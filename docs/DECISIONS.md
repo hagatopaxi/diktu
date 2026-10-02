@@ -22,3 +22,26 @@ Chaque entrée : contexte, choix, alternative écartée, raison.
 - **Choix** : features `gtk4/v4_14` et `libadwaita/v1_5`. `AdwPreferencesWindow` (imposé) n'émet donc pas d'avertissement de dépréciation (déprécié à partir de libadwaita 1.6 au profit d'`AdwPreferencesDialog`).
 - **Écarté** : viser libadwaita 1.6+ et `AdwPreferencesDialog`.
 - **Raison** : contrainte du cahier des charges et compatibilité Ubuntu 24.04 LTS.
+
+## D4 — Bindings sherpa-onnx
+
+- **Contexte** : il faut un reconnaisseur transducteur streaming utilisable depuis Rust.
+- **Choix** : crate officielle `sherpa-onnx` 1.13.8 (k2-fsa, Apache-2.0), liaison statique. Son `build.rs` télécharge l'archive précompilée `sherpa-onnx-v1.13.8-linux-x64-static-lib.tar.bz2` depuis les releases GitHub, ou la prend dans `SHERPA_ONNX_ARCHIVE_DIR` pour un build hors ligne (Flatpak).
+- **Écarté** : wrapper FFI maison sur l'API C ; crate tierce `sherpa-rs`.
+- **Raison** : les bindings officiels exposent tout ce qu'il faut (flux, endpointing, `input_finished`), un wrapper maison n'apporterait que de la maintenance.
+
+## D5 — Modèle français par défaut
+
+- **Contexte** : deux transducteurs zipformer streaming français non gated existent sur HF. Mesures sur 3 extraits Common Voice (CC0), chunks de 100 ms, 2 threads :
+  | Modèle | Taille | WER | RTF | Sortie |
+  |---|---|---|---|---|
+  | `csukuangfj/sherpa-onnx-streaming-zipformer-fr-kroko-2025-08-06` | 71 Mo | 19,4 % | 0,048 | casse et ponctuation |
+  | `shaojieli/sherpa-onnx-streaming-zipformer-fr-2023-04-14` (int8) | 128 Mo | 13,9 % | 0,089 | MAJUSCULES, sans ponctuation |
+- **Choix** : Kroko FR. Licence CC-BY-SA (modèles « community » de Banafo, version de la licence non précisée par l'éditeur ; le dépôt HF de conversion renvoie vers `Banafo/Kroko-ASR`). Consignée dans le registre.
+- **Écarté** : le modèle shaojieli (Apache-2.0), meilleur WER sur ces 3 extraits mais entraîné sur Common Voice, donc dans son domaine ; tout en capitales et sans ponctuation, inutilisable tel quel pour dicter des messages.
+- **Raison** : pour de la dictée, casse et ponctuation natives valent plus que quelques points de WER sur 36 mots ; modèle deux fois plus petit et deux fois plus rapide.
+
+## D6 — Seuil du test de transcription
+
+- **Choix** : WER agrégé ≤ 25 % sur les 3 extraits Common Voice de `core/tests/data` (mesuré : 19,4 %). Normalisation : minuscules, apostrophes et tirets → espaces, ponctuation retirée.
+- **Raison** : marge suffisante pour absorber une variation de version de sherpa-onnx, assez basse pour détecter un modèle mal chargé ou un flux mal découpé.
