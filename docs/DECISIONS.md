@@ -43,7 +43,7 @@ Chaque entrée : contexte, choix, alternative écartée, raison.
 
 ## D6 — Seuil du test de transcription
 
-- **Choix** : WER agrégé ≤ 25 % sur les 3 extraits Common Voice de `core/tests/data` (mesuré : 19,4 %). Normalisation : minuscules, apostrophes et tirets → espaces, ponctuation retirée.
+- **Choix** : WER agrégé ≤ 25 % sur les 3 extraits Common Voice de `core/tests/data`, mesuré sur le texte réellement tapé par `Dictation` (moteur + émission + fin de parole) : 22,2 % (19,4 % en transcription brute). Normalisation : minuscules, apostrophes et tirets → espaces, ponctuation retirée.
 - **Raison** : marge suffisante pour absorber une variation de version de sherpa-onnx, assez basse pour détecter un modèle mal chargé ou un flux mal découpé.
 
 ## D7 — Registre : champs `name` et `size`
@@ -58,3 +58,22 @@ Chaque entrée : contexte, choix, alternative écartée, raison.
 - **Choix** : `reqwest::blocking` (TLS rustls par défaut), exécuté dans un thread dédié ; annulation par `AtomicBool` vérifié à chaque bloc de 64 Kio, progression par callback.
 - **Écarté** : client async intégré à la boucle GLib.
 - **Raison** : code linéaire, testable sans runtime async ; l'UI reçoit la progression par canal.
+
+## D9 — Détection de fin de parole : VAD énergétique, pas l'endpointing de sherpa-onnx
+
+- **Contexte** : l'endpointing intégré de sherpa-onnx (règle 2 = 1,2 s de silence après parole) a été essayé puis mesuré inutilisable avec le modèle par défaut : (1) le modèle émet le `.` final ~1,5 s après la fin de la parole, ce qui remet à zéro le compteur de silence (fin détectée après 2,8 s) ; (2) l'encodeur décode par blocs de 128 trames (1,28 s), donc toute mesure fondée sur les tokens est quantifiée à 1,28 s, au-dessus du seuil de 1,2 s.
+- **Choix** : `Dictation` (core) mesure le silence sur le signal : détecteur d'énergie par trames de 30 ms, plancher de bruit adaptatif (suit les baisses immédiatement, les hausses en ~15 s, initialisé à au plus −40 dBFS), parole = 12 dB au-dessus du plancher et au-dessus de −50 dBFS. Fin d'écoute si : ≥ 200 ms de parole puis `end-silence` (1,2 s par défaut, réglable) de silence ; ou aucun nouveau mot du modèle pendant 6 s (rien dit, ou bruit continu) ; ou 5 min de dictée (garde-fou).
+- **Écarté** : endpointing sherpa ; VAD Silero (second modèle à télécharger et à gérer dans le registre).
+- **Raison** : précision de 30 ms, aucun modèle supplémentaire, testable avec de l'audio simulé. Le repli « aucun nouveau mot » couvre le bruit non stationnaire que l'énergie ne distingue pas de la voix.
+
+## D10 — Micro ouvert seulement pendant l'écoute, pas de pré-roll continu
+
+- **Contexte** : un pré-roll de 200 ms suppose un micro ouvert en permanence pour garder les 200 dernières ms avant le raccourci.
+- **Choix** : le flux `cpal` est ouvert au déclenchement et fermé à la fin de la dictée. Le son de début est joué une fois le flux effectivement ouvert : tout ce que l'utilisateur dit après le bip est capté. Le tampon circulaire (2 s) sert de file entre le callback audio et le thread d'inférence.
+- **Écarté** : micro ouvert en continu avec pré-roll de 200 ms.
+- **Raison** : GNOME affiche l'indicateur de micro tant qu'un flux est ouvert ; un micro ouvert en permanence par une application de fond est inacceptable pour la vie privée et la batterie. Le bip « micro prêt » rend le pré-roll inutile.
+
+## D11 — Une dictée = un segment
+
+- **Choix** : la fin de parole termine à la fois le segment (vidage du modèle avec `input_finished`, reste tapé suivi d'une espace, point final) et l'écoute. Un second appui sur le raccourci fait de même.
+- **Raison** : le comportement attendu arrête l'écoute au premier silence ; un découpage en sous-segments n'aurait aucun effet observable.

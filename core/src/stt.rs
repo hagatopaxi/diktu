@@ -11,8 +11,6 @@ pub const SAMPLE_RATE: u32 = 16_000;
 pub trait SttEngine: Send {
     /// Feeds audio and returns the current hypothesis for the segment.
     fn accept(&mut self, samples: &[f32]) -> String;
-    /// True when the engine's endpoint rules consider the segment over.
-    fn is_endpoint(&self) -> bool;
     /// Flushes the model and returns the final segment text, then starts a new segment.
     fn finish_segment(&mut self) -> String;
 }
@@ -25,12 +23,8 @@ pub struct SherpaTransducer {
 
 impl SherpaTransducer {
     /// Loads a model from `dir`; files are matched by their `encoder`, `decoder`,
-    /// `joiner` and `tokens` name prefixes. `endpoint_silence` is in seconds.
-    pub fn load<'a>(
-        dir: &Path,
-        files: impl IntoIterator<Item = &'a str>,
-        endpoint_silence: f32,
-    ) -> Result<Self, String> {
+    /// `joiner` and `tokens` name prefixes.
+    pub fn load<'a>(dir: &Path, files: impl IntoIterator<Item = &'a str>) -> Result<Self, String> {
         let files: Vec<&str> = files.into_iter().collect();
         let find = |prefix: &str| {
             files
@@ -46,11 +40,6 @@ impl SherpaTransducer {
         config.model_config.tokens = Some(find("tokens")?);
         config.model_config.num_threads = 2;
         config.decoding_method = Some("greedy_search".into());
-        config.enable_endpoint = true;
-        // Rule 1 (no speech at all) is left to the session's own silence timeout.
-        config.rule1_min_trailing_silence = 10.0;
-        config.rule2_min_trailing_silence = endpoint_silence;
-        config.rule3_min_utterance_length = 20.0;
         let recognizer = OnlineRecognizer::create(&config)
             .ok_or_else(|| format!("sherpa-onnx could not load model in {}", dir.display()))?;
         let stream = recognizer.create_stream();
@@ -72,10 +61,6 @@ impl SttEngine for SherpaTransducer {
     fn accept(&mut self, samples: &[f32]) -> String {
         self.stream.accept_waveform(SAMPLE_RATE as i32, samples);
         self.decode()
-    }
-
-    fn is_endpoint(&self) -> bool {
-        self.recognizer.is_endpoint(&self.stream)
     }
 
     fn finish_segment(&mut self) -> String {
