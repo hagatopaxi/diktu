@@ -10,3 +10,5 @@ license.workspace = true
 parlotte-core = { path = "../core" }
 adw = { package = "libadwaita", version = "0.9", features = ["v1_5"] }
 gtk = { package = "gtk4", version = "0.11", features = ["v4_14"] }
+ashpd = { version = "0.13.13", default-features = false, features = ["tokio", "remote_desktop", "screencast", "global_shortcuts"] }
+tokio = { version = "1.53.1", features = ["rt", "time"] }

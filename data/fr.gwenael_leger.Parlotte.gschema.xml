@@ -4,6 +4,42 @@
     <key name="language" type="s">
       <default>'fr'</default>
       <summary>Dictation language</summary>
+      <description>ISO 639-1 code of the language to dictate.</description>
+    </key>
+    <key name="model" type="s">
+      <default>''</default>
+      <summary>Speech model</summary>
+      <description>Registry id of the model to use; empty means the first model registered for the language.</description>
+    </key>
+    <key name="end-silence" type="d">
+      <range min="0.5" max="5.0"/>
+      <default>1.2</default>
+      <summary>Silence that ends the dictation</summary>
+      <description>Seconds of silence after speech before listening stops.</description>
+    </key>
+    <key name="postprocess" type="b">
+      <default>true</default>
+      <summary>Capitalise and add a final period</summary>
+    </key>
+    <key name="key-delay" type="u">
+      <range min="0" max="100"/>
+      <default>3</default>
+      <summary>Pause between typed keys</summary>
+      <description>Milliseconds between two simulated key presses.</description>
+    </key>
+    <key name="sounds" type="b">
+      <default>true</default>
+      <summary>Play start and stop sounds</summary>
+    </key>
+    <key name="volume" type="d">
+      <range min="0.0" max="1.0"/>
+      <default>0.5</default>
+      <summary>Sound volume</summary>
+    </key>
+    <key name="restore-token" type="s">
+      <default>''</default>
+      <summary>RemoteDesktop portal restore token</summary>
+      <description>Lets the keyboard permission persist across restarts.</description>
     </key>
   </schema>
 </schemalist>

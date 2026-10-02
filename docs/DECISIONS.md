@@ -77,3 +77,16 @@ Chaque entrée : contexte, choix, alternative écartée, raison.
 
 - **Choix** : la fin de parole termine à la fois le segment (vidage du modèle avec `input_finished`, reste tapé suivi d'une espace, point final) et l'écoute. Un second appui sur le raccourci fait de même.
 - **Raison** : le comportement attendu arrête l'écoute au premier silence ; un découpage en sous-segments n'aurait aucun effet observable.
+
+## D12 — Session RemoteDesktop ouverte au démarrage et gardée
+
+- **Contexte** : le portail demande un consentement à la création de session (sauf jeton de restauration valide).
+- **Choix** : la session clavier est ouverte au lancement de l'application (dialogue éventuel à ce moment-là plutôt qu'au milieu de la première dictée), gardée ouverte, et rouverte une fois en cas d'échec d'envoi (consentement révoqué, portail redémarré). Le jeton `restore_token` est enregistré dans GSettings (`restore-token`) avec `PersistMode::ExplicitlyRevoked`.
+- **Écarté** : une session par dictée (latence de création et risque de dialogue à chaque fois si la restauration échoue).
+- **Raison** : fiabilité et latence nulle au moment de taper.
+
+## D13 — Commande de repli `parlotte --toggle`
+
+- **Choix** : option de ligne de commande locale qui enregistre l'application, active l'action `app.toggle` (transmise par D-Bus à l'instance principale) puis quitte. C'est la commande à associer à un raccourci personnalisé GNOME si le portail GlobalShortcuts manque.
+- **Écarté** : `gapplication action …`, qui exige une application activable par D-Bus (fichier service supplémentaire).
+- **Raison** : une seule commande, identique en natif et en Flatpak (`flatpak run fr.gwenael_leger.Parlotte --toggle`).
