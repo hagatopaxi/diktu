@@ -1,0 +1,48 @@
+name: Flatpak
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+jobs:
+  flatpak:
+    strategy:
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-50
+      options: --privileged
+    steps:
+      - uses: actions/checkout@v4
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          manifest-path: build-aux/fr.gwenael_leger.Diktu.json
+          bundle: diktu-${{ matrix.arch }}.flatpak
+          artifact-name: diktu-${{ matrix.arch }}
+          arch: ${{ matrix.arch }}
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: flatpak
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: diktu-*
+          merge-multiple: true
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sha256sum diktu-*.flatpak > SHA256SUMS
+          gh release create "$GITHUB_REF_NAME" diktu-*.flatpak SHA256SUMS \
+            --repo "$GITHUB_REPOSITORY" --title "Diktu ${GITHUB_REF_NAME#v}" --generate-notes
