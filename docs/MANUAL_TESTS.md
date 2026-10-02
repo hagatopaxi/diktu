@@ -14,7 +14,7 @@ Préparation : modèle français téléchargé depuis les réglages, une applica
 - [ ] Une deuxième commande `parlotte` ne crée pas de seconde instance ; elle ouvre les réglages.
 - [ ] Premier lancement : le dialogue « Contrôle à distance » (RemoteDesktop) apparaît au démarrage, pas pendant la première dictée ; il ne demande que le clavier.
 - [ ] Après acceptation et redémarrage de l'application, le dialogue RemoteDesktop ne réapparaît pas (jeton `restore-token` enregistré : `gsettings get fr.gwenael_leger.Parlotte restore-token` non vide).
-- [ ] Premier lancement : le dialogue GNOME de raccourci global propose `Super+Alt+D`.
+- [ ] Premier lancement : le dialogue GNOME de raccourci global propose `F12`.
 - [ ] Noter si GNOME affiche un indicateur permanent de « contrôle à distance » pendant que la session clavier est ouverte (comportement du shell, à documenter dans le README le cas échéant).
 
 ## Icône (extension AppIndicator)
@@ -27,7 +27,7 @@ Préparation : modèle français téléchargé depuis les réglages, une applica
 
 ## Raccourci et dictée
 
-- [ ] `Super+Alt+D` démarre l'écoute : son montant court, icône rouge, indicateur micro de GNOME visible.
+- [ ] `F12` démarre l'écoute : son montant court, icône rouge, indicateur micro de GNOME visible.
 - [ ] Le texte est tapé au curseur au fil de la parole, mot par mot (jamais de mot coupé), sans effacement.
 - [ ] Les accents (é, è, à, ç, ù, œ) et l'apostrophe typographique (’) sont tapés correctement, y compris avec une disposition clavier non française (ex. US).
 - [ ] Après ~1,2 s de silence, l'écoute s'arrête seule : le reste du texte est tapé, suivi d'un point et d'une espace ; son descendant ; icône grise ; indicateur micro de GNOME éteint.

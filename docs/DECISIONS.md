@@ -118,7 +118,7 @@ Chaque entrée : contexte, choix, alternative écartée, raison.
 
 ## D18 — Format du raccourci préféré et enregistrement de l'application hôte
 
-- **Choix** : déclencheur préféré `LOGO+ALT+d` (notation de la spécification XDG « shortcuts », équivalent de `<Super><Alt>d`). Au démarrage, l'application s'enregistre auprès de `org.freedesktop.host.portal.Registry` (sans effet en Flatpak).
+- **Choix** : déclencheur préféré `F12` (notation de la spécification XDG « shortcuts » ; une touche seule et libre, choisie par l'utilisateur à la place de `Super+Alt+D`). Au démarrage, l'application s'enregistre auprès de `org.freedesktop.host.portal.Registry` (sans effet en Flatpak).
 - **Constat** : sans cet enregistrement, le portail GlobalShortcuts refuse une application non sandboxée (« An app id is required ») ; l'enregistrement exige que `fr.gwenael_leger.Parlotte.desktop` soit installé. Lancer le binaire depuis l'arbre des sources sans `meson install` ne donne donc que le repli `--toggle`.
 
 ## D19 — Fenêtre de réglages unique, masquée à la fermeture

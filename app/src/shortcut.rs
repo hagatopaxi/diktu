@@ -6,8 +6,8 @@ use ashpd::desktop::global_shortcuts::{GlobalShortcuts, NewShortcut, Shortcut};
 use futures_util::StreamExt;
 use tokio::sync::mpsc::UnboundedReceiver;
 
-/// `<Super><Alt>d` in the XDG shortcuts notation; the compositor has the final say.
-const PREFERRED_TRIGGER: &str = "LOGO+ALT+d";
+/// F12 alone: one free key, reachable without looking; the compositor has the final say.
+const PREFERRED_TRIGGER: &str = "F12";
 
 /// Binds the shortcut and forwards each activation to `toggle`. `on_trigger` receives the
 /// binding chosen by the compositor; a message on `configure` opens the system dialog.

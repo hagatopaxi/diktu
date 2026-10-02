@@ -11,7 +11,7 @@ Licence : GPL-3.0-or-later.
 
 - L'application tourne en tâche de fond, sans fenêtre, avec une icône micro dans la barre
   supérieure (grise au repos, rouge pendant l'écoute).
-- `Super+Alt+D` (proposé à GNOME, qui décide du raccourci final) démarre l'écoute ; un son
+- `F12` (proposé à GNOME, qui décide du raccourci final) démarre l'écoute ; un son
   court confirme que le micro est ouvert. Un second appui l'arrête.
 - L'écoute s'arrête aussi d'elle-même après 1,2 s de silence (réglable), ou après 6 s sans
   aucun mot reconnu.
@@ -87,7 +87,7 @@ Pour lancer Parlotte à l'ouverture de session : copier
 1. La fenêtre de réglages s'ouvre : télécharger le modèle français.
 2. GNOME demande l'autorisation de « contrôler le clavier » (portail RemoteDesktop). Accepter ;
    l'autorisation est mémorisée.
-3. GNOME propose le raccourci `Super+Alt+D` : accepter ou en choisir un autre.
+3. GNOME propose le raccourci `F12` : accepter ou en choisir un autre.
 
 ## Raccourci de repli
 
@@ -107,7 +107,7 @@ KEY=/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/parlotte/
 gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['$KEY']"
 gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:$KEY name 'Parlotte'
 gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:$KEY command 'parlotte --toggle'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:$KEY binding '<Super><Alt>d'
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:$KEY binding 'F12'
 ```
 
 (La première commande remplace la liste existante de raccourcis personnalisés ; s'il y en a
