@@ -23,8 +23,8 @@ pub async fn run(
         configure.close();
     }
     let session = proxy.create_session(Default::default()).await?;
-    let shortcut = NewShortcut::new("toggle", "Démarrer ou arrêter la dictée")
-        .preferred_trigger(PREFERRED_TRIGGER);
+    let shortcut =
+        NewShortcut::new("toggle", "Start or stop dictation").preferred_trigger(PREFERRED_TRIGGER);
     let bound = proxy
         .bind_shortcuts(&session, &[shortcut], None, Default::default())
         .await?
@@ -55,5 +55,5 @@ fn describe(shortcuts: &[Shortcut]) -> String {
         .find(|s| s.id() == "toggle")
         .map(|s| s.trigger_description().to_owned())
         .filter(|d| !d.is_empty())
-        .unwrap_or_else(|| "non attribué".into())
+        .unwrap_or_else(|| "not assigned".into())
 }

@@ -19,7 +19,7 @@
     </key>
     <key name="postprocess" type="b">
       <default>true</default>
-      <summary>Capitalise and add a final period</summary>
+      <summary>Capitalize and add a final period</summary>
     </key>
     <key name="key-delay" type="u">
       <range min="0" max="100"/>

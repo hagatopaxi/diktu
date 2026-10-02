@@ -25,7 +25,7 @@ fn language_name(code: &str) -> &str {
 
 pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
     let window = adw::PreferencesWindow::builder()
-        .title("Réglages de Diktu")
+        .title("Diktu Preferences")
         .default_width(600)
         .default_height(680)
         .search_enabled(false)
@@ -44,22 +44,20 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
     languages.dedup();
     let names: Vec<&str> = languages.iter().map(|l| language_name(l)).collect();
     let language = adw::ComboRow::builder()
-        .title("Langue")
+        .title("Language")
         .model(&gtk::StringList::new(&names))
         .build();
     let current = settings.string("language");
     if let Some(i) = languages.iter().position(|l| *l == current.as_str()) {
         language.set_selected(i as u32);
     }
-    let group = adw::PreferencesGroup::builder().title("Dictée").build();
+    let group = adw::PreferencesGroup::builder().title("Dictation").build();
     group.add(&language);
     page.add(&group);
 
     let group = adw::PreferencesGroup::builder()
-        .title("Modèles")
-        .description(
-            "Téléchargés depuis Hugging Face, vérifiés (SHA-256), puis utilisés hors ligne.",
-        )
+        .title("Models")
+        .description("Downloaded from Hugging Face, verified (SHA-256), then used offline.")
         .build();
     let mut first_check: Option<gtk::CheckButton> = None;
     let rows: Vec<(Model, adw::ActionRow)> = registry::models()
@@ -89,20 +87,20 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
     page.add(&group);
 
     let group = adw::PreferencesGroup::builder()
-        .title("Raccourci")
-        .description("Le raccourci est attribué par GNOME. Repli : un raccourci personnalisé GNOME qui lance « diktu --toggle ».")
+        .title("Shortcut")
+        .description("GNOME assigns the shortcut. Fallback: a custom GNOME shortcut that runs “diktu --toggle”.")
         .build();
     let shortcut = adw::ActionRow::builder()
-        .title("Démarrer ou arrêter la dictée")
+        .title("Start or stop dictation")
         .subtitle(
             ui.trigger
                 .borrow()
                 .as_deref()
-                .unwrap_or("Portail GlobalShortcuts indisponible"),
+                .unwrap_or("GlobalShortcuts portal unavailable"),
         )
         .build();
     let change = gtk::Button::builder()
-        .label("Modifier…")
+        .label("Change…")
         .valign(gtk::Align::Center)
         .build();
     let configure = ui.configure.clone();
@@ -111,9 +109,7 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
         if configure.send(()).is_err()
             && let Some(window) = win.upgrade()
         {
-            window.add_toast(adw::Toast::new(
-                "À modifier dans Paramètres → Applications → Diktu",
-            ));
+            window.add_toast(adw::Toast::new("Change it in Settings → Apps → Diktu"));
         }
     });
     shortcut.add_suffix(&change);
@@ -121,27 +117,25 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
     *ui.shortcut_row.borrow_mut() = Some(shortcut);
     page.add(&group);
 
-    let group = adw::PreferencesGroup::builder()
-        .title("Comportement")
-        .build();
+    let group = adw::PreferencesGroup::builder().title("Behavior").build();
     let silence = adw::SpinRow::with_range(0.5, 5.0, 0.1);
-    silence.set_title("Silence de fin (s)");
-    silence.set_subtitle("Durée de silence après la parole qui arrête l'écoute");
+    silence.set_title("End-of-speech silence (s)");
+    silence.set_subtitle("Silence after speech that stops listening");
     silence.set_digits(1);
     settings.bind("end-silence", &silence, "value").build();
     group.add(&silence);
     let postprocess = adw::SwitchRow::builder()
-        .title("Majuscule initiale et point final")
+        .title("Capitalize and end with a period")
         .build();
     settings.bind("postprocess", &postprocess, "active").build();
     group.add(&postprocess);
     let delay = adw::SpinRow::with_range(0.0, 100.0, 1.0);
-    delay.set_title("Pause entre les touches (ms)");
-    delay.set_subtitle("À augmenter si des caractères manquent dans certaines applications");
+    delay.set_title("Delay between keys (ms)");
+    delay.set_subtitle("Increase it if some apps drop characters");
     settings.bind("key-delay", &delay, "value").build();
     group.add(&delay);
     let sounds = adw::SwitchRow::builder()
-        .title("Sons de début et de fin")
+        .title("Start and stop sounds")
         .build();
     settings.bind("sounds", &sounds, "active").build();
     group.add(&sounds);
@@ -184,7 +178,7 @@ fn model_row(
     model: &Model,
     first_check: &mut Option<gtk::CheckButton>,
 ) -> adw::ActionRow {
-    let size = format!("{} Mo", (model.total_size() + 500_000) / 1_000_000);
+    let size = format!("{} MB", (model.total_size() + 500_000) / 1_000_000);
     let row = adw::ActionRow::builder().title(&model.name).build();
 
     // A choice only exists when a language has several models.
@@ -214,9 +208,9 @@ fn model_row(
         .width_request(140)
         .show_text(true)
         .build();
-    let download = icon_button("folder-download-symbolic", "Télécharger");
-    let cancel = icon_button("process-stop-symbolic", "Annuler le téléchargement");
-    let remove = icon_button("user-trash-symbolic", "Supprimer");
+    let download = icon_button("folder-download-symbolic", "Download");
+    let cancel = icon_button("process-stop-symbolic", "Cancel download");
+    let remove = icon_button("user-trash-symbolic", "Remove");
     for w in [
         progress.upcast_ref::<gtk::Widget>(),
         download.upcast_ref(),
@@ -240,13 +234,13 @@ fn model_row(
             let busy = running.borrow().is_some();
             let installed = !busy && download::is_installed(&models_root(), &model);
             let state = if busy {
-                "téléchargement"
+                "downloading"
             } else if installed {
-                "installé"
+                "installed"
             } else {
-                "non installé"
+                "not installed"
             };
-            row.set_subtitle(&format!("{size} · {state} · licence {license}"));
+            row.set_subtitle(&format!("{size} · {state} · license {license}"));
             progress.set_visible(busy);
             cancel.set_visible(busy);
             download.set_visible(!busy && !installed);
@@ -310,7 +304,7 @@ fn model_row(
                             Progress::Bytes(done, total) => {
                                 progress.set_fraction(done as f64 / total.max(1) as f64);
                                 progress.set_text(Some(&format!(
-                                    "{} / {} Mo",
+                                    "{} / {} MB",
                                     done / 1_000_000,
                                     (total + 500_000) / 1_000_000
                                 )));
@@ -351,7 +345,7 @@ fn model_row(
         model,
         move |_| {
             if let Err(e) = download::remove(&models_root(), &model) {
-                window.add_toast(adw::Toast::new(&format!("Suppression impossible : {e}")));
+                window.add_toast(adw::Toast::new(&format!("Could not remove: {e}")));
             }
             refresh();
         }

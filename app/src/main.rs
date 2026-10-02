@@ -58,7 +58,7 @@ fn main() -> glib::ExitCode {
         b't'.into(),
         glib::OptionFlags::NONE,
         glib::OptionArg::None,
-        "Démarrer ou arrêter la dictée dans l'instance en cours",
+        "Start or stop dictation in the running instance",
         None,
     );
     app.connect_handle_local_options(|app, options| {
@@ -239,7 +239,7 @@ fn startup(app: &adw::Application) {
 
     // Portals identify a non-Flatpak app by this registration; it is a no-op in a sandbox.
     if let Err(e) = runtime().block_on(ashpd::register_host_app(APP_ID.try_into().unwrap())) {
-        eprintln!("diktu: enregistrement auprès des portails : {e}");
+        eprintln!("diktu: portal registration: {e}");
     }
 
     let (text_tx, text_rx) = sync_channel::<String>(64);
@@ -265,7 +265,7 @@ fn startup(app: &adw::Application) {
             // Ask for keyboard access now rather than in the middle of the first dictation;
             // `run` closes this session once idle.
             if let Err(e) = sink.connect() {
-                error(format!("accès au clavier refusé : {e}"));
+                error(format!("keyboard access denied: {e}"));
             }
             inject::run(text_rx, sink, error);
         })
@@ -279,7 +279,7 @@ fn startup(app: &adw::Application) {
         };
         if let Err(e) = shortcut::run(toggle, configure_rx, on_trigger).await {
             let message = format!(
-                "raccourci global indisponible ({e}) : associez un raccourci GNOME à « diktu --toggle »"
+                "global shortcut unavailable ({e}): bind a GNOME shortcut to “diktu --toggle”"
             );
             let _ = trigger_events.send(UiEvent::Notice(Notice::Error(message)));
         }
@@ -287,12 +287,12 @@ fn startup(app: &adw::Application) {
 
     let background = runtime().block_on(async {
         ashpd::desktop::background::Background::request()
-            .reason("Écouter le raccourci de dictée sans fenêtre ouverte")
+            .reason("Listen for the dictation shortcut with no window open")
             .send()
             .await
     });
     if let Err(e) = background {
-        eprintln!("diktu: portail Background : {e}");
+        eprintln!("diktu: Background portal: {e}");
     }
 
     let tray = tray::Tray::new(handles.toggle.clone(), events.clone());
@@ -306,7 +306,7 @@ fn startup(app: &adw::Application) {
         }
     });
     let tray = tray
-        .inspect_err(|e| eprintln!("diktu: icône indisponible : {e}"))
+        .inspect_err(|e| eprintln!("diktu: tray icon unavailable: {e}"))
         .ok();
 
     let sync = {

@@ -74,7 +74,7 @@ impl ksni::Tray for Tray {
     fn tool_tip(&self) -> ksni::ToolTip {
         ksni::ToolTip {
             title: if self.recording {
-                "Diktu : écoute…"
+                "Diktu: listening…"
             } else {
                 "Diktu"
             }
@@ -99,19 +99,19 @@ impl ksni::Tray for Tray {
         vec![
             item(
                 if self.recording {
-                    "Arrêter la dictée"
+                    "Stop dictation"
                 } else {
-                    "Démarrer la dictée"
+                    "Start dictation"
                 },
                 |t| {
                     let _ = t.toggle.send(());
                 },
             ),
-            item("Réglages…", |t| {
+            item("Preferences…", |t| {
                 let _ = t.events.send(UiEvent::Preferences);
             }),
             MenuItem::Separator,
-            item("Quitter", |t| {
+            item("Quit", |t| {
                 let _ = t.events.send(UiEvent::Quit);
             }),
         ]

@@ -72,7 +72,7 @@ fn run(
         }
         let Some(d) = &mut dictation else {
             if toggles.poll() {
-                notify(Notice::Error("aucun modèle installé".into()));
+                notify(Notice::Error("no model installed".into()));
             }
             thread::sleep(Duration::from_millis(20));
             continue;

@@ -22,7 +22,7 @@ impl Capture {
     pub fn start() -> Result<Self, String> {
         let device = cpal::default_host()
             .default_input_device()
-            .ok_or("aucun micro trouvé")?;
+            .ok_or("no microphone found")?;
         let config = device.default_input_config().map_err(|e| e.to_string())?;
         let rate = config.sample_rate();
         let channels = usize::from(config.channels());
@@ -33,7 +33,7 @@ impl Capture {
             cpal::SampleFormat::I16 => open::<i16>(&device, &config.into(), channels, producer),
             cpal::SampleFormat::I32 => open::<i32>(&device, &config.into(), channels, producer),
             cpal::SampleFormat::U16 => open::<u16>(&device, &config.into(), channels, producer),
-            other => return Err(format!("format audio non géré : {other}")),
+            other => return Err(format!("unsupported audio format: {other}")),
         }?;
         stream.play().map_err(|e| e.to_string())?;
         Ok(Self {
@@ -76,7 +76,7 @@ where
                     let _ = producer.try_push(sum / channels as f32);
                 }
             },
-            |err| eprintln!("diktu: flux audio : {err}"),
+            |err| eprintln!("diktu: audio stream: {err}"),
             None,
         )
         .map_err(|e| e.to_string())

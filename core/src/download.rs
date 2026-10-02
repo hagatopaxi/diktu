@@ -28,10 +28,10 @@ pub enum Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Error::Cancelled => write!(f, "téléchargement annulé"),
-            Error::Http(e) => write!(f, "erreur réseau : {e}"),
-            Error::Io(e) => write!(f, "erreur disque : {e}"),
-            Error::HashMismatch(p) => write!(f, "{p} : empreinte SHA-256 invalide"),
+            Error::Cancelled => write!(f, "download cancelled"),
+            Error::Http(e) => write!(f, "network error: {e}"),
+            Error::Io(e) => write!(f, "disk error: {e}"),
+            Error::HashMismatch(p) => write!(f, "{p}: SHA-256 mismatch"),
         }
     }
 }
