@@ -4,3 +4,4 @@
 /build-dir
 /repo
 *.part
+/.claude

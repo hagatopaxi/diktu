@@ -29,7 +29,9 @@
       streaming téléchargé une fois depuis Hugging Face. Aucun son ne quitte votre machine.
     </p>
   </description>
-  <url type="homepage">https://gwenael-leger.fr</url>
+  <url type="homepage">https://github.com/hagatopaxi/diktu</url>
+  <url type="bugtracker">https://github.com/hagatopaxi/diktu/issues</url>
+  <url type="vcs-browser">https://github.com/hagatopaxi/diktu</url>
   <launchable type="desktop-id">fr.gwenael_leger.Diktu.desktop</launchable>
   <provides>
     <binary>diktu</binary>

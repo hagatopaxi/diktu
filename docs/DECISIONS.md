@@ -136,7 +136,7 @@ Chaque entrée : contexte, choix, alternative écartée, raison.
 
 ## D21 — Page d'accueil AppStream
 
-- **Choix** : `https://gwenael-leger.fr` (site de l'auteur, vérifié joignable), faute de dépôt public au moment de l'écriture. À remplacer par l'URL du dépôt une fois publié.
+- **Choix** : le dépôt public `https://github.com/hagatopaxi/diktu` (page d'accueil, suivi des tickets, sources).
 
 ## D22 — Version minimale de Rust : 1.92
 
