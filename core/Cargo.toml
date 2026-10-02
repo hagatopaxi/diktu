@@ -7,7 +7,8 @@ rust-version.workspace = true
 license.workspace = true
 
 [dependencies]
-sherpa-onnx = "1.13.8"
+# Same version as the sherpa-onnx tag built in build-aux/fr.gwenael_leger.Diktu.json.
+sherpa-onnx = { version = "1.13.8", default-features = false }
 serde = { version = "1.0.229", features = ["derive"] }
 toml = "1.1.6"
 sha2 = "0.11.0"
@@ -15,6 +16,11 @@ reqwest = { version = "0.13.5", features = ["blocking"] }
 cpal = "0.17.3"
 rubato = "5.0.1"
 ringbuf = "0.5.2"
+
+[features]
+# Links the shared libsherpa-onnx-c-api found in SHERPA_ONNX_LIB_DIR (Flatpak build from
+# source); without it, sherpa-onnx-sys links its prebuilt static archive.
+shared-sherpa = ["sherpa-onnx/shared"]
 
 [dev-dependencies]
 sha2 = "0.11.0"

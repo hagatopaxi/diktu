@@ -10,6 +10,9 @@ cargo_options = ['--manifest-path', meson.project_source_root() / 'Cargo.toml',
 if get_option('offline')
   cargo_options += ['--offline']
 endif
+if get_option('shared_sherpa_onnx')
+  cargo_options += ['--features', 'diktu-core/shared-sherpa']
+endif
 if get_option('buildtype') == 'release'
   cargo_options += ['--release']
   rust_target = 'release'
