@@ -1,45 +1,46 @@
 # Maintenance
 
-## Mettre à jour sherpa-onnx et onnxruntime
+## Updating sherpa-onnx and onnxruntime
 
-Le Flatpak compile sherpa-onnx depuis les sources (module `sherpa-onnx` du manifeste
-`build-aux/fr.gwenael_leger.Diktu.json`) contre la bibliothèque onnxruntime publiée par
-Microsoft (module `onnxruntime`), puis lie Diktu à `libsherpa-onnx-c-api.so` (voir D24).
-Le build natif (`cargo build`) télécharge lui l'archive statique précompilée de k2-fsa.
+The Flatpak builds sherpa-onnx from source (`sherpa-onnx` module of the manifest
+`build-aux/fr.gwenael_leger.Diktu.json`) against the onnxruntime library published by
+Microsoft (`onnxruntime` module), then links Diktu to `libsherpa-onnx-c-api.so` (see
+[D24](DECISIONS.md#d24--sherpa-onnx-built-from-source-in-the-flatpak)). The native build
+(`cargo build`), on the other hand, downloads the prebuilt static archive from k2-fsa.
 
-**Couplage obligatoire** : la version de la crate `sherpa-onnx` dans `core/Cargo.toml` est
-toujours égale au tag sherpa-onnx compilé par le manifeste. Les déclarations FFI de
-`sherpa-onnx-sys` reproduisent les structures de l'API C de la même version ; un écart
-ne provoque pas d'erreur d'édition de liens mais des structures mal lues à l'exécution.
+**Mandatory coupling**: the version of the `sherpa-onnx` crate in `core/Cargo.toml` is
+always equal to the sherpa-onnx tag built by the manifest. The FFI declarations of
+`sherpa-onnx-sys` mirror the C API structures of the same version; a mismatch does not
+cause a link error but structures misread at runtime.
 
-La version d'onnxruntime suit celle qu'attend sherpa-onnx, lue dans
-`cmake/onnxruntime-linux-x86_64.cmake` au tag choisi (1.28.2 pour sherpa-onnx v1.13.8).
+The onnxruntime version follows the one sherpa-onnx expects, read from
+`cmake/onnxruntime-linux-x86_64.cmake` at the chosen tag (1.28.2 for sherpa-onnx v1.13.8).
 
-### Procédure
+### Procedure
 
-Avec `N` la nouvelle version de sherpa-onnx (sans le `v`) :
+With `N` the new sherpa-onnx version (without the `v`):
 
-1. **Crate** : dans `core/Cargo.toml`, passer `sherpa-onnx` à `N`, puis
-   `cargo update -p sherpa-onnx --precise N` (met aussi à jour `sherpa-onnx-sys`).
-2. **Sources cargo hors ligne** : régénérer `build-aux/cargo-sources.json` avec
+1. **Crate**: in `core/Cargo.toml`, set `sherpa-onnx` to `N`, then run
+   `cargo update -p sherpa-onnx --precise N` (this also updates `sherpa-onnx-sys`).
+2. **Offline cargo sources**: regenerate `build-aux/cargo-sources.json` with
    [flatpak-cargo-generator](https://github.com/flatpak/flatpak-builder-tools/tree/master/cargo),
-   depuis un clone de flatpak-builder-tools :
+   from a clone of flatpak-builder-tools:
 
    ```sh
    uv run flatpak-cargo-generator.py Cargo.lock -o build-aux/cargo-sources.json
    ```
 
-3. **Commit du tag** : le résoudre sans le deviner.
+3. **Tag commit**: resolve it rather than guess it.
 
    ```sh
    git ls-remote https://github.com/k2-fsa/sherpa-onnx refs/tags/vN 'refs/tags/vN^{}'
    ```
 
-   Pour un tag annoté, prendre la ligne `^{}` (le commit) ; sinon l'unique ligne. Reporter
-   `tag` et `commit` dans la source `git` du module `sherpa-onnx`.
-4. **Dépendances CMake de sherpa-onnx** : le build Flatpak n'a pas de réseau ; chaque
-   `FetchContent` de sherpa-onnx trouve son archive dans le dossier des sources, où la
-   déposent les sources `file` du module `sherpa-onnx`. Au nouveau tag, relire dans un clone :
+   For an annotated tag, take the `^{}` line (the commit); otherwise the only line. Copy
+   `tag` and `commit` into the `git` source of the `sherpa-onnx` module.
+4. **sherpa-onnx CMake dependencies**: the Flatpak build has no network; each
+   `FetchContent` of sherpa-onnx finds its archive in the sources directory, where the
+   `file` sources of the `sherpa-onnx` module put it. At the new tag, check them again in a clone:
 
    ```sh
    git clone --depth 1 --branch vN https://github.com/k2-fsa/sherpa-onnx
@@ -49,53 +50,53 @@ Avec `N` la nouvelle version de sherpa-onnx (sans le `v`) :
        cmake/eigen.cmake cmake/openfst.cmake
    ```
 
-   Deux archives sont demandées par les dépendances elles-mêmes : kissfft
-   (`cmake/kissfft.cmake` de kaldi-native-fbank) et kaldifst (`cmake/kaldifst.cmake` de
-   kaldi-decoder) ; les lire dans ces archives. Pour chaque archive : `url` = l'URL du
-   fichier `.cmake`, `dest-filename` = le nom attendu dans `possible_file_locations`,
-   `sha256` = le hash calculé sur le fichier téléchargé (`curl -L <url> | sha256sum`),
-   qui doit être égal au `_HASH` du `.cmake`. Si le build échoue en tentant un
-   téléchargement (`Downloading … from https://…`), ajouter l'archive manquante de la même
-   façon. Les options `-DSHERPA_ONNX_ENABLE_…` du module désactivent ce que Diktu n'utilise
-   pas (TTS, diarisation, websocket, Python, exécutables) et donc leurs dépendances.
-5. **onnxruntime** : lire la version dans `cmake/onnxruntime-linux-x86_64.cmake`, mettre à
-   jour les deux sources du module `onnxruntime` (x86_64 et aarch64) :
+   Two archives are requested by the dependencies themselves: kissfft
+   (`cmake/kissfft.cmake` in kaldi-native-fbank) and kaldifst (`cmake/kaldifst.cmake` in
+   kaldi-decoder); read them from those archives. For each archive: `url` = the URL from the
+   `.cmake` file, `dest-filename` = the name expected in `possible_file_locations`,
+   `sha256` = the hash computed on the downloaded file (`curl -L <url> | sha256sum`),
+   which must equal the `_HASH` in the `.cmake` file. If the build fails while attempting a
+   download (`Downloading … from https://…`), add the missing archive the same way. The
+   module's `-DSHERPA_ONNX_ENABLE_…` options disable what Diktu does not use (TTS,
+   diarization, websocket, Python, executables) and therefore their dependencies.
+5. **onnxruntime**: read the version from `cmake/onnxruntime-linux-x86_64.cmake`, and update
+   both sources of the `onnxruntime` module (x86_64 and aarch64):
    `https://github.com/microsoft/onnxruntime/releases/download/vX/onnxruntime-linux-{x64,aarch64}-X.tgz`,
-   avec le `sha256` de chaque fichier téléchargé.
-6. **Construire le Flatpak** et vérifier les bibliothèques :
+   with the `sha256` of each downloaded file.
+6. **Build the Flatpak** and check the libraries:
 
    ```sh
    flatpak run org.flatpak.Builder --user --force-clean build-dir \
        build-aux/fr.gwenael_leger.Diktu.json
-   flatpak build build-dir ldd /app/bin/diktu | grep "not found"   # ne doit rien afficher
+   flatpak build build-dir ldd /app/bin/diktu | grep "not found"   # must print nothing
    flatpak build build-dir /app/bin/diktu --help
    ```
 
-7. **Tester la dictée réelle** (build natif, même version de l'API C) :
-   `cargo test -- --ignored`, puis `cargo fmt --all --check`,
-   `cargo clippy --all-targets -- -D warnings` et `cargo test`.
-8. Consigner tout changement de comportement dans `docs/DECISIONS.md`, puis un commit
+7. **Test real dictation** (native build, same C API version):
+   `cargo test -- --ignored`, then `cargo fmt --all --check`,
+   `cargo clippy --all-targets -- -D warnings` and `cargo test`.
+8. Record any behavior change in [DECISIONS.md](DECISIONS.md), then make a commit
    `build(deps): bump sherpa-onnx to N`.
 
-### Détection automatique sur Flathub
+### Automatic detection on Flathub
 
-Le bot de Flathub exécute
+The Flathub bot runs
 [flatpak-external-data-checker](https://github.com/flathub-infra/flatpak-external-data-checker)
-sur le dépôt Flathub de l'application et lit les blocs `x-checker-data` du manifeste :
+on the application's Flathub repository and reads the `x-checker-data` blocks of the manifest:
 
-- source `git` de sherpa-onnx (`"type": "git"`, `tag-pattern` `^v([\d.]+)$`) : à chaque
-  nouveau tag, il ouvre une pull request qui met à jour `tag` et `commit` ;
-- sources d'onnxruntime (`"type": "json"` sur l'API GitHub de la dernière release de
-  Microsoft) : à chaque release, il met à jour `url` et `sha256` des deux architectures.
+- sherpa-onnx `git` source (`"type": "git"`, `tag-pattern` `^v([\d.]+)$`): for each
+  new tag, it opens a pull request that updates `tag` and `commit`;
+- onnxruntime sources (`"type": "json"` on the GitHub API for Microsoft's latest
+  release): for each release, it updates `url` and `sha256` for both architectures.
 
-Le bot ne touche ni à `core/Cargo.toml`, ni à `cargo-sources.json`, ni aux archives des
-dépendances CMake : sa pull request sert d'alerte et se complète avec la procédure
-ci-dessus (étapes 1, 2, 4 et 7). Une release d'onnxruntime plus récente que celle attendue
-par sherpa-onnx est acceptable si le build et `cargo test -- --ignored` passent (l'API C
-d'onnxruntime reste rétrocompatible) ; sinon fermer la pull request et attendre le tag
-sherpa-onnx correspondant.
+The bot touches neither `core/Cargo.toml`, nor `cargo-sources.json`, nor the archives of the
+CMake dependencies: its pull request serves as an alert and is completed with the procedure
+above (steps 1, 2, 4 and 7). An onnxruntime release newer than the one expected by
+sherpa-onnx is acceptable if the build and `cargo test -- --ignored` pass (the onnxruntime C
+API stays backward compatible); otherwise close the pull request and wait for the matching
+sherpa-onnx tag.
 
-Vérifier localement ce que le bot verrait :
+Check locally what the bot would see:
 
 ```sh
 flatpak install --user flathub org.flathub.flatpak-external-data-checker

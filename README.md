@@ -1,155 +1,142 @@
 # Diktu
 
-Dictée vocale locale et en streaming pour GNOME sous Wayland. Un raccourci global lance
-l'écoute ; le texte est tapé au curseur de l'application active au fil de la parole ;
-l'écoute s'arrête seule après un court silence. La reconnaissance tourne sur le processeur,
-sans service en ligne : seul le modèle est téléchargé, une fois, depuis Hugging Face.
+Diktu is a voice dictation tool for GNOME on Wayland. Press a shortcut, speak, and your words
+are typed at the cursor of whatever application you are using, as you talk. Speech
+recognition runs entirely on your computer.
 
-Licence : GPL-3.0-or-later.
+Diktu currently understands French only.
 
-## Fonctionnement
+## Features
 
-- L'application tourne en tâche de fond, sans fenêtre, avec une icône micro dans la barre
-  supérieure (grise au repos, rouge pendant l'écoute).
-- `F12` (proposé à GNOME, qui décide du raccourci final) démarre l'écoute ; un son
-  court confirme que le micro est ouvert. Un second appui l'arrête.
-- L'écoute s'arrête aussi d'elle-même après 1,2 s de silence (réglable), ou après 6 s sans
-  aucun mot reconnu.
-- Les mots sont tapés dès qu'ils sont stables (jamais de mot coupé, jamais d'effacement). En fin
-  de dictée, le reste est tapé avec une majuscule initiale et un point final (désactivable).
-- Le texte est injecté par le portail XDG RemoteDesktop (aucun accès au presse-papiers, ni
-  `uinput`, ni `xdotool`).
-- Les réglages (menu de l'icône, ou relancer `diktu`) permettent de choisir la langue et le
-  modèle, de le télécharger (progression, annulation, reprise, vérification SHA-256) ou de le
-  supprimer, et de changer le raccourci.
+- **Types where you are.** Text goes to the focused application: editor, browser, terminal,
+  chat. It is typed through the XDG RemoteDesktop portal, without touching the clipboard and
+  without `uinput` or `xdotool`.
+- **Streaming.** Words appear while you speak, once the model is sure of them: never half a
+  word, never a backspace.
+- **Stops by itself.** Listening ends after a short silence (1.2 s by default). The first
+  letter is capitalized and a final period is added (this can be turned off).
+- **Stays out of the way.** No window, just a microphone icon in the top bar: grey when idle,
+  red while listening. A short sound tells you when the microphone is open.
+- **Local.** Recognition runs on the CPU with [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx).
+  No account, no online service.
 
-Modèle par défaut : [Kroko FR](https://huggingface.co/csukuangfj/sherpa-onnx-streaming-zipformer-fr-kroko-2025-08-06)
-(zipformer streaming pour sherpa-onnx, 71 Mo, licence CC-BY-SA des modèles « community »
-de [Banafo](https://huggingface.co/Banafo/Kroko-ASR)).
+## Privacy
 
-## Prérequis
+No audio ever leaves your machine. The microphone is open only while you dictate. The only
+network access is the one-time download of the speech model from Hugging Face, which you start
+yourself from the preferences.
 
-- GNOME sous Wayland avec `xdg-desktop-portal-gnome`. Le portail GlobalShortcuts existe depuis
-  GNOME 48 ; avant, utiliser le [repli](#raccourci-de-repli).
-- L'extension **AppIndicator** pour voir l'icône :
-  - Ubuntu : présente par défaut (`gnome-shell-extension-appindicator`).
-  - Fedora : `sudo dnf install gnome-shell-extension-appindicator`, puis l'activer dans
-    l'application Extensions et se reconnecter.
+## Requirements
 
-  Sans l'extension, tout fonctionne sauf l'icône.
+- GNOME on Wayland, version 48 or later for the global shortcut (older versions can use a
+  [fallback shortcut](docs/INSTALL.md#fallback-shortcut-without-the-globalshortcuts-portal)).
+- The [AppIndicator](https://extensions.gnome.org/extension/615/appindicator-support/)
+  extension to see the icon. It is enabled by default on Ubuntu; on Fedora, install
+  `gnome-shell-extension-appindicator`. Diktu works without it, minus the icon.
+- About 71 MB of disk space for the default model.
 
-## Installation avec Flatpak
+## Install
+
+The easiest way is the Flatpak bundle from
+[GitHub Releases](https://github.com/hagatopaxi/diktu/releases). No release has been published
+yet (v0.1.0 is planned); until then, build it from source as described in
+[docs/INSTALL.md](docs/INSTALL.md).
+
+Once a release is out, download `diktu-x86_64.flatpak` (or `diktu-aarch64.flatpak`) and run:
 
 ```sh
-flatpak install --user flathub org.gnome.Platform//50 org.gnome.Sdk//50 \
-    org.freedesktop.Sdk.Extension.rust-stable//25.08 org.flatpak.Builder
-flatpak run org.flatpak.Builder --user --install --force-clean build-dir \
-    build-aux/fr.gwenael_leger.Diktu.json
+flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak install --user diktu-x86_64.flatpak
 flatpak run fr.gwenael_leger.Diktu
 ```
 
-Le build est hors ligne : les crates viennent de `build-aux/cargo-sources.json`, sherpa-onnx
-est compilé depuis les sources (tag épinglé par commit) contre onnxruntime précompilé par
-Microsoft, et chaque archive est épinglée par SHA-256. Mise à jour de ces bibliothèques :
-[docs/MAINTENANCE.md](docs/MAINTENANCE.md).
+Flathub provides the GNOME 50 runtime Diktu needs. Diktu itself is not on Flathub yet.
 
-## Installation native
+[docs/INSTALL.md](docs/INSTALL.md) also covers building the Flatpak from source, the native
+build with Meson, starting at login, and uninstalling.
 
-Dépendances de build :
+## First launch
 
-```sh
-# Ubuntu 24.04 ou plus récent
-sudo apt install build-essential meson libgtk-4-dev libadwaita-1-dev libasound2-dev \
-    libglib2.0-dev-bin desktop-file-utils appstream
-# Fedora
-sudo dnf install gcc meson gtk4-devel libadwaita-devel alsa-lib-devel \
-    desktop-file-utils appstream
-```
+1. The preferences window opens. Download the French model (71 MB). The download can be
+   cancelled and resumed, and is checked with SHA-256.
+2. GNOME asks for permission to control the keyboard. Accept: this is how Diktu types. The
+   answer is remembered.
+3. GNOME proposes the `F12` shortcut. Accept it or choose another key. On many laptops the
+   F row sends media keys by default; press `Fn+F12` then, or turn on Fn-lock.
 
-Rust 1.92 ou plus récent est requis (exigence de gtk-rs 0.22), en général plus récent que le
-`cargo` des distributions : l'installer avec [rustup](https://rustup.rs). Le build
-télécharge la bibliothèque statique sherpa-onnx depuis les releases GitHub de k2-fsa.
+## Everyday use
 
-```sh
-meson setup _build --prefix=$HOME/.local --buildtype=release
-meson install -C _build
-diktu
-```
+1. Put the cursor where you want the text.
+2. Press the shortcut. After the short sound, speak.
+3. Stop talking. After 1.2 s of silence, Diktu types the rest and stops listening. Press the
+   shortcut again to stop immediately.
 
-L'installation (et pas seulement `cargo build`) est nécessaire : le portail GlobalShortcuts
-n'accepte une application non sandboxée que si son fichier
-`fr.gwenael_leger.Diktu.desktop` est installé. Vérifier que `~/.local/bin` est dans le
-`PATH`.
+Listening also stops after 6 s without any recognized word, and after 5 minutes at most.
 
-Pour lancer Diktu à l'ouverture de session : copier
-`~/.local/share/applications/fr.gwenael_leger.Diktu.desktop` dans `~/.config/autostart/`.
+While text is being typed, GNOME shows its red remote-control icon in the top bar. It goes
+away about 3 s after the last word.
 
-## Premier lancement
+Open the preferences from the icon menu ("Preferences…") or by running `diktu` again. There
+you can choose the language and model, download or remove models, change the shortcut, and
+set the end-of-speech silence (0.5 to 5 s), automatic capitalization and final period, the
+delay between typed keys, and the sounds and their volume.
 
-1. La fenêtre de réglages s'ouvre : télécharger le modèle français.
-2. GNOME demande l'autorisation de « contrôler le clavier » (portail RemoteDesktop). Accepter ;
-   l'autorisation est mémorisée.
-3. GNOME propose le raccourci `F12` : accepter ou en choisir un autre. Sur beaucoup de
-   portables, la rangée F envoie des touches multimédia par défaut : F12 s'obtient alors
-   avec `Fn+F12` (ou en activant le verrouillage Fn).
+## Known limitations
 
-## Raccourci de repli
+- French only for now.
+- The model decodes speech in 1.28 s chunks, so words arrive in bursts, 1 to 2 s behind
+  your voice.
+- Accuracy is limited: the model sometimes invents words. Words already typed are never
+  corrected. Better models are being evaluated in [docs/STT_LANDSCAPE.md](docs/STT_LANDSCAPE.md).
+- No voice commands for punctuation; the punctuation the model produces is kept.
+- Characters missing from your keyboard layout (emoji, rare symbols) may be dropped.
+- Loud, irregular background noise can delay the automatic stop by a few seconds.
+- X11 is not supported.
 
-Si le portail GlobalShortcuts est absent (GNOME < 48) ou refusé, créer un raccourci
-personnalisé : Paramètres → Clavier → Raccourcis clavier → Raccourcis personnalisés → `+`,
-avec la commande :
+If something does not work, see [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md).
 
-```sh
-diktu --toggle                                 # installation native
-flatpak run fr.gwenael_leger.Diktu --toggle    # Flatpak
-```
+## Documentation
 
-ou en ligne de commande :
+- [docs/INSTALL.md](docs/INSTALL.md): all installation methods, fallback shortcut, uninstalling.
+- [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md): common problems and debug logs.
+- [docs/DECISIONS.md](docs/DECISIONS.md): technical choices and their reasons.
+- [docs/MANUAL_TESTS.md](docs/MANUAL_TESTS.md): manual test checklist for a real GNOME session.
+- [docs/MAINTENANCE.md](docs/MAINTENANCE.md): updating sherpa-onnx and onnxruntime.
+- [docs/STT_LANDSCAPE.md](docs/STT_LANDSCAPE.md): survey of local speech recognition models.
 
-```sh
-KEY=/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/diktu/
-gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['$KEY']"
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:$KEY name 'Diktu'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:$KEY command 'diktu --toggle'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:$KEY binding 'F12'
-```
+## Contributing
 
-(La première commande remplace la liste existante de raccourcis personnalisés ; s'il y en a
-déjà, ajouter le chemin à la liste au lieu de l'écraser.)
-
-## Limites connues
-
-- Français uniquement pour l'instant (le registre `data/models.toml` et l'interface gèrent
-  plusieurs langues et modèles).
-- Le modèle décode par blocs de 1,28 s : les mots apparaissent par salves, avec 1 à 2 s de
-  retard sur la parole.
-- La fin de parole se détecte à l'énergie du signal : un bruit de fond fort et irrégulier
-  (musique, conversation) peut retarder l'arrêt automatique jusqu'à 6 s. Le raccourci arrête
-  toujours l'écoute immédiatement.
-- Pas de ponctuation dictée par commande vocale ; celle du modèle (virgules, points,
-  points d'interrogation) est conservée.
-- Les mots déjà tapés ne sont jamais corrigés (pas de BackSpace) : si le modèle révise un mot
-  déjà stable, la correction est perdue.
-- Les caractères hors de la disposition clavier active (emoji, symboles rares) dépendent de la
-  prise en charge des keysyms Unicode par le compositeur.
-- Pendant la frappe (et 3 s après), GNOME affiche son icône rouge de contrôle à distance :
-  c'est le portail RemoteDesktop qui tape le texte. Elle disparaît ensuite.
-- X11 n'est pas une cible : cela peut fonctionner via les portails, sans garantie.
-
-## Développement
-
-Voir [CLAUDE.md](CLAUDE.md) pour les commandes et l'architecture,
-[docs/DECISIONS.md](docs/DECISIONS.md) pour les choix techniques,
-[docs/MANUAL_TESTS.md](docs/MANUAL_TESTS.md) pour la recette manuelle.
+Bug reports and pull requests are welcome on
+[GitHub](https://github.com/hagatopaxi/diktu/issues). [CLAUDE.md](CLAUDE.md) gives the build,
+test and lint commands and an overview of the architecture.
 
 ```sh
-cargo test                                   # tests unitaires et d'intégration
-cargo test -p diktu-core -- --ignored     # télécharge le modèle puis teste la dictée réelle
+cargo test                                # unit and integration tests
+cargo test -p diktu-core -- --ignored     # downloads the model, then tests real dictation
+cargo fmt --all && cargo clippy --all-targets -- -D warnings
 ```
 
-Après un changement de `Cargo.lock`, régénérer les sources Flatpak avec
-[flatpak-cargo-generator](https://github.com/flatpak/flatpak-builder-tools/tree/master/cargo) :
+Commits follow [Conventional Commits](https://www.conventionalcommits.org). Record non-obvious
+choices in [docs/DECISIONS.md](docs/DECISIONS.md). After changing `Cargo.lock`, regenerate the
+Flatpak sources with
+[flatpak-cargo-generator](https://github.com/flatpak/flatpak-builder-tools/tree/master/cargo):
 
 ```sh
 uv run flatpak-cargo-generator.py Cargo.lock -o build-aux/cargo-sources.json
 ```
+
+## License and credits
+
+Diktu is written by Gwenaël Léger and released under the
+[GNU General Public License v3.0 or later](LICENSE).
+
+It builds on:
+
+- [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) by k2-fsa (Apache-2.0), for speech
+  recognition;
+- [ONNX Runtime](https://github.com/microsoft/onnxruntime) by Microsoft (MIT);
+- the [Kroko FR](https://huggingface.co/csukuangfj/sherpa-onnx-streaming-zipformer-fr-kroko-2025-08-06)
+  model by [Banafo](https://huggingface.co/Banafo/Kroko-ASR) (CC-BY-SA), downloaded separately;
+- [gtk-rs](https://gtk-rs.org) and libadwaita, [ashpd](https://github.com/bilelmoussaoui/ashpd),
+  [ksni](https://github.com/iovxw/ksni), [rodio](https://github.com/RustAudio/rodio) and
+  [cpal](https://github.com/RustAudio/cpal).

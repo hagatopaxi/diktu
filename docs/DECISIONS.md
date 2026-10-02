@@ -1,159 +1,159 @@
-# Décisions
+# Decisions
 
-Chaque entrée : contexte, choix, alternative écartée, raison.
+Each entry: context, choice, rejected alternative, reason.
 
-## D1 — Identifiant d'application
+## D1 — Application ID
 
-- **Contexte** : il faut un identifiant inverse-DNS (GApplication, GSettings, Flatpak, AppStream).
-- **Choix** : `fr.gwenael_leger.Diktu` (domaine de l'auteur `gwenael-leger.fr`, tiret remplacé par un souligné comme le recommande Flatpak).
-- **Écarté** : `io.github.<compte>.Diktu`, aucun compte GitHub vérifiable au moment du choix.
-- **Raison** : identifiant stable, rattaché à un domaine possédé.
+- **Context**: a reverse-DNS ID is needed (GApplication, GSettings, Flatpak, AppStream).
+- **Choice**: `fr.gwenael_leger.Diktu` (the author's domain `gwenael-leger.fr`, with the hyphen replaced by an underscore as Flatpak recommends).
+- **Rejected**: `io.github.<account>.Diktu`, as no verifiable GitHub account existed at the time of the choice.
+- **Reason**: a stable ID, tied to a domain the author owns.
 
-## D2 — En-têtes GTK de développement absents sur la machine de build
+## D2 — GTK development headers missing on the build machine
 
-- **Contexte** : la machine de développement n'a ni `libgtk-4-dev` ni `libadwaita-1-dev` ni `libasound2-dev`, sans accès `sudo`.
-- **Choix** : paquets `-dev` téléchargés avec `apt-get download` et extraits dans un sysroot local, pointé par `PKG_CONFIG_SYSROOT_DIR`/`PKG_CONFIG_LIBDIR`. Purement local, rien de tout ça n'est dans le dépôt ; la CI et le README utilisent les paquets système.
-- **Écarté** : construire uniquement dans le SDK Flatpak (lent, ~1 Go à télécharger avant le premier `cargo test`).
-- **Raison** : garder `cargo test` natif et rapide.
+- **Context**: the development machine has neither `libgtk-4-dev`, `libadwaita-1-dev` nor `libasound2-dev`, and no `sudo` access.
+- **Choice**: `-dev` packages downloaded with `apt-get download` and extracted into a local sysroot, pointed to by `PKG_CONFIG_SYSROOT_DIR`/`PKG_CONFIG_LIBDIR`. Purely local, none of it is in the repository; CI and the README use system packages.
+- **Rejected**: building only inside the Flatpak SDK (slow, ~1 GB to download before the first `cargo test`).
+- **Reason**: keep `cargo test` native and fast.
 
-## D3 — Versions minimales GTK/libadwaita
+## D3 — Minimum GTK/libadwaita versions
 
-- **Contexte** : la CI tourne sur Ubuntu 24.04 (GTK 4.14, libadwaita 1.5).
-- **Choix** : features `gtk4/v4_14` et `libadwaita/v1_5`. `AdwPreferencesWindow` (imposé) n'émet donc pas d'avertissement de dépréciation (déprécié à partir de libadwaita 1.6 au profit d'`AdwPreferencesDialog`).
-- **Écarté** : viser libadwaita 1.6+ et `AdwPreferencesDialog`.
-- **Raison** : contrainte du cahier des charges et compatibilité Ubuntu 24.04 LTS.
+- **Context**: CI runs on Ubuntu 24.04 (GTK 4.14, libadwaita 1.5).
+- **Choice**: features `gtk4/v4_14` and `libadwaita/v1_5`. `AdwPreferencesWindow` (required) therefore emits no deprecation warning (it is deprecated from libadwaita 1.6 onward in favor of `AdwPreferencesDialog`).
+- **Rejected**: targeting libadwaita 1.6+ and `AdwPreferencesDialog`.
+- **Reason**: a constraint of the specification, and compatibility with Ubuntu 24.04 LTS.
 
-## D4 — Bindings sherpa-onnx
+## D4 — sherpa-onnx bindings
 
-- **Contexte** : il faut un reconnaisseur transducteur streaming utilisable depuis Rust.
-- **Choix** : crate officielle `sherpa-onnx` 1.13.8 (k2-fsa, Apache-2.0), liaison statique. Son `build.rs` télécharge l'archive précompilée `sherpa-onnx-v1.13.8-linux-x64-static-lib.tar.bz2` depuis les releases GitHub, ou la prend dans `SHERPA_ONNX_ARCHIVE_DIR` pour un build hors ligne. Le Flatpak lie en partagé un sherpa-onnx compilé depuis les sources (D24).
-- **Écarté** : wrapper FFI maison sur l'API C ; crate tierce `sherpa-rs`.
-- **Raison** : les bindings officiels exposent tout ce qu'il faut (flux, endpointing, `input_finished`), un wrapper maison n'apporterait que de la maintenance.
+- **Context**: a streaming transducer recognizer usable from Rust is needed.
+- **Choice**: the official `sherpa-onnx` 1.13.8 crate (k2-fsa, Apache-2.0), statically linked. Its `build.rs` downloads the prebuilt archive `sherpa-onnx-v1.13.8-linux-x64-static-lib.tar.bz2` from the GitHub releases, or takes it from `SHERPA_ONNX_ARCHIVE_DIR` for an offline build. The Flatpak dynamically links a sherpa-onnx built from source (D24).
+- **Rejected**: a home-made FFI wrapper over the C API; the third-party `sherpa-rs` crate.
+- **Reason**: the official bindings expose everything needed (streams, endpointing, `input_finished`); a home-made wrapper would only add maintenance.
 
-## D5 — Modèle français par défaut
+## D5 — Default French model
 
-- **Contexte** : deux transducteurs zipformer streaming français non gated existent sur HF. Mesures sur 3 extraits Common Voice (CC0), chunks de 100 ms, 2 threads :
-  | Modèle | Taille | WER | RTF | Sortie |
+- **Context**: two non-gated French streaming zipformer transducers exist on HF. Measured on 3 Common Voice clips (CC0), 100 ms chunks, 2 threads:
+  | Model | Size | WER | RTF | Output |
   |---|---|---|---|---|
-  | `csukuangfj/sherpa-onnx-streaming-zipformer-fr-kroko-2025-08-06` | 71 Mo | 19,4 % | 0,048 | casse et ponctuation |
-  | `shaojieli/sherpa-onnx-streaming-zipformer-fr-2023-04-14` (int8) | 128 Mo | 13,9 % | 0,089 | MAJUSCULES, sans ponctuation |
-- **Choix** : Kroko FR. Licence CC-BY-SA (modèles « community » de Banafo, version de la licence non précisée par l'éditeur ; le dépôt HF de conversion renvoie vers `Banafo/Kroko-ASR`). Consignée dans le registre.
-- **Écarté** : le modèle shaojieli (Apache-2.0), meilleur WER sur ces 3 extraits mais entraîné sur Common Voice, donc dans son domaine ; tout en capitales et sans ponctuation, inutilisable tel quel pour dicter des messages.
-- **Raison** : pour de la dictée, casse et ponctuation natives valent plus que quelques points de WER sur 36 mots ; modèle deux fois plus petit et deux fois plus rapide.
+  | `csukuangfj/sherpa-onnx-streaming-zipformer-fr-kroko-2025-08-06` | 71 MB | 19.4% | 0.048 | casing and punctuation |
+  | `shaojieli/sherpa-onnx-streaming-zipformer-fr-2023-04-14` (int8) | 128 MB | 13.9% | 0.089 | UPPERCASE, no punctuation |
+- **Choice**: Kroko FR. CC-BY-SA license (Banafo's "community" models; the license version is not specified by the publisher; the HF conversion repository points to `Banafo/Kroko-ASR`). Recorded in the registry.
+- **Rejected**: the shaojieli model (Apache-2.0), with a better WER on these 3 clips but trained on Common Voice, hence in-domain; all uppercase and without punctuation, unusable as is for dictating messages.
+- **Reason**: for dictation, native casing and punctuation are worth more than a few WER points on 36 words; the model is half the size and twice as fast.
 
-## D6 — Seuil du test de transcription
+## D6 — Transcription test threshold
 
-- **Choix** : WER agrégé ≤ 25 % sur les 3 extraits Common Voice de `core/tests/data`, mesuré sur le texte réellement tapé par `Dictation` (moteur + émission + fin de parole) : 22,2 % (19,4 % en transcription brute). Normalisation : minuscules, apostrophes et tirets → espaces, ponctuation retirée.
-- **Raison** : marge suffisante pour absorber une variation de version de sherpa-onnx, assez basse pour détecter un modèle mal chargé ou un flux mal découpé.
+- **Choice**: aggregate WER ≤ 25% on the 3 Common Voice clips in `core/tests/data`, measured on the text actually typed by `Dictation` (engine + emission + end of speech): 22.2% (19.4% for raw transcription). Normalization: lowercase, apostrophes and hyphens → spaces, punctuation removed.
+- **Reason**: enough margin to absorb a change of sherpa-onnx version, low enough to detect a badly loaded model or a badly chunked stream.
 
-## D7 — Registre : champs `name` et `size`
+## D7 — Registry: `name` and `size` fields
 
-- **Contexte** : le schéma imposé (`id`, `langs`, `engine`, `license`, `repo`, `revision`, `files[{path, sha256}]`) ne donne ni libellé pour l'UI ni taille totale pour la progression multi-fichiers.
-- **Choix** : ajout de `name` (libellé affiché) et `files[].size` (octets, relevé via l'API HF). Le rôle de chaque fichier (encodeur, décodeur, joiner, tokens) est déduit du préfixe de son nom, sans champ dédié.
-- **Écarté** : progression par fichier via `Content-Length` (barre qui repart à zéro à chaque fichier).
-- **Raison** : une seule barre de progression cohérente.
+- **Context**: the required schema (`id`, `langs`, `engine`, `license`, `repo`, `revision`, `files[{path, sha256}]`) gives neither a label for the UI nor a total size for multi-file progress.
+- **Choice**: added `name` (displayed label) and `files[].size` (bytes, read from the HF API). The role of each file (encoder, decoder, joiner, tokens) is inferred from its name prefix, without a dedicated field.
+- **Rejected**: per-file progress from `Content-Length` (a bar that resets to zero for each file).
+- **Reason**: a single, consistent progress bar.
 
-## D8 — Client HTTP bloquant dans un thread
+## D8 — Blocking HTTP client in a thread
 
-- **Choix** : `reqwest::blocking` (TLS rustls par défaut), exécuté dans un thread dédié ; annulation par `AtomicBool` vérifié à chaque bloc de 64 Kio, progression par callback.
-- **Écarté** : client async intégré à la boucle GLib.
-- **Raison** : code linéaire, testable sans runtime async ; l'UI reçoit la progression par canal.
+- **Choice**: `reqwest::blocking` (rustls TLS by default), run in a dedicated thread; cancellation through an `AtomicBool` checked at every 64 KiB block, progress through a callback.
+- **Rejected**: an async client integrated into the GLib main loop.
+- **Reason**: linear code, testable without an async runtime; the UI receives progress through a channel.
 
-## D9 — Détection de fin de parole : VAD énergétique, pas l'endpointing de sherpa-onnx
+## D9 — End-of-speech detection: energy VAD, not sherpa-onnx endpointing
 
-- **Contexte** : l'endpointing intégré de sherpa-onnx (règle 2 = 1,2 s de silence après parole) a été essayé puis mesuré inutilisable avec le modèle par défaut : (1) le modèle émet le `.` final ~1,5 s après la fin de la parole, ce qui remet à zéro le compteur de silence (fin détectée après 2,8 s) ; (2) l'encodeur décode par blocs de 128 trames (1,28 s), donc toute mesure fondée sur les tokens est quantifiée à 1,28 s, au-dessus du seuil de 1,2 s.
-- **Choix** : `Dictation` (core) mesure le silence sur le signal : détecteur d'énergie par trames de 30 ms, plancher de bruit adaptatif (suit les baisses immédiatement, les hausses en ~15 s, initialisé à au plus −40 dBFS), parole = 12 dB au-dessus du plancher et au-dessus de −50 dBFS. Fin d'écoute si : ≥ 200 ms de parole puis `end-silence` (1,2 s par défaut, réglable) de silence ; ou aucun nouveau mot du modèle pendant 6 s (rien dit, ou bruit continu) ; ou 5 min de dictée (garde-fou).
-- **Écarté** : endpointing sherpa ; VAD Silero (second modèle à télécharger et à gérer dans le registre).
-- **Raison** : précision de 30 ms, aucun modèle supplémentaire, testable avec de l'audio simulé. Le repli « aucun nouveau mot » couvre le bruit non stationnaire que l'énergie ne distingue pas de la voix.
+- **Context**: sherpa-onnx's built-in endpointing (rule 2 = 1.2 s of silence after speech) was tried and measured unusable with the default model: (1) the model emits the final `.` ~1.5 s after the end of speech, which resets the silence counter (end detected after 2.8 s); (2) the encoder decodes in blocks of 128 frames (1.28 s), so any token-based measurement is quantized to 1.28 s, above the 1.2 s threshold.
+- **Choice**: `Dictation` (core) measures silence on the signal: an energy detector on 30 ms frames, an adaptive noise floor (follows drops immediately, rises in ~15 s, initialized to at most −40 dBFS), speech = 12 dB above the floor and above −50 dBFS. Listening ends if: ≥ 200 ms of speech followed by `end-silence` (1.2 s by default, configurable) of silence; or no new word from the model for 6 s (nothing said, or continuous noise); or 5 min of dictation (safety net).
+- **Rejected**: sherpa endpointing; Silero VAD (a second model to download and manage in the registry).
+- **Reason**: 30 ms precision, no extra model, testable with simulated audio. The "no new word" fallback covers non-stationary noise that energy cannot tell apart from voice.
 
-## D10 — Micro ouvert seulement pendant l'écoute, pas de pré-roll continu
+## D10 — Microphone open only while listening, no continuous pre-roll
 
-- **Contexte** : un pré-roll de 200 ms suppose un micro ouvert en permanence pour garder les 200 dernières ms avant le raccourci.
-- **Choix** : le flux `cpal` est ouvert au déclenchement et fermé à la fin de la dictée. Le son de début est joué une fois le flux effectivement ouvert : tout ce que l'utilisateur dit après le bip est capté. Le tampon circulaire (2 s) sert de file entre le callback audio et le thread d'inférence.
-- **Écarté** : micro ouvert en continu avec pré-roll de 200 ms.
-- **Raison** : GNOME affiche l'indicateur de micro tant qu'un flux est ouvert ; un micro ouvert en permanence par une application de fond est inacceptable pour la vie privée et la batterie. Le bip « micro prêt » rend le pré-roll inutile.
+- **Context**: a 200 ms pre-roll implies a permanently open microphone to keep the last 200 ms before the shortcut.
+- **Choice**: the `cpal` stream is opened when triggered and closed at the end of the dictation. The start sound is played once the stream is actually open: everything the user says after the beep is captured. The ring buffer (2 s) serves as a queue between the audio callback and the inference thread.
+- **Rejected**: a continuously open microphone with a 200 ms pre-roll.
+- **Reason**: GNOME shows the microphone indicator as long as a stream is open; a microphone permanently open by a background application is unacceptable for privacy and battery life. The "microphone ready" beep makes the pre-roll unnecessary.
 
-## D11 — Une dictée = un segment
+## D11 — One dictation = one segment
 
-- **Choix** : la fin de parole termine à la fois le segment (vidage du modèle avec `input_finished`, reste tapé suivi d'une espace, point final) et l'écoute. Un second appui sur le raccourci fait de même.
-- **Raison** : le comportement attendu arrête l'écoute au premier silence ; un découpage en sous-segments n'aurait aucun effet observable.
+- **Choice**: end of speech ends both the segment (model flushed with `input_finished`, remaining text typed followed by a space, final period) and listening. A second press of the shortcut does the same.
+- **Reason**: the expected behavior stops listening at the first silence; splitting into sub-segments would have no observable effect.
 
-## D12 — Session RemoteDesktop ouverte seulement pendant la frappe
+## D12 — RemoteDesktop session open only while typing
 
-- **Contexte** : le portail demande un consentement à la création de session (sauf jeton de restauration valide), et GNOME affiche une icône rouge de contrôle à distance tant qu'une session est ouverte, ce qui inquiète (constaté sur GNOME 50.1).
-- **Choix** : la session clavier est ouverte au lancement pour obtenir le consentement (dialogue à ce moment-là plutôt qu'au milieu de la première dictée), puis fermée après 3 s sans texte à taper ; elle est rouverte au premier texte suivant grâce au jeton `restore_token` (GSettings `restore-token`, `PersistMode::ExplicitlyRevoked`), sans dialogue. L'icône rouge n'apparaît donc que pendant une dictée. En cas d'échec d'envoi, la session est rouverte une fois.
-- **Coût** : le premier mot de chaque dictée attend la création de la session.
+- **Context**: the portal asks for consent when a session is created (unless a valid restore token exists), and GNOME shows a red remote-control icon as long as a session is open, which is worrying (observed on GNOME 50.1).
+- **Choice**: the keyboard session is opened at launch to obtain consent (the dialog appears then rather than in the middle of the first dictation), then closed after 3 s with no text to type; it is reopened on the next text thanks to the `restore_token` (GSettings `restore-token`, `PersistMode::ExplicitlyRevoked`), without a dialog. The red icon therefore only appears during a dictation. If sending fails, the session is reopened once.
+- **Cost**: the first word of each dictation waits for the session to be created.
 
-## D13 — Commande de repli `diktu --toggle`
+## D13 — Fallback command `diktu --toggle`
 
-- **Choix** : option de ligne de commande locale qui enregistre l'application, active l'action `app.toggle` (transmise par D-Bus à l'instance principale) puis quitte. C'est la commande à associer à un raccourci personnalisé GNOME si le portail GlobalShortcuts manque.
-- **Écarté** : `gapplication action …`, qui exige une application activable par D-Bus (fichier service supplémentaire).
-- **Raison** : une seule commande, identique en natif et en Flatpak (`flatpak run fr.gwenael_leger.Diktu --toggle`).
+- **Choice**: a local command-line option that registers the application, activates the `app.toggle` action (forwarded over D-Bus to the primary instance), then exits. This is the command to bind to a GNOME custom shortcut if the GlobalShortcuts portal is missing.
+- **Rejected**: `gapplication action …`, which requires a D-Bus-activatable application (an extra service file).
+- **Reason**: a single command, identical natively and in Flatpak (`flatpak run fr.gwenael_leger.Diktu --toggle`).
 
-## D14 — cpal 0.17 au lieu de 0.18
+## D14 — cpal 0.17 instead of 0.18
 
-- **Contexte** : rodio 0.22.2 (dernière version) dépend de cpal 0.17 ; deux versions de cpal ne peuvent pas coexister (même bibliothèque native `alsa-sys`).
-- **Choix** : `cpal = "0.17.3"` dans `core`, partagé avec rodio.
-- **Écarté** : cpal 0.18 avec un lecteur de sons maison sur cpal.
-- **Raison** : l'API utilisée est identique à une référence près ; une seule pile audio.
+- **Context**: rodio 0.22.2 (latest version) depends on cpal 0.17; two versions of cpal cannot coexist (same native library `alsa-sys`).
+- **Choice**: `cpal = "0.17.3"` in `core`, shared with rodio.
+- **Rejected**: cpal 0.18 with a home-made sound player on top of cpal.
+- **Reason**: the API used is identical except for one reference; a single audio stack.
 
-## D15 — Sons : WAV synthétisés, GResource, flux de sortie éphémère
+## D15 — Sounds: synthesized WAV, GResource, ephemeral output stream
 
-- **Choix** : `tools/gen-sounds.py` synthétise deux sons de 160 ms (deux notes sinusoïdales montantes ou descendantes, fondus de 8 ms), versionnés dans `data/sounds/`, embarqués en GResource, joués par rodio sur un flux de sortie ouvert le temps du son. Le son de début est joué quand le micro est réellement ouvert. Œuvre originale générée par code, placée sous CC0.
-- **Écarté** : libcanberra (dépendance C supplémentaire, thème de sons système).
-- **Raison** : aucun fichier tiers, rien de bloqué sur le périphérique de sortie entre deux dictées.
+- **Choice**: `tools/gen-sounds.py` synthesizes two 160 ms sounds (two rising or falling sine notes, 8 ms fades), versioned in `data/sounds/`, embedded as a GResource, played by rodio on an output stream opened for the duration of the sound. The start sound is played when the microphone is actually open. An original work generated by code, released under CC0.
+- **Rejected**: libcanberra (an extra C dependency, system sound theme).
+- **Reason**: no third-party files, nothing held on the output device between two dictations.
 
-## D16 — Icône SNI en pixmap rendue depuis le SVG embarqué
+## D16 — SNI icon as a pixmap rendered from the embedded SVG
 
-- **Choix** : les deux SVG colorés (micro gris clair, micro rouge) sont embarqués en GResource et rendus par gdk-pixbuf en pixmaps ARGB32 (22 et 44 px) transmis par `IconPixmap`. En Flatpak, l'icône est publiée sans nom D-Bus propre (`disable_dbus_name`), comme l'exige le bac à sable.
-- **Écarté** : `IconName` + `IconThemePath`, qui suppose des icônes installées et visibles du shell hôte (faux en lançant depuis les sources, et noms imposés par l'export Flatpak).
-- **Raison** : même rendu en développement, en natif et en Flatpak ; la couleur ne dépend pas du thème.
+- **Choice**: the two colored SVGs (light grey microphone, red microphone) are embedded as a GResource and rendered by gdk-pixbuf into ARGB32 pixmaps (22 and 44 px) sent through `IconPixmap`. In Flatpak, the icon is published without its own D-Bus name (`disable_dbus_name`), as the sandbox requires.
+- **Rejected**: `IconName` + `IconThemePath`, which assumes icons installed and visible to the host shell (false when running from the sources, and names constrained by the Flatpak export).
+- **Reason**: the same rendering in development, native and Flatpak; the color does not depend on the theme.
 
-## D17 — Un seul runtime tokio pour les portails et l'icône
+## D17 — A single tokio runtime for the portals and the icon
 
-- **Contexte** : ashpd et ksni partagent une connexion zbus dont les tâches de fond tournent sur le runtime qui l'a créée ; tout objet zbus détruit hors contexte tokio fait paniquer le programme (constaté au premier test de fumée).
-- **Choix** : un runtime multi-thread (1 worker) global ; les threads principal et d'injection y entrent pour toute leur durée de vie (`Runtime::enter`).
-- **Raison** : plus aucun blocage ni panique quelle que soit la façon dont un thread attend.
+- **Context**: ashpd and ksni share a zbus connection whose background tasks run on the runtime that created it; any zbus object dropped outside a tokio context makes the program panic (observed during the first smoke test).
+- **Choice**: a global multi-thread runtime (1 worker); the main and injection threads enter it for their whole lifetime (`Runtime::enter`).
+- **Reason**: no more deadlocks or panics, however a thread waits.
 
-## D18 — Format du raccourci préféré et enregistrement de l'application hôte
+## D18 — Preferred shortcut format and host application registration
 
-- **Choix** : déclencheur préféré `F12` (notation de la spécification XDG « shortcuts » ; une touche seule et libre, choisie par l'utilisateur à la place de `Super+Alt+D`). Au démarrage, l'application s'enregistre auprès de `org.freedesktop.host.portal.Registry` (sans effet en Flatpak).
-- **Constat** : sans cet enregistrement, le portail GlobalShortcuts refuse une application non sandboxée (« An app id is required ») ; l'enregistrement exige que `fr.gwenael_leger.Diktu.desktop` soit installé. Lancer le binaire depuis l'arbre des sources sans `meson install` ne donne donc que le repli `--toggle`.
+- **Choice**: preferred trigger `F12` (notation of the XDG "shortcuts" specification; a single free key, chosen by the user instead of `Super+Alt+D`). At startup, the application registers with `org.freedesktop.host.portal.Registry` (no effect in Flatpak).
+- **Finding**: without this registration, the GlobalShortcuts portal rejects a non-sandboxed application ("An app id is required"); the registration requires `fr.gwenael_leger.Diktu.desktop` to be installed. Running the binary from the source tree without `meson install` therefore only gives the `--toggle` fallback.
 
-## D19 — Fenêtre de réglages unique, masquée à la fermeture
+## D19 — Single preferences window, hidden on close
 
-- **Choix** : la fenêtre `AdwPreferencesWindow` est construite une fois et masquée à la fermeture ; chaque modèle a une ligne dont la visibilité suit la langue choisie. Les téléchargements continuent fenêtre fermée.
-- **Écarté** : reconstruire la fenêtre et la liste à chaque ouverture ou changement de langue (il faudrait alors retrouver les téléchargements en cours).
-- **Raison** : état unique, aucune synchronisation à écrire.
-- Le sélecteur de modèle (case radio) n'apparaît que si une langue a plusieurs modèles.
+- **Choice**: the `AdwPreferencesWindow` is built once and hidden on close; each model has a row whose visibility follows the selected language. Downloads continue while the window is closed.
+- **Rejected**: rebuilding the window and the list at every opening or language change (in-progress downloads would then have to be found again).
+- **Reason**: a single state, no synchronization to write.
+- The model selector (radio button) only appears if a language has several models.
 
-## D20 — Flatpak : runtime GNOME 50, build hors ligne
+## D20 — Flatpak: GNOME 50 runtime, offline build
 
-- **Choix** : `org.gnome.Platform//50` (la 51 existe mais la 50 est la plus déployée au moment du choix et déjà présente sur la machine de dev), extension `rust-stable//25.08` (version du SDK freedesktop de GNOME 50). Crates vendorisées par `flatpak-cargo-generator` (flatpak-builder-tools épinglé au commit `74697c75`) dans `build-aux/cargo-sources.json` ; archive statique sherpa-onnx v1.13.8 (x86_64 et aarch64) en source `file` avec SHA-256 identique au digest publié par GitHub, fournie au build via `SHERPA_ONNX_ARCHIVE_DIR` (remplacée par une compilation depuis les sources, D24).
-- **Permissions** : celles demandées, plus `--talk-name=org.kde.StatusNotifierWatcher` pour l'icône SNI. Les portails (Background, RemoteDesktop, GlobalShortcuts, notifications) sont toujours accessibles depuis le bac à sable sans permission supplémentaire ; l'application appelle le portail Background au démarrage.
-- **Écarté** : `cargo vendor` versionné dans le dépôt (des centaines de Mo de sources).
-- **Vérifié** : `flatpak-builder` (org.flatpak.Builder 1.4.9) construit et exporte le paquet hors ligne ; le binaire démarre dans le runtime sans bibliothèque manquante. Sur la machine de dev, il a fallu `flatpak run --no-documents-portal … --disable-rofiles-fuse` (pas de FUSE dans le bac à sable de l'agent) ; ces options ne sont pas nécessaires sur un poste normal.
+- **Choice**: `org.gnome.Platform//50` (51 exists but 50 is the most widely deployed at the time of the choice and already present on the dev machine), extension `rust-stable//25.08` (the freedesktop SDK version of GNOME 50). Crates vendored by `flatpak-cargo-generator` (flatpak-builder-tools pinned at commit `74697c75`) into `build-aux/cargo-sources.json`; sherpa-onnx v1.13.8 static archive (x86_64 and aarch64) as a `file` source with a SHA-256 identical to the digest published by GitHub, provided to the build through `SHERPA_ONNX_ARCHIVE_DIR` (replaced by a build from source, D24).
+- **Permissions**: those requested, plus `--talk-name=org.kde.StatusNotifierWatcher` for the SNI icon. The portals (Background, RemoteDesktop, GlobalShortcuts, notifications) are always reachable from the sandbox without extra permissions; the application calls the Background portal at startup.
+- **Rejected**: `cargo vendor` committed to the repository (hundreds of MB of sources).
+- **Verified**: `flatpak-builder` (org.flatpak.Builder 1.4.9) builds and exports the package offline; the binary starts in the runtime with no missing library. On the dev machine, `flatpak run --no-documents-portal … --disable-rofiles-fuse` was needed (no FUSE in the agent's sandbox); these options are not needed on a normal workstation.
 
-## D21 — Page d'accueil AppStream
+## D21 — AppStream homepage
 
-- **Choix** : le dépôt public `https://github.com/hagatopaxi/diktu` (page d'accueil, suivi des tickets, sources).
+- **Choice**: the public repository `https://github.com/hagatopaxi/diktu` (homepage, issue tracker, sources).
 
-## D22 — Version minimale de Rust : 1.92
+## D22 — Minimum Rust version: 1.92
 
-- **Constat** : la valeur initiale (1.88) était fausse ; vérifiée avec la chaîne 1.88, la compilation échoue (cairo-rs/gtk-rs 0.22 exigent 1.92). `cargo +1.92 check --all-targets` passe.
-- **Choix** : `rust-version = "1.92"` ; le README demande rustup, les paquets `cargo` d'Ubuntu 24.04 et de Fedora étant trop anciens ou à la limite.
+- **Finding**: the initial value (1.88) was wrong; checked with the 1.88 toolchain, compilation fails (cairo-rs/gtk-rs 0.22 require 1.92). `cargo +1.92 check --all-targets` passes.
+- **Choice**: `rust-version = "1.92"`; the README asks for rustup, as the `cargo` packages of Ubuntu 24.04 and Fedora are too old or borderline.
 
-## D23 — Nom : Diktu
+## D23 — Name: Diktu
 
-- **Contexte** : « Parlotte » s'écrit aussi « parlote » et ne se lit bien qu'en français ; le nom doit se prononcer et s'écrire sans ambiguïté dans toutes les langues.
-- **Choix** : « Diktu » (« dicte ! » en espéranto, langue phonétique). Vérifié libre le 2026-10-02 : aucun dépôt GitHub de ce nom, absent de crates.io, PyPI et Flathub (registres de marques non consultés). Identifiant `fr.gwenael_leger.Diktu`, crates `diktu` et `diktu-core`.
+- **Context**: "Parlotte" is also spelled "parlote" and only reads well in French; the name must be pronounced and spelled unambiguously in every language.
+- **Choice**: "Diktu" ("dictate!" in Esperanto, a phonetic language). Checked as available on 2026-10-02: no GitHub repository with that name, absent from crates.io, PyPI and Flathub (trademark registries not consulted). ID `fr.gwenael_leger.Diktu`, crates `diktu` and `diktu-core`.
 
-## D24 — sherpa-onnx compilé depuis les sources dans le Flatpak
+## D24 — sherpa-onnx built from source in the Flatpak
 
-- **Contexte** : Flathub exige que tout logiciel dont les sources sont disponibles soit compilé depuis ces sources, sans réseau pendant le build ; des binaires de grands éditeurs sont acceptés au cas par cas quand l'outillage ne permet pas un build hors ligne (précédent : `net.mkiol.SpeechNote` embarque l'onnxruntime précompilé de Microsoft). L'archive statique de k2-fsa de D20 ne remplit pas cette condition.
-- **Choix** : le manifeste construit trois modules.
-  - `onnxruntime` : release officielle de Microsoft 1.28.2 (bibliothèque partagée, version qu'attend sherpa-onnx v1.13.8), installée dans `/app/lib` ; ses en-têtes sont retirés en fin de build. Raison : onnxruntime fait appel à des dizaines de dépendances `FetchContent` et sous-modules (abseil, protobuf, flatbuffers, onnx…), Microsoft est un grand éditeur et le précédent SpeechNote existe.
-  - `sherpa-onnx` : tag v1.13.8 épinglé au commit `11afbd009a7f8c08f4bcf2fc1b265d0df4670fbf`, CMake en `BUILD_SHARED_LIBS=ON` réduit à l'API C (TTS, diarisation, websocket, PortAudio, Python, tests et exécutables désactivés : Diktu n'utilise que la reconnaissance en streaming). Il trouve onnxruntime par `SHERPA_ONNXRUNTIME_LIB_DIR`/`SHERPA_ONNXRUNTIME_INCLUDE_DIR`. Chaque archive de ses `FetchContent` (kaldi-native-fbank, kissfft, kaldi-decoder, kaldifst, openfst, eigen, simple-sentencepiece, nlohmann/json) est une source `file` déposée dans le dossier des sources sous le nom que cherchent ses fichiers CMake, qui vérifient aussi le SHA-256.
-  - `diktu` : option Meson `shared_sherpa_onnx` → feature Cargo `diktu-core/shared-sherpa` (`sherpa-onnx/shared`) avec `SHERPA_ONNX_LIB_DIR=/app/lib` ; le binaire lie `libsherpa-onnx-c-api.so` et `libonnxruntime.so`, trouvées à l'exécution dans `/app/lib`.
-- Le build natif garde l'archive statique précompilée : la crate `sherpa-onnx` est déclarée sans ses features par défaut, et `sherpa-onnx-sys` lie en statique tant que `shared` n'est pas demandé.
-- La version de la crate `sherpa-onnx` reste égale au tag compilé : les structures FFI de `sherpa-onnx-sys` suivent l'API C de la même version. Des blocs `x-checker-data` sur la source git de sherpa-onnx et sur les archives onnxruntime font signaler les nouvelles versions par le bot de Flathub ; procédure de mise à jour dans `docs/MAINTENANCE.md`.
+- **Context**: Flathub requires any software whose sources are available to be built from those sources, without network access during the build; binaries from major vendors are accepted case by case when the tooling does not allow an offline build (precedent: `net.mkiol.SpeechNote` bundles Microsoft's prebuilt onnxruntime). The k2-fsa static archive from D20 does not meet this requirement.
+- **Choice**: the manifest builds three modules.
+  - `onnxruntime`: Microsoft's official 1.28.2 release (shared library, the version sherpa-onnx v1.13.8 expects), installed in `/app/lib`; its headers are removed at the end of the build. Reason: onnxruntime relies on dozens of `FetchContent` dependencies and submodules (abseil, protobuf, flatbuffers, onnx…), Microsoft is a major vendor, and the SpeechNote precedent exists.
+  - `sherpa-onnx`: tag v1.13.8 pinned at commit `11afbd009a7f8c08f4bcf2fc1b265d0df4670fbf`, CMake with `BUILD_SHARED_LIBS=ON` reduced to the C API (TTS, diarization, websocket, PortAudio, Python, tests and executables disabled: Diktu only uses streaming recognition). It finds onnxruntime through `SHERPA_ONNXRUNTIME_LIB_DIR`/`SHERPA_ONNXRUNTIME_INCLUDE_DIR`. Each archive of its `FetchContent` dependencies (kaldi-native-fbank, kissfft, kaldi-decoder, kaldifst, openfst, eigen, simple-sentencepiece, nlohmann/json) is a `file` source placed in the sources directory under the name its CMake files look for, which also check the SHA-256.
+  - `diktu`: Meson option `shared_sherpa_onnx` → Cargo feature `diktu-core/shared-sherpa` (`sherpa-onnx/shared`) with `SHERPA_ONNX_LIB_DIR=/app/lib`; the binary links `libsherpa-onnx-c-api.so` and `libonnxruntime.so`, found at runtime in `/app/lib`.
+- The native build keeps the prebuilt static archive: the `sherpa-onnx` crate is declared without its default features, and `sherpa-onnx-sys` links statically as long as `shared` is not requested.
+- The version of the `sherpa-onnx` crate stays equal to the built tag: the FFI structures of `sherpa-onnx-sys` follow the C API of the same version. `x-checker-data` blocks on the sherpa-onnx git source and on the onnxruntime archives make the Flathub bot report new versions; the update procedure is in [MAINTENANCE.md](MAINTENANCE.md).
