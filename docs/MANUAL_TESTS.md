@@ -8,6 +8,12 @@ AppIndicator installée), en natif (`meson install`) et en Flatpak.
 Préparation : modèle français téléchargé depuis les réglages, une application cible ouverte
 (éditeur de texte, champ de saisie d'un navigateur, terminal).
 
+## Résultats
+
+| Date | Environnement | Résultat |
+|---|---|---|
+| 2026-10-02 | Ubuntu 26.04, GNOME Shell 50.1 Wayland, xdg-desktop-portal 1.21.1 (GlobalShortcuts v1) | Toutes les cases validées, sauf celles propres à Fedora (pas de machine disponible). F12 s'obtient avec Fn+F12 sur le portable testé. |
+
 ## Démarrage
 
 - [ ] Premier lancement (aucun modèle installé) : la fenêtre de réglages s'ouvre, ainsi que le dialogue RemoteDesktop (point suivant).
