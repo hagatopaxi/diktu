@@ -6,6 +6,9 @@ pub fn keysym(c: char) -> Option<u32> {
     match c {
         '\n' => Some(0xff0d), // Return
         '\t' => Some(0xff09), // Tab
+        // Typographic apostrophes, which the model outputs, are on no common layout and GNOME
+        // drops keysyms missing from the active keymap: type the ASCII apostrophe.
+        '’' | '‘' => Some(0x27),
         c if c.is_control() => None,
         c if (c as u32) < 0x100 => Some(c as u32),
         c => Some(0x0100_0000 + c as u32),
@@ -44,7 +47,7 @@ mod tests {
             ('é', 0xe9),
             ('ç', 0xe7),
             ('É', 0xc9),
-            ('’', 0x0100_2019),
+            ('’', 0x27),
             ('€', 0x0100_20ac),
             ('😀', 0x0101_f600),
             ('\n', 0xff0d),
