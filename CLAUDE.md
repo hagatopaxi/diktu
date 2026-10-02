@@ -7,15 +7,17 @@ Dictée vocale locale en streaming pour GNOME (Rust, GPL-3.0-or-later). Le texte
 - Build : `cargo build` (ou `meson setup _build && meson compile -C _build` pour l'installation complète)
 - Tests : `cargo test` ; tests réseau/modèle réels : `cargo test -- --ignored`
 - Lint : `cargo fmt --all && cargo clippy --all-targets -- -D warnings`
-- Schéma : `glib-compile-schemas --strict --dry-run data`
+- Schéma, .desktop, metainfo : `meson test -C _build`
+- Flatpak : `flatpak run org.flatpak.Builder --user --force-clean build-dir build-aux/fr.gwenael_leger.Parlotte.json` ; après tout changement de `Cargo.lock`, régénérer `build-aux/cargo-sources.json` (voir README).
 - Sans en-têtes GTK système (machine de dev actuelle) : `. <sysroot>/env.sh` avant cargo, cf. docs/DECISIONS.md D2.
 
 ## Architecture
 
-- `core/` (`parlotte-core`, sans GTK) : audio, moteur STT, émission du texte, registre et téléchargement des modèles.
-- `app/` (`parlotte`, binaire) : GTK4/libadwaita, portails (ashpd), icône SNI, sons, réglages.
-- `data/` : schéma GSettings, icônes, sons, `.desktop`, metainfo, registre des modèles.
-- `meson.build` : appelle cargo puis installe binaire et données.
+- `core/` (`parlotte-core`, sans GTK) : `audio` (cpal → ringbuf → rubato 16 kHz), `stt` (trait `SttEngine`, sherpa-onnx), `session` (`Dictation` : machine à états, VAD énergétique, trait `Trigger`), `emit` (delta stable), `inject` (keysyms, trait `TextSink`), `pipeline` (thread d'inférence), `registry` + `download` (modèles HF).
+- `app/` (`parlotte`, binaire) : `main` (GApplication en fond, threads, canal d'événements vers le thread GTK), `inject` (portail RemoteDesktop), `shortcut` (portail GlobalShortcuts), `tray` (SNI via ksni), `preferences` (AdwPreferencesWindow).
+- Threads : audio (callback cpal) → inférence (`pipeline`) → injection (canal borné) ; portails et icône sur un runtime tokio partagé (D17).
+- `data/` : schéma GSettings, registre `models.toml`, icônes, sons (GResource), `.desktop`, metainfo.
+- `build-aux/` : manifeste Flatpak et sources cargo hors ligne. `meson.build` appelle cargo puis installe.
 
 ## Conventions
 

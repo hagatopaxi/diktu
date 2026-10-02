@@ -1,0 +1,54 @@
+{
+  "id": "fr.gwenael_leger.Parlotte",
+  "runtime": "org.gnome.Platform",
+  "runtime-version": "50",
+  "sdk": "org.gnome.Sdk",
+  "sdk-extensions": ["org.freedesktop.Sdk.Extension.rust-stable"],
+  "command": "parlotte",
+  "finish-args": [
+    "--socket=wayland",
+    "--socket=fallback-x11",
+    "--socket=pulseaudio",
+    "--device=dri",
+    "--share=network",
+    "--share=ipc",
+    "--talk-name=org.kde.StatusNotifierWatcher"
+  ],
+  "build-options": {
+    "append-path": "/usr/lib/sdk/rust-stable/bin",
+    "env": {
+      "CARGO_HOME": "/run/build/parlotte/cargo",
+      "CARGO_NET_OFFLINE": "true",
+      "SHERPA_ONNX_ARCHIVE_DIR": "/run/build/parlotte/sherpa-onnx"
+    }
+  },
+  "modules": [
+    {
+      "name": "parlotte",
+      "buildsystem": "meson",
+      "config-opts": ["--buildtype=release", "-Doffline=true"],
+      "sources": [
+        {
+          "type": "dir",
+          "path": "..",
+          "skip": ["target", "_build", ".flatpak-builder", "build-dir", "repo", ".git"]
+        },
+        "cargo-sources.json",
+        {
+          "type": "file",
+          "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/v1.13.8/sherpa-onnx-v1.13.8-linux-x64-static-lib.tar.bz2",
+          "sha256": "e1fdc5b67530e15741ef897fa5ffff297056f3bf0c6d829a27af9225a4c4b5a6",
+          "dest": "sherpa-onnx",
+          "only-arches": ["x86_64"]
+        },
+        {
+          "type": "file",
+          "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/v1.13.8/sherpa-onnx-v1.13.8-linux-aarch64-static-lib.tar.bz2",
+          "sha256": "77983e3cf29aa60f2e531d249dbd01d15596530550c8db2e9e02fc6a655da6bb",
+          "dest": "sherpa-onnx",
+          "only-arches": ["aarch64"]
+        }
+      ]
+    }
+  ]
+}

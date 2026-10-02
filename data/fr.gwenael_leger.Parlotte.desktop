@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=Parlotte
+GenericName=Dictée vocale
+Comment=Dicter du texte au curseur, reconnaissance vocale locale
+Exec=parlotte
+Icon=fr.gwenael_leger.Parlotte
+Terminal=false
+Categories=Utility;Accessibility;
+Keywords=dictée;voix;parole;reconnaissance;speech;dictation;voice;
+StartupNotify=false
+X-GNOME-UsesNotifications=true

@@ -127,3 +127,14 @@ Chaque entrée : contexte, choix, alternative écartée, raison.
 - **Écarté** : reconstruire la fenêtre et la liste à chaque ouverture ou changement de langue (il faudrait alors retrouver les téléchargements en cours).
 - **Raison** : état unique, aucune synchronisation à écrire.
 - Le sélecteur de modèle (case radio) n'apparaît que si une langue a plusieurs modèles.
+
+## D20 — Flatpak : runtime GNOME 50, build hors ligne
+
+- **Choix** : `org.gnome.Platform//50` (la 51 existe mais la 50 est la plus déployée au moment du choix et déjà présente sur la machine de dev), extension `rust-stable//25.08` (version du SDK freedesktop de GNOME 50). Crates vendorisées par `flatpak-cargo-generator` (flatpak-builder-tools épinglé au commit `74697c75`) dans `build-aux/cargo-sources.json` ; archive statique sherpa-onnx v1.13.8 (x86_64 et aarch64) en source `file` avec SHA-256 identique au digest publié par GitHub, fournie au build via `SHERPA_ONNX_ARCHIVE_DIR`.
+- **Permissions** : celles demandées, plus `--talk-name=org.kde.StatusNotifierWatcher` pour l'icône SNI. Les portails (Background, RemoteDesktop, GlobalShortcuts, notifications) sont toujours accessibles depuis le bac à sable sans permission supplémentaire ; l'application appelle le portail Background au démarrage.
+- **Écarté** : `cargo vendor` versionné dans le dépôt (des centaines de Mo de sources).
+- **Vérifié** : `flatpak-builder` (org.flatpak.Builder 1.4.9) construit et exporte le paquet hors ligne ; le binaire démarre dans le runtime sans bibliothèque manquante. Sur la machine de dev, il a fallu `flatpak run --no-documents-portal … --disable-rofiles-fuse` (pas de FUSE dans le bac à sable de l'agent) ; ces options ne sont pas nécessaires sur un poste normal.
+
+## D21 — Page d'accueil AppStream
+
+- **Choix** : `https://gwenael-leger.fr` (site de l'auteur, vérifié joignable), faute de dépôt public au moment de l'écriture. À remplacer par l'URL du dépôt une fois publié.

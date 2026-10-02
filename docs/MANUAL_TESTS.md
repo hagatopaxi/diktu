@@ -57,3 +57,10 @@ Préparation : modèle français téléchargé depuis les réglages, une applica
 - [ ] Supprimer : le dossier du modèle disparaît, l'état repasse à « non installé ».
 - [ ] « Modifier… » du raccourci ouvre la boîte de dialogue GNOME (portail GlobalShortcuts version 2) ; le nouveau raccourci s'affiche ensuite dans la ligne.
 - [ ] Silence de fin, majuscule/point final, pause entre touches, sons, volume : chaque réglage s'applique à la dictée suivante sans redémarrage, et persiste après redémarrage.
+
+## Flatpak
+
+- [ ] `flatpak run fr.gwenael_leger.Parlotte` : mêmes vérifications que ci-dessus (icône, raccourci, dictée, sons, réglages).
+- [ ] GNOME liste Parlotte parmi les applications en arrière-plan (menu des réglages rapides) et ne la ferme pas.
+- [ ] Le micro est accessible (socket PulseAudio/PipeWire) ; GNOME affiche son indicateur pendant l'écoute seulement.
+- [ ] Le modèle est stocké dans `~/.var/app/fr.gwenael_leger.Parlotte/data/parlotte/models/`.

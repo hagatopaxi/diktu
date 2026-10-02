@@ -29,7 +29,20 @@ custom_target('cargo-build',
 )
 
 install_data('data' / app_id + '.gschema.xml', install_dir: datadir / 'glib-2.0' / 'schemas')
+install_data('data' / app_id + '.desktop', install_dir: datadir / 'applications')
+install_data('data' / app_id + '.metainfo.xml', install_dir: datadir / 'metainfo')
+install_data('data' / 'icons' / app_id + '.svg', install_dir: datadir / 'icons' / 'hicolor' / 'scalable' / 'apps')
+
 test('gschema', find_program('glib-compile-schemas'),
   args: ['--strict', '--dry-run', meson.project_source_root() / 'data'])
+desktop_file_validate = find_program('desktop-file-validate', required: false)
+if desktop_file_validate.found()
+  test('desktop', desktop_file_validate, args: [meson.project_source_root() / 'data' / app_id + '.desktop'])
+endif
+appstreamcli = find_program('appstreamcli', required: false)
+if appstreamcli.found()
+  test('metainfo', appstreamcli,
+    args: ['validate', '--no-net', meson.project_source_root() / 'data' / app_id + '.metainfo.xml'])
+endif
 
-gnome.post_install(glib_compile_schemas: true)
+gnome.post_install(glib_compile_schemas: true, gtk_update_icon_cache: true, update_desktop_database: true)

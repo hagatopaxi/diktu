@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>fr.gwenael_leger.Parlotte</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Parlotte</name>
+  <summary>Dictate text at the cursor with local speech recognition</summary>
+  <summary xml:lang="fr">Dicter du texte au curseur, reconnaissance vocale locale</summary>
+  <developer id="fr.gwenael_leger">
+    <name>Gwenaël Léger</name>
+  </developer>
+  <description>
+    <p>
+      Parlotte runs in the background. Press a global shortcut, speak, and the text is typed
+      at the cursor of the focused application as you talk. Listening stops by itself when you
+      stop speaking.
+    </p>
+    <p>
+      Speech recognition runs entirely on your computer with a streaming model downloaded once
+      from Hugging Face. No audio leaves your machine.
+    </p>
+    <p xml:lang="fr">
+      Parlotte tourne en tâche de fond. Appuyez sur un raccourci global, parlez : le texte est
+      tapé au curseur de l'application active au fil de la parole. L'écoute s'arrête seule
+      quand vous cessez de parler.
+    </p>
+    <p xml:lang="fr">
+      La reconnaissance vocale tourne entièrement sur votre ordinateur, avec un modèle de
+      streaming téléchargé une fois depuis Hugging Face. Aucun son ne quitte votre machine.
+    </p>
+  </description>
+  <url type="homepage">https://gwenael-leger.fr</url>
+  <launchable type="desktop-id">fr.gwenael_leger.Parlotte.desktop</launchable>
+  <provides>
+    <binary>parlotte</binary>
+  </provides>
+  <categories>
+    <category>Utility</category>
+    <category>Accessibility</category>
+  </categories>
+  <requires>
+    <internet>first-run</internet>
+  </requires>
+  <recommends>
+    <control>keyboard</control>
+  </recommends>
+  <supports>
+    <control>voice</control>
+  </supports>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="0.1.0" date="2026-10-02">
+      <description>
+        <p>First release: French streaming dictation, global shortcut, model manager.</p>
+      </description>
+    </release>
+  </releases>
+</component>
