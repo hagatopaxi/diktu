@@ -16,7 +16,7 @@ Préparation : modèle français téléchargé depuis les réglages, une applica
 - [ ] Premier lancement : le dialogue « Contrôle à distance » (RemoteDesktop) apparaît au démarrage, pas pendant la première dictée ; il ne demande que le clavier.
 - [ ] Après acceptation et redémarrage de l'application, le dialogue RemoteDesktop ne réapparaît pas (jeton `restore-token` enregistré : `gsettings get fr.gwenael_leger.Parlotte restore-token` non vide).
 - [ ] Premier lancement : le dialogue GNOME de raccourci global propose `F12`.
-- [ ] Noter si GNOME affiche un indicateur permanent de « contrôle à distance » pendant que la session clavier est ouverte (comportement du shell, à documenter dans le README le cas échéant).
+- [ ] L'icône rouge de contrôle à distance de GNOME disparaît environ 3 s après le dialogue de consentement, puis n'apparaît que pendant la frappe d'une dictée (jusqu'à 3 s après le dernier mot), sans que le dialogue de consentement ne revienne.
 
 ## Icône (extension AppIndicator)
 

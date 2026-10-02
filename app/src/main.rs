@@ -262,7 +262,8 @@ fn startup(app: &adw::Application) {
             let error = |e: String| {
                 let _ = sink_events.send(UiEvent::Notice(Notice::Error(e)));
             };
-            // Ask for keyboard access now rather than in the middle of the first dictation.
+            // Ask for keyboard access now rather than in the middle of the first dictation;
+            // `run` closes this session once idle.
             if let Err(e) = sink.connect() {
                 error(format!("accès au clavier refusé : {e}"));
             }

@@ -2,7 +2,7 @@
 
 use std::sync::Arc;
 use std::sync::atomic::{AtomicU32, Ordering};
-use std::sync::mpsc::Receiver;
+use std::sync::mpsc::{Receiver, RecvTimeoutError};
 use std::time::Duration;
 
 use ashpd::desktop::PersistMode;
@@ -63,6 +63,14 @@ impl PortalSink {
         Ok(())
     }
 
+    /// Closes the session, which removes GNOME's remote-control indicator; the restore token
+    /// lets the next `connect` skip the consent dialog.
+    pub fn disconnect(&mut self) {
+        if let Some((_, session)) = self.connection.take() {
+            let _ = crate::runtime().block_on(session.close());
+        }
+    }
+
     fn send(&self, text: &str) -> Result<(), ashpd::Error> {
         let (proxy, session) = self.connection.as_ref().expect("connected");
         let delay = Duration::from_millis(self.delay_ms.load(Ordering::Relaxed).into());
@@ -95,12 +103,23 @@ impl TextSink for PortalSink {
     }
 }
 
-/// Injection thread: types every chunk received, reports failures.
-pub fn run(texts: Receiver<String>, mut sink: impl TextSink, on_error: impl Fn(String)) {
-    for text in texts {
-        gtk::glib::g_debug!("parlotte", "typing {text:?}");
-        if let Err(e) = sink.type_text(&text) {
-            on_error(e);
+/// Idle time after which the keyboard session is closed. It outlasts the gaps between the
+/// model's bursts, so one dictation keeps one session.
+const IDLE: Duration = Duration::from_secs(3);
+
+/// Injection thread: types every chunk received, reports failures, and keeps the session open
+/// only while text flows.
+pub fn run(texts: Receiver<String>, mut sink: PortalSink, on_error: impl Fn(String)) {
+    loop {
+        match texts.recv_timeout(IDLE) {
+            Ok(text) => {
+                gtk::glib::g_debug!("parlotte", "typing {text:?}");
+                if let Err(e) = sink.type_text(&text) {
+                    on_error(e);
+                }
+            }
+            Err(RecvTimeoutError::Timeout) => sink.disconnect(),
+            Err(RecvTimeoutError::Disconnected) => return,
         }
     }
 }
