@@ -128,6 +128,8 @@ déjà, ajouter le chemin à la liste au lieu de l'écraser.)
   déjà stable, la correction est perdue.
 - Les caractères hors de la disposition clavier active (emoji, symboles rares) dépendent de la
   prise en charge des keysyms Unicode par le compositeur.
+- Pendant la frappe (et 3 s après), GNOME affiche son icône rouge de contrôle à distance :
+  c'est le portail RemoteDesktop qui tape le texte. Elle disparaît ensuite.
 - X11 n'est pas une cible : cela peut fonctionner via les portails, sans garantie.
 
 ## Développement
