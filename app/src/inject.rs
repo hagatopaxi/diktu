@@ -11,7 +11,6 @@ use ashpd::desktop::remote_desktop::{DeviceType, KeyState, RemoteDesktop, Select
 use parlotte_core::inject::{TextSink, keysym};
 
 pub struct PortalSink {
-    runtime: tokio::runtime::Runtime,
     connection: Option<(RemoteDesktop, Session<RemoteDesktop>)>,
     restore_token: Option<String>,
     /// Pause between two key events, in milliseconds.
@@ -26,12 +25,7 @@ impl PortalSink {
         delay_ms: Arc<AtomicU32>,
         on_token: impl Fn(String) + 'static,
     ) -> Self {
-        let runtime = tokio::runtime::Builder::new_current_thread()
-            .enable_time()
-            .build()
-            .expect("tokio runtime");
         Self {
-            runtime,
             connection: None,
             restore_token,
             delay_ms,
@@ -42,7 +36,7 @@ impl PortalSink {
     /// Opens the session, showing the consent dialog unless a restore token is accepted.
     pub fn connect(&mut self) -> Result<(), ashpd::Error> {
         let token = self.restore_token.clone();
-        let (proxy, session, new_token) = self.runtime.block_on(async {
+        let (proxy, session, new_token) = crate::runtime().block_on(async {
             let proxy = RemoteDesktop::new().await?;
             let session = proxy.create_session(Default::default()).await?;
             proxy
@@ -72,7 +66,7 @@ impl PortalSink {
     fn send(&self, text: &str) -> Result<(), ashpd::Error> {
         let (proxy, session) = self.connection.as_ref().expect("connected");
         let delay = Duration::from_millis(self.delay_ms.load(Ordering::Relaxed).into());
-        self.runtime.block_on(async {
+        crate::runtime().block_on(async {
             for k in text.chars().filter_map(keysym) {
                 for state in [KeyState::Pressed, KeyState::Released] {
                     proxy
@@ -104,6 +98,7 @@ impl TextSink for PortalSink {
 /// Injection thread: types every chunk received, reports failures.
 pub fn run(texts: Receiver<String>, mut sink: impl TextSink, on_error: impl Fn(String)) {
     for text in texts {
+        gtk::glib::g_debug!("parlotte", "typing {text:?}");
         if let Err(e) = sink.type_text(&text) {
             on_error(e);
         }

@@ -1,21 +1,56 @@
 mod inject;
+mod shortcut;
+mod tray;
 
+use std::cell::RefCell;
 use std::ops::ControlFlow;
 use std::path::PathBuf;
-use std::sync::Arc;
+use std::rc::Rc;
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::mpsc::{Sender, sync_channel};
+use std::sync::{Arc, OnceLock};
 
 use adw::prelude::*;
 use gtk::{gio, glib};
+use ksni::TrayMethods;
 use parlotte_core::download;
 use parlotte_core::pipeline::{self, Notice};
 use parlotte_core::registry::{self, Model};
 use parlotte_core::stt::{SherpaTransducer, SttEngine};
+use tokio::sync::mpsc::{UnboundedSender, unbounded_channel};
 
 const APP_ID: &str = "fr.gwenael_leger.Parlotte";
+const RESOURCE_PREFIX: &str = "/fr/gwenael_leger/Parlotte";
+/// The launch itself activates the app: only later activations open a window.
+static FIRST_ACTIVATION: std::sync::Mutex<bool> = std::sync::Mutex::new(true);
+
+/// Everything other threads ask of the GTK main thread.
+pub enum UiEvent {
+    Notice(Notice),
+    Trigger(String),
+    RestoreToken(String),
+    Preferences,
+    Quit,
+}
+
+/// Shared runtime for portal and tray D-Bus traffic: ashpd and ksni tasks keep running
+/// while other threads block on it.
+pub fn runtime() -> &'static tokio::runtime::Runtime {
+    static RUNTIME: OnceLock<tokio::runtime::Runtime> = OnceLock::new();
+    RUNTIME.get_or_init(|| {
+        tokio::runtime::Builder::new_multi_thread()
+            .worker_threads(1)
+            .thread_name("portals")
+            .enable_all()
+            .build()
+            .expect("tokio runtime")
+    })
+}
 
 fn main() -> glib::ExitCode {
+    // zbus objects (portal proxies, tray) may only be dropped inside a tokio context.
+    let _tokio = runtime().enter();
+    gio::resources_register_include!("parlotte.gresource").expect("embedded resources");
     let app = adw::Application::builder().application_id(APP_ID).build();
     app.add_main_option(
         "toggle",
@@ -39,7 +74,13 @@ fn main() -> glib::ExitCode {
         ControlFlow::Continue(())
     });
     app.connect_startup(startup);
-    app.connect_activate(|_| {});
+    // Launching the app again (e.g. from the app grid) opens the preferences.
+    app.connect_activate(|app| {
+        if app.is_remote() || std::mem::replace(&mut *FIRST_ACTIVATION.lock().unwrap(), false) {
+            return;
+        }
+        app.activate_action("preferences", None);
+    });
     app.run()
 }
 
@@ -70,7 +111,11 @@ pub fn selected_model(settings: &gio::Settings) -> Option<Model> {
 }
 
 /// Loads the selected model off the main thread and hands it to the pipeline.
-fn load_engine(settings: &gio::Settings, engines: &Sender<Box<dyn SttEngine>>) {
+fn load_engine(
+    settings: &gio::Settings,
+    engines: &Sender<Box<dyn SttEngine>>,
+    events: &UnboundedSender<UiEvent>,
+) {
     let Some(model) = selected_model(settings) else {
         return;
     };
@@ -78,36 +123,86 @@ fn load_engine(settings: &gio::Settings, engines: &Sender<Box<dyn SttEngine>>) {
     if !download::is_installed(&root, &model) {
         return;
     }
-    let engines = engines.clone();
+    let (engines, events) = (engines.clone(), events.clone());
     std::thread::spawn(move || {
         let files = model.files.iter().map(|f| f.path.as_str());
         match SherpaTransducer::load(&download::model_dir(&root, &model), files) {
             Ok(engine) => {
                 let _ = engines.send(Box::new(engine));
             }
-            Err(e) => on_main(move || notify_error(&e)),
+            Err(e) => {
+                let _ = events.send(UiEvent::Notice(Notice::Error(e)));
+            }
         }
     });
 }
 
-/// Runs `f` on the GTK main thread.
-fn on_main(f: impl FnOnce() + Send + 'static) {
-    glib::MainContext::default().invoke(f);
-}
-
-fn notify_error(message: &str) {
-    let Some(app) = gio::Application::default() else {
-        return;
-    };
+fn notify_error(app: &adw::Application, message: &str) {
     let n = gio::Notification::new("Parlotte");
     n.set_body(Some(message));
     app.send_notification(Some("error"), &n);
 }
 
-fn on_notice(notice: Notice) {
-    match notice {
-        Notice::Started | Notice::Stopped => {}
-        Notice::Error(e) => notify_error(&e),
+/// Plays an embedded sound on a short-lived output stream, so the device is not held open.
+fn play_sound(settings: &gio::Settings, name: &str) {
+    if !settings.boolean("sounds") {
+        return;
+    }
+    let volume = settings.double("volume") as f32;
+    let path = format!("{RESOURCE_PREFIX}/sounds/{name}.wav");
+    let Ok(bytes) = gio::resources_lookup_data(&path, gio::ResourceLookupFlags::NONE) else {
+        return;
+    };
+    let bytes = bytes.to_vec();
+    std::thread::spawn(move || {
+        let Ok(mut output) = rodio::DeviceSinkBuilder::open_default_sink() else {
+            return;
+        };
+        output.log_on_drop(false);
+        if let Ok(player) = rodio::play(output.mixer(), std::io::Cursor::new(bytes)) {
+            player.set_volume(volume);
+            player.sleep_until_end();
+        }
+    });
+}
+
+/// State owned by the main thread.
+struct Ui {
+    app: adw::Application,
+    settings: gio::Settings,
+    tray: Option<ksni::Handle<tray::Tray>>,
+    /// Shortcut as bound by the compositor, once the portal answered.
+    trigger: RefCell<Option<String>>,
+}
+
+impl Ui {
+    fn handle(&self, event: UiEvent) {
+        if let UiEvent::Notice(n) = &event {
+            glib::g_debug!("parlotte", "{n:?}");
+        }
+        match event {
+            UiEvent::Notice(Notice::Started) => {
+                play_sound(&self.settings, "start");
+                self.set_recording(true);
+            }
+            UiEvent::Notice(Notice::Stopped) => {
+                play_sound(&self.settings, "stop");
+                self.set_recording(false);
+            }
+            UiEvent::Notice(Notice::Error(e)) => notify_error(&self.app, &e),
+            UiEvent::Trigger(t) => *self.trigger.borrow_mut() = Some(t),
+            UiEvent::RestoreToken(t) => {
+                let _ = self.settings.set_string("restore-token", &t);
+            }
+            UiEvent::Preferences => self.app.activate_action("preferences", None),
+            UiEvent::Quit => self.app.quit(),
+        }
+    }
+
+    fn set_recording(&self, recording: bool) {
+        if let Some(tray) = self.tray.clone() {
+            runtime().spawn(async move { tray.update(|t| t.recording = recording).await });
+        }
     }
 }
 
@@ -115,29 +210,78 @@ fn startup(app: &adw::Application) {
     // No window: the application lives in the background until quit.
     std::mem::forget(app.hold());
     let settings = settings();
+    let (events, mut event_rx) = unbounded_channel::<UiEvent>();
+
+    // Portals identify a non-Flatpak app by this registration; it is a no-op in a sandbox.
+    if let Err(e) = runtime().block_on(ashpd::register_host_app(APP_ID.try_into().unwrap())) {
+        eprintln!("parlotte: enregistrement auprès des portails : {e}");
+    }
 
     let (text_tx, text_rx) = sync_channel::<String>(64);
-    let handles = pipeline::spawn(text_tx, |n| on_main(move || on_notice(n)));
+    let notices = events.clone();
+    let handles = pipeline::spawn(text_tx, move |n| {
+        let _ = notices.send(UiEvent::Notice(n));
+    });
 
     let delay = Arc::new(AtomicU32::new(settings.uint("key-delay")));
     let token = Some(settings.string("restore-token").to_string()).filter(|t| !t.is_empty());
-    let sink_delay = delay.clone();
+    let (sink_delay, sink_events) = (delay.clone(), events.clone());
     std::thread::Builder::new()
         .name("injection".into())
         .spawn(move || {
-            let mut sink = inject::PortalSink::new(token, sink_delay, |t| {
-                on_main(move || {
-                    let _ = crate::settings().set_string("restore-token", &t);
-                })
+            let _tokio = runtime().enter();
+            let tokens = sink_events.clone();
+            let mut sink = inject::PortalSink::new(token, sink_delay, move |t| {
+                let _ = tokens.send(UiEvent::RestoreToken(t));
             });
+            let error = |e: String| {
+                let _ = sink_events.send(UiEvent::Notice(Notice::Error(e)));
+            };
             // Ask for keyboard access now rather than in the middle of the first dictation.
             if let Err(e) = sink.connect() {
-                let e = format!("accès clavier refusé : {e}");
-                on_main(move || notify_error(&e));
+                error(format!("accès au clavier refusé : {e}"));
             }
-            inject::run(text_rx, sink, |e| on_main(move || notify_error(&e)));
+            inject::run(text_rx, sink, error);
         })
         .expect("spawn injection thread");
+
+    let (configure, configure_rx) = unbounded_channel();
+    let (toggle, trigger_events) = (handles.toggle.clone(), events.clone());
+    runtime().spawn(async move {
+        let on_trigger = |t| {
+            let _ = trigger_events.send(UiEvent::Trigger(t));
+        };
+        if let Err(e) = shortcut::run(toggle, configure_rx, on_trigger).await {
+            let message = format!(
+                "raccourci global indisponible ({e}) : associez un raccourci GNOME à « parlotte --toggle »"
+            );
+            let _ = trigger_events.send(UiEvent::Notice(Notice::Error(message)));
+        }
+    });
+
+    let background = runtime().block_on(async {
+        ashpd::desktop::background::Background::request()
+            .reason("Écouter le raccourci de dictée sans fenêtre ouverte")
+            .send()
+            .await
+    });
+    if let Err(e) = background {
+        eprintln!("parlotte: portail Background : {e}");
+    }
+
+    let tray = tray::Tray::new(handles.toggle.clone(), events.clone());
+    let sandboxed = std::path::Path::new("/.flatpak-info").exists();
+    let tray = runtime().block_on(async {
+        // A sandbox may not own the per-process D-Bus name the SNI spec asks for.
+        if sandboxed {
+            tray.disable_dbus_name(true).spawn().await
+        } else {
+            tray.spawn().await
+        }
+    });
+    let tray = tray
+        .inspect_err(|e| eprintln!("parlotte: icône indisponible : {e}"))
+        .ok();
 
     let sync = {
         let (pp, silence) = (handles.postprocess.clone(), handles.end_silence_ms.clone());
@@ -148,33 +292,47 @@ fn startup(app: &adw::Application) {
         }
     };
     sync(&settings);
-    settings.connect_changed(None, move |s, key| match key {
-        "language" | "model" => {}
-        _ => sync(s),
-    });
-    let engines = handles.engine.clone();
+    let (engines, engine_events) = (handles.engine.clone(), events.clone());
     settings.connect_changed(None, move |s, key| {
         if matches!(key, "language" | "model") {
-            load_engine(s, &engines);
+            load_engine(s, &engines, &engine_events);
+        } else {
+            sync(s);
         }
     });
-    load_engine(&settings, &handles.engine);
+    load_engine(&settings, &handles.engine, &events);
 
-    let toggle = gio::SimpleAction::new("toggle", None);
-    let toggles = handles.toggle.clone();
-    toggle.connect_activate(move |_, _| {
-        let _ = toggles.send(());
+    let ui = Rc::new(Ui {
+        app: app.clone(),
+        settings,
+        tray,
+        trigger: RefCell::new(None),
     });
-    app.add_action(&toggle);
 
-    let quit = gio::SimpleAction::new("quit", None);
-    quit.connect_activate(glib::clone!(
+    let action = gio::SimpleAction::new("toggle", None);
+    let toggle = handles.toggle.clone();
+    action.connect_activate(move |_, _| {
+        let _ = toggle.send(());
+    });
+    app.add_action(&action);
+
+    let action = gio::SimpleAction::new("preferences", None);
+    action.connect_activate(move |_, _| {
+        let _ = &configure;
+    });
+    app.add_action(&action);
+
+    let action = gio::SimpleAction::new("quit", None);
+    action.connect_activate(glib::clone!(
         #[weak]
         app,
         move |_, _| app.quit()
     ));
-    app.add_action(&quit);
+    app.add_action(&action);
 
-    // The settings object and its signal handlers live as long as the process.
-    std::mem::forget(settings);
+    glib::spawn_future_local(async move {
+        while let Some(event) = event_rx.recv().await {
+            ui.handle(event);
+        }
+    });
 }

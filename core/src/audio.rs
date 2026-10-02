@@ -68,7 +68,7 @@ where
 {
     device
         .build_input_stream(
-            *config,
+            config,
             // Real-time callback: no allocation, no lock; drops samples if the ring is full.
             move |data: &[T], _: &cpal::InputCallbackInfo| {
                 for frame in data.chunks_exact(channels) {
@@ -142,27 +142,34 @@ mod tests {
     use super::*;
 
     #[test]
-    fn resamples_48k_sine_to_16k() {
-        let tone = |rate: f32, n: usize| -> Vec<f32> {
-            (0..n)
-                .map(|i| (i as f32 * 440.0 * std::f32::consts::TAU / rate).sin())
-                .collect()
-        };
-        let mut r = To16k::new(48_000).unwrap();
-        let mut out = Vec::new();
-        // Odd-sized slices, like a real callback would deliver.
-        for chunk in tone(48_000.0, 48_000).chunks(333) {
-            r.push(chunk, &mut out);
+    fn resamples_device_rates_to_16k() {
+        for rate in [44_100, 48_000] {
+            let tone: Vec<f32> = (0..rate)
+                .map(|i| (i as f32 * 440.0 * std::f32::consts::TAU / rate as f32).sin())
+                .collect();
+            let mut r = To16k::new(rate).unwrap();
+            let mut out = Vec::new();
+            // Odd-sized slices, like a real callback would deliver.
+            for chunk in tone.chunks(333) {
+                r.push(chunk, &mut out);
+            }
+            assert!(
+                (15_000..=16_000).contains(&out.len()),
+                "{rate}: {}",
+                out.len()
+            );
+            // Past the start-up delay: a 440 Hz sine at 16 kHz, up to a phase shift.
+            let rms = |v: &[f32]| (v.iter().map(|x| x * x).sum::<f32>() / v.len() as f32).sqrt();
+            assert!(
+                (rms(&out[2000..]) - std::f32::consts::FRAC_1_SQRT_2).abs() < 0.05,
+                "{rate}"
+            );
+            let crossings = out[2000..12_000]
+                .windows(2)
+                .filter(|w| w[0] < 0.0 && w[1] >= 0.0)
+                .count();
+            assert!((270..=282).contains(&crossings), "{rate}: {crossings}"); // 440 Hz over 10 000 samples ≈ 275
         }
-        assert!((15_000..=16_000).contains(&out.len()), "{}", out.len());
-        // Past the resampler's start-up delay, the signal matches a 16 kHz 440 Hz sine up to a phase shift.
-        let rms = |v: &[f32]| (v.iter().map(|x| x * x).sum::<f32>() / v.len() as f32).sqrt();
-        assert!((rms(&out[2000..]) - std::f32::consts::FRAC_1_SQRT_2).abs() < 0.05);
-        let crossings = out[2000..12_000]
-            .windows(2)
-            .filter(|w| w[0] < 0.0 && w[1] >= 0.0)
-            .count();
-        assert!((270..=282).contains(&crossings), "{crossings}"); // 440 Hz over 10 000 samples ≈ 275
 
         let mut same = To16k::new(16_000).unwrap();
         let mut out = Vec::new();
