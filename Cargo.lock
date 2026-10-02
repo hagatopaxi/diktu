@@ -587,6 +587,35 @@ dependencies = [
 ]
 
 [[package]]
+name = "diktu"
+version = "0.1.0"
+dependencies = [
+ "ashpd",
+ "diktu-core",
+ "futures-util",
+ "glib-build-tools",
+ "gtk4",
+ "ksni",
+ "libadwaita",
+ "rodio",
+ "tokio",
+]
+
+[[package]]
+name = "diktu-core"
+version = "0.1.0"
+dependencies = [
+ "cpal",
+ "reqwest",
+ "ringbuf",
+ "rubato",
+ "serde",
+ "sha2",
+ "sherpa-onnx",
+ "toml",
+]
+
+[[package]]
 name = "dispatch2"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1945,35 +1974,6 @@ name = "parking"
 version = "2.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f38d5652c16fde515bb1ecef450ab0f6a219d619a7274976324d5e377f7dceba"
-
-[[package]]
-name = "diktu"
-version = "0.1.0"
-dependencies = [
- "ashpd",
- "futures-util",
- "glib-build-tools",
- "gtk4",
- "ksni",
- "libadwaita",
- "diktu-core",
- "rodio",
- "tokio",
-]
-
-[[package]]
-name = "diktu-core"
-version = "0.1.0"
-dependencies = [
- "cpal",
- "reqwest",
- "ringbuf",
- "rubato",
- "serde",
- "sha2",
- "sherpa-onnx",
- "toml",
-]
 
 [[package]]
 name = "pastey"

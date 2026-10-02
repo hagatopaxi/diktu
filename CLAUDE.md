@@ -8,7 +8,7 @@ Dictée vocale locale en streaming pour GNOME (Rust, GPL-3.0-or-later). Le texte
 - Tests : `cargo test` ; tests réseau/modèle réels : `cargo test -- --ignored`
 - Lint : `cargo fmt --all && cargo clippy --all-targets -- -D warnings`
 - Schéma, .desktop, metainfo : `meson test -C _build`
-- Flatpak : `flatpak run org.flatpak.Builder --user --force-clean build-dir build-aux/fr.gwenael_leger.Diktu.json` ; après tout changement de `Cargo.lock`, régénérer `build-aux/cargo-sources.json` (voir README).
+- Flatpak : `flatpak run org.flatpak.Builder --user --force-clean build-dir build-aux/fr.gwenael_leger.Diktu.json` ; après tout changement de `Cargo.lock`, régénérer `build-aux/cargo-sources.json` (voir README). Mise à jour de sherpa-onnx et onnxruntime : `docs/MAINTENANCE.md` (la version de la crate `sherpa-onnx` reste égale au tag du manifeste).
 - Sans en-têtes GTK système (machine de dev actuelle) : `. <sysroot>/env.sh` avant cargo, cf. docs/DECISIONS.md D2.
 
 ## Architecture
@@ -17,7 +17,7 @@ Dictée vocale locale en streaming pour GNOME (Rust, GPL-3.0-or-later). Le texte
 - `app/` (`diktu`, binaire) : `main` (GApplication en fond, threads, canal d'événements vers le thread GTK), `inject` (portail RemoteDesktop), `shortcut` (portail GlobalShortcuts), `tray` (SNI via ksni), `preferences` (AdwPreferencesWindow).
 - Threads : audio (callback cpal) → inférence (`pipeline`) → injection (canal borné) ; portails et icône sur un runtime tokio partagé (D17).
 - `data/` : schéma GSettings, registre `models.toml`, icônes, sons (GResource), `.desktop`, metainfo.
-- `build-aux/` : manifeste Flatpak et sources cargo hors ligne. `meson.build` appelle cargo puis installe.
+- `build-aux/` : manifeste Flatpak (onnxruntime de Microsoft, sherpa-onnx compilé depuis les sources, puis Diktu en `-Dshared_sherpa_onnx=true`) et sources cargo hors ligne. `meson.build` appelle cargo puis installe.
 
 ## Conventions
 

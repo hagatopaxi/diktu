@@ -1,1 +1,2 @@
 option('offline', type: 'boolean', value: false, description: 'Build with cargo --offline (vendored sources, Flatpak)')
+option('shared_sherpa_onnx', type: 'boolean', value: false, description: 'Link the shared sherpa-onnx C API from SHERPA_ONNX_LIB_DIR (Flatpak)')
