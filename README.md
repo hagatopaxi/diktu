@@ -57,14 +57,15 @@ Dépendances de build :
 
 ```sh
 # Ubuntu 24.04 ou plus récent
-sudo apt install build-essential cargo meson libgtk-4-dev libadwaita-1-dev libasound2-dev \
+sudo apt install build-essential meson libgtk-4-dev libadwaita-1-dev libasound2-dev \
     libglib2.0-dev-bin desktop-file-utils appstream
 # Fedora
-sudo dnf install gcc cargo meson gtk4-devel libadwaita-devel alsa-lib-devel \
+sudo dnf install gcc meson gtk4-devel libadwaita-devel alsa-lib-devel \
     desktop-file-utils appstream
 ```
 
-Rust 1.88 ou plus récent est requis (sinon via [rustup](https://rustup.rs)). Le build
+Rust 1.92 ou plus récent est requis (exigence de gtk-rs 0.22), en général plus récent que le
+`cargo` des distributions : l'installer avec [rustup](https://rustup.rs). Le build
 télécharge la bibliothèque statique sherpa-onnx depuis les releases GitHub de k2-fsa.
 
 ```sh

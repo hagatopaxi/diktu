@@ -138,3 +138,8 @@ Chaque entrée : contexte, choix, alternative écartée, raison.
 ## D21 — Page d'accueil AppStream
 
 - **Choix** : `https://gwenael-leger.fr` (site de l'auteur, vérifié joignable), faute de dépôt public au moment de l'écriture. À remplacer par l'URL du dépôt une fois publié.
+
+## D22 — Version minimale de Rust : 1.92
+
+- **Constat** : la valeur initiale (1.88) était fausse ; vérifiée avec la chaîne 1.88, la compilation échoue (cairo-rs/gtk-rs 0.22 exigent 1.92). `cargo +1.92 check --all-targets` passe.
+- **Choix** : `rust-version = "1.92"` ; le README demande rustup, les paquets `cargo` d'Ubuntu 24.04 et de Fedora étant trop anciens ou à la limite.
