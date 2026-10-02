@@ -8,7 +8,7 @@ use std::time::Duration;
 use ashpd::desktop::PersistMode;
 use ashpd::desktop::Session;
 use ashpd::desktop::remote_desktop::{DeviceType, KeyState, RemoteDesktop, SelectDevicesOptions};
-use parlotte_core::inject::{TextSink, keysym};
+use diktu_core::inject::{TextSink, keysym};
 
 pub struct PortalSink {
     connection: Option<(RemoteDesktop, Session<RemoteDesktop>)>,
@@ -113,7 +113,7 @@ pub fn run(texts: Receiver<String>, mut sink: PortalSink, on_error: impl Fn(Stri
     loop {
         match texts.recv_timeout(IDLE) {
             Ok(text) => {
-                gtk::glib::g_debug!("parlotte", "typing {text:?}");
+                gtk::glib::g_debug!("diktu", "typing {text:?}");
                 if let Err(e) = sink.type_text(&text) {
                     on_error(e);
                 }

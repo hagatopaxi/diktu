@@ -1,10 +1,10 @@
 {
-  "id": "fr.gwenael_leger.Parlotte",
+  "id": "fr.gwenael_leger.Diktu",
   "runtime": "org.gnome.Platform",
   "runtime-version": "50",
   "sdk": "org.gnome.Sdk",
   "sdk-extensions": ["org.freedesktop.Sdk.Extension.rust-stable"],
-  "command": "parlotte",
+  "command": "diktu",
   "finish-args": [
     "--socket=wayland",
     "--socket=fallback-x11",
@@ -17,14 +17,14 @@
   "build-options": {
     "append-path": "/usr/lib/sdk/rust-stable/bin",
     "env": {
-      "CARGO_HOME": "/run/build/parlotte/cargo",
+      "CARGO_HOME": "/run/build/diktu/cargo",
       "CARGO_NET_OFFLINE": "true",
-      "SHERPA_ONNX_ARCHIVE_DIR": "/run/build/parlotte/sherpa-onnx"
+      "SHERPA_ONNX_ARCHIVE_DIR": "/run/build/diktu/sherpa-onnx"
     }
   },
   "modules": [
     {
-      "name": "parlotte",
+      "name": "diktu",
       "buildsystem": "meson",
       "config-opts": ["--buildtype=release", "-Doffline=true"],
       "sources": [

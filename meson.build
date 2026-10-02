@@ -1,7 +1,7 @@
-project('parlotte', version: '0.1.0', license: 'GPL-3.0-or-later', meson_version: '>= 1.0')
+project('diktu', version: '0.1.0', license: 'GPL-3.0-or-later', meson_version: '>= 1.0')
 
 gnome = import('gnome')
-app_id = 'fr.gwenael_leger.Parlotte'
+app_id = 'fr.gwenael_leger.Diktu'
 datadir = get_option('prefix') / get_option('datadir')
 
 cargo = find_program('cargo')
@@ -20,12 +20,12 @@ endif
 custom_target('cargo-build',
   build_by_default: true,
   build_always_stale: true,
-  output: 'parlotte',
+  output: 'diktu',
   console: true,
   install: true,
   install_dir: get_option('bindir'),
-  command: [cargo, 'build', cargo_options, '-p', 'parlotte', '&&',
-            'cp', meson.project_build_root() / 'target' / rust_target / 'parlotte', '@OUTPUT@'],
+  command: [cargo, 'build', cargo_options, '-p', 'diktu', '&&',
+            'cp', meson.project_build_root() / 'target' / rust_target / 'diktu', '@OUTPUT@'],
 )
 
 install_data('data' / app_id + '.gschema.xml', install_dir: datadir / 'glib-2.0' / 'schemas')

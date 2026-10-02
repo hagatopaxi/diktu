@@ -6,8 +6,8 @@ use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 
-use parlotte_core::download::{self, Error};
-use parlotte_core::registry::{self, Model, ModelFile};
+use diktu_core::download::{self, Error};
+use diktu_core::registry::{self, Model, ModelFile};
 use sha2::{Digest, Sha256};
 
 const LEN: usize = 200_000;

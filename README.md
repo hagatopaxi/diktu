@@ -1,4 +1,4 @@
-# Parlotte
+# Diktu
 
 Dictée vocale locale et en streaming pour GNOME sous Wayland. Un raccourci global lance
 l'écoute ; le texte est tapé au curseur de l'application active au fil de la parole ;
@@ -19,7 +19,7 @@ Licence : GPL-3.0-or-later.
   de dictée, le reste est tapé avec une majuscule initiale et un point final (désactivable).
 - Le texte est injecté par le portail XDG RemoteDesktop (aucun accès au presse-papiers, ni
   `uinput`, ni `xdotool`).
-- Les réglages (menu de l'icône, ou relancer `parlotte`) permettent de choisir la langue et le
+- Les réglages (menu de l'icône, ou relancer `diktu`) permettent de choisir la langue et le
   modèle, de le télécharger (progression, annulation, reprise, vérification SHA-256) ou de le
   supprimer, et de changer le raccourci.
 
@@ -44,8 +44,8 @@ de [Banafo](https://huggingface.co/Banafo/Kroko-ASR)).
 flatpak install --user flathub org.gnome.Platform//50 org.gnome.Sdk//50 \
     org.freedesktop.Sdk.Extension.rust-stable//25.08 org.flatpak.Builder
 flatpak run org.flatpak.Builder --user --install --force-clean build-dir \
-    build-aux/fr.gwenael_leger.Parlotte.json
-flatpak run fr.gwenael_leger.Parlotte
+    build-aux/fr.gwenael_leger.Diktu.json
+flatpak run fr.gwenael_leger.Diktu
 ```
 
 Le build est hors ligne : les crates viennent de `build-aux/cargo-sources.json`, et la
@@ -71,16 +71,16 @@ télécharge la bibliothèque statique sherpa-onnx depuis les releases GitHub de
 ```sh
 meson setup _build --prefix=$HOME/.local --buildtype=release
 meson install -C _build
-parlotte
+diktu
 ```
 
 L'installation (et pas seulement `cargo build`) est nécessaire : le portail GlobalShortcuts
 n'accepte une application non sandboxée que si son fichier
-`fr.gwenael_leger.Parlotte.desktop` est installé. Vérifier que `~/.local/bin` est dans le
+`fr.gwenael_leger.Diktu.desktop` est installé. Vérifier que `~/.local/bin` est dans le
 `PATH`.
 
-Pour lancer Parlotte à l'ouverture de session : copier
-`~/.local/share/applications/fr.gwenael_leger.Parlotte.desktop` dans `~/.config/autostart/`.
+Pour lancer Diktu à l'ouverture de session : copier
+`~/.local/share/applications/fr.gwenael_leger.Diktu.desktop` dans `~/.config/autostart/`.
 
 ## Premier lancement
 
@@ -98,17 +98,17 @@ personnalisé : Paramètres → Clavier → Raccourcis clavier → Raccourcis pe
 avec la commande :
 
 ```sh
-parlotte --toggle                                 # installation native
-flatpak run fr.gwenael_leger.Parlotte --toggle    # Flatpak
+diktu --toggle                                 # installation native
+flatpak run fr.gwenael_leger.Diktu --toggle    # Flatpak
 ```
 
 ou en ligne de commande :
 
 ```sh
-KEY=/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/parlotte/
+KEY=/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/diktu/
 gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['$KEY']"
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:$KEY name 'Parlotte'
-gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:$KEY command 'parlotte --toggle'
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:$KEY name 'Diktu'
+gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:$KEY command 'diktu --toggle'
 gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:$KEY binding 'F12'
 ```
 
@@ -142,7 +142,7 @@ Voir [CLAUDE.md](CLAUDE.md) pour les commandes et l'architecture,
 
 ```sh
 cargo test                                   # tests unitaires et d'intégration
-cargo test -p parlotte-core -- --ignored     # télécharge le modèle puis teste la dictée réelle
+cargo test -p diktu-core -- --ignored     # télécharge le modèle puis teste la dictée réelle
 ```
 
 Après un changement de `Cargo.lock`, régénérer les sources Flatpak avec

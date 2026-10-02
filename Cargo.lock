@@ -1947,7 +1947,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f38d5652c16fde515bb1ecef450ab0f6a219d619a7274976324d5e377f7dceba"
 
 [[package]]
-name = "parlotte"
+name = "diktu"
 version = "0.1.0"
 dependencies = [
  "ashpd",
@@ -1956,13 +1956,13 @@ dependencies = [
  "gtk4",
  "ksni",
  "libadwaita",
- "parlotte-core",
+ "diktu-core",
  "rodio",
  "tokio",
 ]
 
 [[package]]
-name = "parlotte-core"
+name = "diktu-core"
 version = "0.1.0"
 dependencies = [
  "cpal",

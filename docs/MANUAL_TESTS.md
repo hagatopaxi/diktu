@@ -17,10 +17,10 @@ Préparation : modèle français téléchargé depuis les réglages, une applica
 ## Démarrage
 
 - [x] Premier lancement (aucun modèle installé) : la fenêtre de réglages s'ouvre, ainsi que le dialogue RemoteDesktop (point suivant).
-- [x] Lancements suivants (modèle installé, consentement mémorisé) : `parlotte` lancé depuis un terminal ne montre aucune fenêtre et rend la main au shell seulement à `Quitter`.
-- [x] Une deuxième commande `parlotte` ne crée pas de seconde instance ; elle ouvre les réglages.
+- [x] Lancements suivants (modèle installé, consentement mémorisé) : `diktu` lancé depuis un terminal ne montre aucune fenêtre et rend la main au shell seulement à `Quitter`.
+- [x] Une deuxième commande `diktu` ne crée pas de seconde instance ; elle ouvre les réglages.
 - [x] Premier lancement : le dialogue « Contrôle à distance » (RemoteDesktop) apparaît au démarrage, pas pendant la première dictée ; il ne demande que le clavier.
-- [x] Après acceptation et redémarrage de l'application, le dialogue RemoteDesktop ne réapparaît pas (jeton `restore-token` enregistré : `gsettings get fr.gwenael_leger.Parlotte restore-token` non vide).
+- [x] Après acceptation et redémarrage de l'application, le dialogue RemoteDesktop ne réapparaît pas (jeton `restore-token` enregistré : `gsettings get fr.gwenael_leger.Diktu restore-token` non vide).
 - [x] Premier lancement : le dialogue GNOME de raccourci global propose `F12`.
 - [x] L'icône rouge de contrôle à distance de GNOME disparaît environ 3 s après le dialogue de consentement, puis n'apparaît que pendant la frappe d'une dictée (jusqu'à 3 s après le dernier mot), sans que le dialogue de consentement ne revienne.
 
@@ -46,7 +46,7 @@ Préparation : modèle français téléchargé depuis les réglages, une applica
 
 ## Repli sans portail GlobalShortcuts
 
-- [x] Raccourci personnalisé GNOME (Paramètres → Clavier → Raccourcis personnalisés) avec la commande `parlotte --toggle` (ou `flatpak run fr.gwenael_leger.Parlotte --toggle`) : démarre et arrête la dictée.
+- [x] Raccourci personnalisé GNOME (Paramètres → Clavier → Raccourcis personnalisés) avec la commande `diktu --toggle` (ou `flatpak run fr.gwenael_leger.Diktu --toggle`) : démarre et arrête la dictée.
 
 ## Sons
 
@@ -56,18 +56,18 @@ Préparation : modèle français téléchargé depuis les réglages, une applica
 ## Réglages
 
 - [x] Premier lancement sans modèle : la fenêtre de réglages s'ouvre seule ; une fois un modèle installé, les lancements suivants n'ouvrent aucune fenêtre.
-- [x] Le menu de l'icône « Réglages… » et un second lancement de `parlotte` ouvrent la même fenêtre (pas de doublon).
+- [x] Le menu de l'icône « Réglages… » et un second lancement de `diktu` ouvrent la même fenêtre (pas de doublon).
 - [x] Télécharger : barre de progression « x / 71 Mo », puis état « installé » et bouton de suppression ; la dictée fonctionne sans redémarrer l'application.
-- [x] Annuler en cours de téléchargement, puis relancer : le téléchargement reprend où il s'était arrêté (fichier `.part` dans `~/.local/share/parlotte/models/`, ou `~/.var/app/fr.gwenael_leger.Parlotte/data/parlotte/models/` en Flatpak).
+- [x] Annuler en cours de téléchargement, puis relancer : le téléchargement reprend où il s'était arrêté (fichier `.part` dans `~/.local/share/diktu/models/`, ou `~/.var/app/fr.gwenael_leger.Diktu/data/diktu/models/` en Flatpak).
 - [x] Fermer la fenêtre pendant un téléchargement puis la rouvrir : la progression continue.
 - [x] Couper le réseau pendant un téléchargement : un message d'erreur s'affiche dans la fenêtre ; relancer reprend.
 - [x] Supprimer : le dossier du modèle disparaît, l'état repasse à « non installé ».
-- [x] « Modifier… » du raccourci ouvre la boîte de dialogue GNOME si le portail GlobalShortcuts est en version 2 ou plus, et le nouveau raccourci s'affiche ensuite dans la ligne ; en version 1 (GNOME 50.1 + xdg-desktop-portal 1.21.1), un toast renvoie à Paramètres → Applications → Parlotte.
+- [x] « Modifier… » du raccourci ouvre la boîte de dialogue GNOME si le portail GlobalShortcuts est en version 2 ou plus, et le nouveau raccourci s'affiche ensuite dans la ligne ; en version 1 (GNOME 50.1 + xdg-desktop-portal 1.21.1), un toast renvoie à Paramètres → Applications → Diktu.
 - [x] Silence de fin, majuscule/point final, pause entre touches, sons, volume : chaque réglage s'applique à la dictée suivante sans redémarrage, et persiste après redémarrage.
 
 ## Flatpak
 
-- [x] `flatpak run fr.gwenael_leger.Parlotte` : mêmes vérifications que ci-dessus (icône, raccourci, dictée, sons, réglages).
-- [x] GNOME liste Parlotte parmi les applications en arrière-plan (menu des réglages rapides) et ne la ferme pas.
+- [x] `flatpak run fr.gwenael_leger.Diktu` : mêmes vérifications que ci-dessus (icône, raccourci, dictée, sons, réglages).
+- [x] GNOME liste Diktu parmi les applications en arrière-plan (menu des réglages rapides) et ne la ferme pas.
 - [x] Le micro est accessible (socket PulseAudio/PipeWire) ; GNOME affiche son indicateur pendant l'écoute seulement.
-- [x] Le modèle est stocké dans `~/.var/app/fr.gwenael_leger.Parlotte/data/parlotte/models/`.
+- [x] Le modèle est stocké dans `~/.var/app/fr.gwenael_leger.Diktu/data/diktu/models/`.

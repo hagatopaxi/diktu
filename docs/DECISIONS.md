@@ -5,8 +5,8 @@ Chaque entrée : contexte, choix, alternative écartée, raison.
 ## D1 — Identifiant d'application
 
 - **Contexte** : il faut un identifiant inverse-DNS (GApplication, GSettings, Flatpak, AppStream).
-- **Choix** : `fr.gwenael_leger.Parlotte` (domaine de l'auteur `gwenael-leger.fr`, tiret remplacé par un souligné comme le recommande Flatpak).
-- **Écarté** : `io.github.<compte>.Parlotte`, aucun compte GitHub vérifiable au moment du choix.
+- **Choix** : `fr.gwenael_leger.Diktu` (domaine de l'auteur `gwenael-leger.fr`, tiret remplacé par un souligné comme le recommande Flatpak).
+- **Écarté** : `io.github.<compte>.Diktu`, aucun compte GitHub vérifiable au moment du choix.
 - **Raison** : identifiant stable, rattaché à un domaine possédé.
 
 ## D2 — En-têtes GTK de développement absents sur la machine de build
@@ -84,11 +84,11 @@ Chaque entrée : contexte, choix, alternative écartée, raison.
 - **Choix** : la session clavier est ouverte au lancement pour obtenir le consentement (dialogue à ce moment-là plutôt qu'au milieu de la première dictée), puis fermée après 3 s sans texte à taper ; elle est rouverte au premier texte suivant grâce au jeton `restore_token` (GSettings `restore-token`, `PersistMode::ExplicitlyRevoked`), sans dialogue. L'icône rouge n'apparaît donc que pendant une dictée. En cas d'échec d'envoi, la session est rouverte une fois.
 - **Coût** : le premier mot de chaque dictée attend la création de la session.
 
-## D13 — Commande de repli `parlotte --toggle`
+## D13 — Commande de repli `diktu --toggle`
 
 - **Choix** : option de ligne de commande locale qui enregistre l'application, active l'action `app.toggle` (transmise par D-Bus à l'instance principale) puis quitte. C'est la commande à associer à un raccourci personnalisé GNOME si le portail GlobalShortcuts manque.
 - **Écarté** : `gapplication action …`, qui exige une application activable par D-Bus (fichier service supplémentaire).
-- **Raison** : une seule commande, identique en natif et en Flatpak (`flatpak run fr.gwenael_leger.Parlotte --toggle`).
+- **Raison** : une seule commande, identique en natif et en Flatpak (`flatpak run fr.gwenael_leger.Diktu --toggle`).
 
 ## D14 — cpal 0.17 au lieu de 0.18
 
@@ -118,7 +118,7 @@ Chaque entrée : contexte, choix, alternative écartée, raison.
 ## D18 — Format du raccourci préféré et enregistrement de l'application hôte
 
 - **Choix** : déclencheur préféré `F12` (notation de la spécification XDG « shortcuts » ; une touche seule et libre, choisie par l'utilisateur à la place de `Super+Alt+D`). Au démarrage, l'application s'enregistre auprès de `org.freedesktop.host.portal.Registry` (sans effet en Flatpak).
-- **Constat** : sans cet enregistrement, le portail GlobalShortcuts refuse une application non sandboxée (« An app id is required ») ; l'enregistrement exige que `fr.gwenael_leger.Parlotte.desktop` soit installé. Lancer le binaire depuis l'arbre des sources sans `meson install` ne donne donc que le repli `--toggle`.
+- **Constat** : sans cet enregistrement, le portail GlobalShortcuts refuse une application non sandboxée (« An app id is required ») ; l'enregistrement exige que `fr.gwenael_leger.Diktu.desktop` soit installé. Lancer le binaire depuis l'arbre des sources sans `meson install` ne donne donc que le repli `--toggle`.
 
 ## D19 — Fenêtre de réglages unique, masquée à la fermeture
 
@@ -142,3 +142,8 @@ Chaque entrée : contexte, choix, alternative écartée, raison.
 
 - **Constat** : la valeur initiale (1.88) était fausse ; vérifiée avec la chaîne 1.88, la compilation échoue (cairo-rs/gtk-rs 0.22 exigent 1.92). `cargo +1.92 check --all-targets` passe.
 - **Choix** : `rust-version = "1.92"` ; le README demande rustup, les paquets `cargo` d'Ubuntu 24.04 et de Fedora étant trop anciens ou à la limite.
+
+## D23 — Nom : Diktu
+
+- **Contexte** : « Parlotte » s'écrit aussi « parlote » et ne se lit bien qu'en français ; le nom doit se prononcer et s'écrire sans ambiguïté dans toutes les langues.
+- **Choix** : « Diktu » (« dicte ! » en espéranto, langue phonétique). Vérifié libre le 2026-10-02 : aucun dépôt GitHub de ce nom, absent de crates.io, PyPI et Flathub (registres de marques non consultés). Identifiant `fr.gwenael_leger.Diktu`, crates `diktu` et `diktu-core`.

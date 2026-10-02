@@ -1,5 +1,5 @@
 [package]
-name = "parlotte"
+name = "diktu"
 description = "Local streaming voice dictation for GNOME"
 version.workspace = true
 edition.workspace = true
@@ -7,7 +7,7 @@ rust-version.workspace = true
 license.workspace = true
 
 [dependencies]
-parlotte-core = { path = "../core" }
+diktu-core = { path = "../core" }
 adw = { package = "libadwaita", version = "0.9", features = ["v1_5"] }
 gtk = { package = "gtk4", version = "0.11", features = ["v4_14"] }
 ashpd = { version = "0.13.13", default-features = false, features = ["tokio", "remote_desktop", "screencast", "global_shortcuts", "background"] }

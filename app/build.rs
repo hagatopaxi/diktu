@@ -6,12 +6,12 @@ use std::process::Command;
 fn main() {
     glib_build_tools::compile_resources(
         &["../data"],
-        "../data/parlotte.gresource.xml",
-        "parlotte.gresource",
+        "../data/diktu.gresource.xml",
+        "diktu.gresource",
     );
 
     let out = std::env::var("OUT_DIR").unwrap();
-    println!("cargo:rerun-if-changed=../data/fr.gwenael_leger.Parlotte.gschema.xml");
+    println!("cargo:rerun-if-changed=../data/fr.gwenael_leger.Diktu.gschema.xml");
     let status = Command::new("glib-compile-schemas")
         .args(["--strict", "--targetdir", &out, "../data"])
         .status()

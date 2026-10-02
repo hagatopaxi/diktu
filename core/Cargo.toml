@@ -1,5 +1,5 @@
 [package]
-name = "parlotte-core"
+name = "diktu-core"
 description = "Dictation pipeline: audio, streaming STT, text emission, model registry"
 version.workspace = true
 edition.workspace = true

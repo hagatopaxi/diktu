@@ -77,7 +77,7 @@ pub fn install(
 ) -> Result<(), Error> {
     let dir = model_dir(root, model);
     let client = reqwest::blocking::Client::builder()
-        .user_agent(concat!("parlotte/", env!("CARGO_PKG_VERSION")))
+        .user_agent(concat!("diktu/", env!("CARGO_PKG_VERSION")))
         .timeout(None)
         .build()?;
     let total = model.total_size();

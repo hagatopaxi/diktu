@@ -6,9 +6,9 @@ use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 
 use adw::prelude::*;
+use diktu_core::download::{self, Error};
+use diktu_core::registry::{self, Model};
 use gtk::glib;
-use parlotte_core::download::{self, Error};
-use parlotte_core::registry::{self, Model};
 
 use crate::{Ui, models_root, selected_model};
 
@@ -25,7 +25,7 @@ fn language_name(code: &str) -> &str {
 
 pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
     let window = adw::PreferencesWindow::builder()
-        .title("Réglages de Parlotte")
+        .title("Réglages de Diktu")
         .default_width(600)
         .default_height(680)
         .search_enabled(false)
@@ -90,7 +90,7 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
 
     let group = adw::PreferencesGroup::builder()
         .title("Raccourci")
-        .description("Le raccourci est attribué par GNOME. Repli : un raccourci personnalisé GNOME qui lance « parlotte --toggle ».")
+        .description("Le raccourci est attribué par GNOME. Repli : un raccourci personnalisé GNOME qui lance « diktu --toggle ».")
         .build();
     let shortcut = adw::ActionRow::builder()
         .title("Démarrer ou arrêter la dictée")
@@ -112,7 +112,7 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
             && let Some(window) = win.upgrade()
         {
             window.add_toast(adw::Toast::new(
-                "À modifier dans Paramètres → Applications → Parlotte",
+                "À modifier dans Paramètres → Applications → Diktu",
             ));
         }
     });

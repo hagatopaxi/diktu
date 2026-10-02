@@ -1,10 +1,10 @@
 [Desktop Entry]
 Type=Application
-Name=Parlotte
+Name=Diktu
 GenericName=Dictée vocale
 Comment=Dicter du texte au curseur, reconnaissance vocale locale
-Exec=@BINDIR@/parlotte
-Icon=fr.gwenael_leger.Parlotte
+Exec=@BINDIR@/diktu
+Icon=fr.gwenael_leger.Diktu
 Terminal=false
 Categories=Utility;Accessibility;
 Keywords=dictée;voix;parole;reconnaissance;speech;dictation;voice;

@@ -76,7 +76,7 @@ where
                     let _ = producer.try_push(sum / channels as f32);
                 }
             },
-            |err| eprintln!("parlotte: flux audio : {err}"),
+            |err| eprintln!("diktu: flux audio : {err}"),
             None,
         )
         .map_err(|e| e.to_string())

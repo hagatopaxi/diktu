@@ -1,14 +1,14 @@
 //! Dictates French Common Voice clips (CC0) in simulated 100 ms streaming chunks
 //! through the real engine, emitter and end-of-speech detection.
 //!
-//! Needs a model on disk: `PARLOTTE_MODEL_DIR`, or by default the one fetched by the
-//! ignored download test. Run with `cargo test -p parlotte-core -- --ignored --nocapture`.
+//! Needs a model on disk: `DIKTU_MODEL_DIR`, or by default the one fetched by the
+//! ignored download test. Run with `cargo test -p diktu-core -- --ignored --nocapture`.
 
 use std::path::PathBuf;
 use std::time::Instant;
 
-use parlotte_core::session::{Dictation, State, Trigger};
-use parlotte_core::stt::{SAMPLE_RATE, SherpaTransducer};
+use diktu_core::session::{Dictation, State, Trigger};
+use diktu_core::stt::{SAMPLE_RATE, SherpaTransducer};
 
 /// Aggregate word error rate allowed over the test set.
 const MAX_WER: f64 = 0.25;
@@ -16,10 +16,10 @@ const END_SILENCE: f32 = 1.2;
 const CHUNK: usize = SAMPLE_RATE as usize / 10;
 
 fn model_dir() -> PathBuf {
-    std::env::var_os("PARLOTTE_MODEL_DIR")
+    std::env::var_os("DIKTU_MODEL_DIR")
         .map(PathBuf::from)
         .unwrap_or_else(|| {
-            let model = parlotte_core::registry::default_for("fr").unwrap();
+            let model = diktu_core::registry::default_for("fr").unwrap();
             PathBuf::from(env!("CARGO_TARGET_TMPDIR"))
                 .join("models")
                 .join(model.id)

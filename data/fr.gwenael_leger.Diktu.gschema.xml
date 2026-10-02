@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schemalist gettext-domain="parlotte">
-  <schema id="fr.gwenael_leger.Parlotte" path="/fr/gwenael_leger/Parlotte/">
+<schemalist gettext-domain="diktu">
+  <schema id="fr.gwenael_leger.Diktu" path="/fr/gwenael_leger/Diktu/">
     <key name="language" type="s">
       <default>'fr'</default>
       <summary>Dictation language</summary>

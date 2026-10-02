@@ -56,11 +56,11 @@ fn icon(name: &str) -> Vec<ksni::Icon> {
 
 impl ksni::Tray for Tray {
     fn id(&self) -> String {
-        "parlotte".into()
+        "diktu".into()
     }
 
     fn title(&self) -> String {
-        "Parlotte".into()
+        "Diktu".into()
     }
 
     fn icon_pixmap(&self) -> Vec<ksni::Icon> {
@@ -74,9 +74,9 @@ impl ksni::Tray for Tray {
     fn tool_tip(&self) -> ksni::ToolTip {
         ksni::ToolTip {
             title: if self.recording {
-                "Parlotte : écoute…"
+                "Diktu : écoute…"
             } else {
-                "Parlotte"
+                "Diktu"
             }
             .into(),
             ..Default::default()

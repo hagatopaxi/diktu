@@ -12,16 +12,16 @@ use std::sync::mpsc::{Sender, sync_channel};
 use std::sync::{Arc, OnceLock};
 
 use adw::prelude::*;
+use diktu_core::download;
+use diktu_core::pipeline::{self, Notice};
+use diktu_core::registry::{self, Model};
+use diktu_core::stt::{SherpaTransducer, SttEngine};
 use gtk::{gio, glib};
 use ksni::TrayMethods;
-use parlotte_core::download;
-use parlotte_core::pipeline::{self, Notice};
-use parlotte_core::registry::{self, Model};
-use parlotte_core::stt::{SherpaTransducer, SttEngine};
 use tokio::sync::mpsc::{UnboundedSender, unbounded_channel};
 
-const APP_ID: &str = "fr.gwenael_leger.Parlotte";
-const RESOURCE_PREFIX: &str = "/fr/gwenael_leger/Parlotte";
+const APP_ID: &str = "fr.gwenael_leger.Diktu";
+const RESOURCE_PREFIX: &str = "/fr/gwenael_leger/Diktu";
 /// The launch itself activates the app: only later activations open a window.
 static LAUNCHED: AtomicBool = AtomicBool::new(false);
 
@@ -51,7 +51,7 @@ pub fn runtime() -> &'static tokio::runtime::Runtime {
 fn main() -> glib::ExitCode {
     // zbus objects (portal proxies, tray) may only be dropped inside a tokio context.
     let _tokio = runtime().enter();
-    gio::resources_register_include!("parlotte.gresource").expect("embedded resources");
+    gio::resources_register_include!("diktu.gresource").expect("embedded resources");
     let app = adw::Application::builder().application_id(APP_ID).build();
     app.add_main_option(
         "toggle",
@@ -64,7 +64,7 @@ fn main() -> glib::ExitCode {
     app.connect_handle_local_options(|app, options| {
         if options.contains("toggle") {
             if let Err(e) = app.register(gio::Cancellable::NONE) {
-                eprintln!("parlotte: {e}");
+                eprintln!("diktu: {e}");
                 return ControlFlow::Break(glib::ExitCode::FAILURE);
             }
             app.activate_action("toggle", None);
@@ -98,7 +98,7 @@ pub fn settings() -> gio::Settings {
 }
 
 pub fn models_root() -> PathBuf {
-    glib::user_data_dir().join("parlotte").join("models")
+    glib::user_data_dir().join("diktu").join("models")
 }
 
 /// The model selected for the current language, if any is registered.
@@ -138,7 +138,7 @@ fn load_engine(
 }
 
 fn notify_error(app: &adw::Application, message: &str) {
-    let n = gio::Notification::new("Parlotte");
+    let n = gio::Notification::new("Diktu");
     n.set_body(Some(message));
     app.send_notification(Some("error"), &n);
 }
@@ -198,7 +198,7 @@ impl Ui {
 
     fn handle(self: &Rc<Self>, event: UiEvent) {
         if let UiEvent::Notice(n) = &event {
-            glib::g_debug!("parlotte", "{n:?}");
+            glib::g_debug!("diktu", "{n:?}");
         }
         match event {
             UiEvent::Notice(Notice::Started) => {
@@ -239,7 +239,7 @@ fn startup(app: &adw::Application) {
 
     // Portals identify a non-Flatpak app by this registration; it is a no-op in a sandbox.
     if let Err(e) = runtime().block_on(ashpd::register_host_app(APP_ID.try_into().unwrap())) {
-        eprintln!("parlotte: enregistrement auprès des portails : {e}");
+        eprintln!("diktu: enregistrement auprès des portails : {e}");
     }
 
     let (text_tx, text_rx) = sync_channel::<String>(64);
@@ -279,7 +279,7 @@ fn startup(app: &adw::Application) {
         };
         if let Err(e) = shortcut::run(toggle, configure_rx, on_trigger).await {
             let message = format!(
-                "raccourci global indisponible ({e}) : associez un raccourci GNOME à « parlotte --toggle »"
+                "raccourci global indisponible ({e}) : associez un raccourci GNOME à « diktu --toggle »"
             );
             let _ = trigger_events.send(UiEvent::Notice(Notice::Error(message)));
         }
@@ -292,7 +292,7 @@ fn startup(app: &adw::Application) {
             .await
     });
     if let Err(e) = background {
-        eprintln!("parlotte: portail Background : {e}");
+        eprintln!("diktu: portail Background : {e}");
     }
 
     let tray = tray::Tray::new(handles.toggle.clone(), events.clone());
@@ -306,7 +306,7 @@ fn startup(app: &adw::Application) {
         }
     });
     let tray = tray
-        .inspect_err(|e| eprintln!("parlotte: icône indisponible : {e}"))
+        .inspect_err(|e| eprintln!("diktu: icône indisponible : {e}"))
         .ok();
 
     let sync = {

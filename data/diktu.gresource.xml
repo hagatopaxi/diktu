@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/fr/gwenael_leger/Parlotte">
+  <gresource prefix="/fr/gwenael_leger/Diktu">
     <file compressed="true">sounds/start.wav</file>
     <file compressed="true">sounds/stop.wav</file>
     <file>icons/status-idle.svg</file>
