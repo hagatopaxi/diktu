@@ -10,7 +10,8 @@ Préparation : modèle français téléchargé depuis les réglages, une applica
 
 ## Démarrage
 
-- [ ] `parlotte` lancé depuis un terminal ne montre aucune fenêtre et rend la main au shell seulement à `Quitter`.
+- [ ] Premier lancement (aucun modèle installé) : la fenêtre de réglages s'ouvre, ainsi que le dialogue RemoteDesktop (point suivant).
+- [ ] Lancements suivants (modèle installé, consentement mémorisé) : `parlotte` lancé depuis un terminal ne montre aucune fenêtre et rend la main au shell seulement à `Quitter`.
 - [ ] Une deuxième commande `parlotte` ne crée pas de seconde instance ; elle ouvre les réglages.
 - [ ] Premier lancement : le dialogue « Contrôle à distance » (RemoteDesktop) apparaît au démarrage, pas pendant la première dictée ; il ne demande que le clavier.
 - [ ] Après acceptation et redémarrage de l'application, le dialogue RemoteDesktop ne réapparaît pas (jeton `restore-token` enregistré : `gsettings get fr.gwenael_leger.Parlotte restore-token` non vide).
