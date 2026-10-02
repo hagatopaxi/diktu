@@ -1,7 +1,7 @@
 //! Transcribes French Common Voice clips (CC0) in simulated 100 ms streaming chunks.
 //!
-//! Needs a model on disk: `PARLOTTE_MODEL_DIR` (default: the app's install dir for
-//! the default model). Run with `cargo test -p parlotte-core --test stt -- --ignored --nocapture`.
+//! Needs a model on disk: `PARLOTTE_MODEL_DIR`, or by default the one fetched by the
+//! ignored download test. Run with `cargo test -p parlotte-core -- --ignored --nocapture`.
 
 use std::path::PathBuf;
 use std::time::Instant;
@@ -14,7 +14,12 @@ const MAX_WER: f64 = 0.25;
 fn model_dir() -> PathBuf {
     std::env::var_os("PARLOTTE_MODEL_DIR")
         .map(PathBuf::from)
-        .expect("set PARLOTTE_MODEL_DIR to a downloaded sherpa-onnx transducer")
+        .unwrap_or_else(|| {
+            let model = parlotte_core::registry::default_for("fr").unwrap();
+            PathBuf::from(env!("CARGO_TARGET_TMPDIR"))
+                .join("models")
+                .join(model.id)
+        })
 }
 
 fn words(text: &str) -> Vec<String> {
@@ -54,12 +59,13 @@ fn edit_distance_counts_word_errors() {
 }
 
 #[test]
-#[ignore = "needs a downloaded model (PARLOTTE_MODEL_DIR)"]
+#[ignore = "needs a downloaded model (see module doc)"]
 fn transcribes_french_within_wer_threshold() {
     let dir = model_dir();
     let files: Vec<String> = std::fs::read_dir(&dir)
         .unwrap()
         .map(|e| e.unwrap().file_name().to_string_lossy().into_owned())
+        .filter(|f| !f.starts_with('.'))
         .collect();
     let mut engine = SherpaTransducer::load(&dir, files.iter().map(String::as_str), 1.2).unwrap();
 

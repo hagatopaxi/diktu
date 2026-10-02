@@ -1,0 +1,17 @@
+# Embedded model registry. `revision` is always a commit hash, never a branch.
+# Files are fetched from https://huggingface.co/{repo}/resolve/{revision}/{path}.
+
+[[model]]
+id = "kroko-fr-2025-08-06"
+name = "Kroko FR (zipformer streaming, 71 Mo)"
+langs = ["fr"]
+engine = "sherpa-onnx-transducer"
+license = "CC-BY-SA (Banafo Kroko community model)"
+repo = "csukuangfj/sherpa-onnx-streaming-zipformer-fr-kroko-2025-08-06"
+revision = "08b84b7b7cf519be9817e9c16919d96a7a8bad91"
+files = [
+  { path = "encoder.onnx", size = 70092599, sha256 = "e02facae1daf6f1f13da67ea3ace7c722516d0868d1768d78c0580bc22cc0c5b" },
+  { path = "decoder.onnx", size = 617488, sha256 = "6aed547570e3ab5afc05429a017cedd3a056c16df3baa5703f02461cefa25bac" },
+  { path = "joiner.onnx", size = 336817, sha256 = "a51eec759bcdcaae2614686fa2a8b57417b2d420dd55a5a5558b388d35a9b2b6" },
+  { path = "tokens.txt", size = 5415, sha256 = "fedfb9c844bfb2bf14171f8184863e3d617b815a8667bdd9fc9a3149fde73298" },
+]

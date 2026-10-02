@@ -45,3 +45,16 @@ Chaque entrée : contexte, choix, alternative écartée, raison.
 
 - **Choix** : WER agrégé ≤ 25 % sur les 3 extraits Common Voice de `core/tests/data` (mesuré : 19,4 %). Normalisation : minuscules, apostrophes et tirets → espaces, ponctuation retirée.
 - **Raison** : marge suffisante pour absorber une variation de version de sherpa-onnx, assez basse pour détecter un modèle mal chargé ou un flux mal découpé.
+
+## D7 — Registre : champs `name` et `size`
+
+- **Contexte** : le schéma imposé (`id`, `langs`, `engine`, `license`, `repo`, `revision`, `files[{path, sha256}]`) ne donne ni libellé pour l'UI ni taille totale pour la progression multi-fichiers.
+- **Choix** : ajout de `name` (libellé affiché) et `files[].size` (octets, relevé via l'API HF). Le rôle de chaque fichier (encodeur, décodeur, joiner, tokens) est déduit du préfixe de son nom, sans champ dédié.
+- **Écarté** : progression par fichier via `Content-Length` (barre qui repart à zéro à chaque fichier).
+- **Raison** : une seule barre de progression cohérente.
+
+## D8 — Client HTTP bloquant dans un thread
+
+- **Choix** : `reqwest::blocking` (TLS rustls par défaut), exécuté dans un thread dédié ; annulation par `AtomicBool` vérifié à chaque bloc de 64 Kio, progression par callback.
+- **Écarté** : client async intégré à la boucle GLib.
+- **Raison** : code linéaire, testable sans runtime async ; l'UI reçoit la progression par canal.
