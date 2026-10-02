@@ -15,7 +15,7 @@ jobs:
       - name: System dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgtk-4-dev libadwaita-1-dev libasound2-dev libglib2.0-dev-bin desktop-file-utils appstream
+          sudo apt-get install -y libgtk-4-dev libadwaita-1-dev libasound2-dev libglib2.0-dev-bin meson desktop-file-utils appstream
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
@@ -23,6 +23,5 @@ jobs:
       - run: cargo fmt --all --check
       - run: cargo clippy --all-targets -- -D warnings
       - run: cargo test
-      - run: glib-compile-schemas --strict --dry-run data
-      - run: desktop-file-validate data/fr.gwenael_leger.Parlotte.desktop
-      - run: appstreamcli validate --no-net data/fr.gwenael_leger.Parlotte.metainfo.xml
+      - name: Schema, .desktop, metainfo
+        run: meson setup _build && meson test -C _build --no-rebuild --print-errorlogs

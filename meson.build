@@ -29,7 +29,13 @@ custom_target('cargo-build',
 )
 
 install_data('data' / app_id + '.gschema.xml', install_dir: datadir / 'glib-2.0' / 'schemas')
-install_data('data' / app_id + '.desktop', install_dir: datadir / 'applications')
+# Absolute Exec: xdg-desktop-portal resolves it with its own PATH, which lacks ~/.local/bin.
+desktop_file = configure_file(
+  input: 'data' / app_id + '.desktop.in',
+  output: app_id + '.desktop',
+  configuration: {'BINDIR': get_option('prefix') / get_option('bindir')},
+  install_dir: datadir / 'applications',
+)
 install_data('data' / app_id + '.metainfo.xml', install_dir: datadir / 'metainfo')
 install_data('data' / 'icons' / app_id + '.svg', install_dir: datadir / 'icons' / 'hicolor' / 'scalable' / 'apps')
 
@@ -37,7 +43,7 @@ test('gschema', find_program('glib-compile-schemas'),
   args: ['--strict', '--dry-run', meson.project_source_root() / 'data'])
 desktop_file_validate = find_program('desktop-file-validate', required: false)
 if desktop_file_validate.found()
-  test('desktop', desktop_file_validate, args: [meson.project_source_root() / 'data' / app_id + '.desktop'])
+  test('desktop', desktop_file_validate, args: [desktop_file])
 endif
 appstreamcli = find_program('appstreamcli', required: false)
 if appstreamcli.found()
