@@ -54,7 +54,7 @@ equivalent label.
 ## Sounds
 
 - [x] Both sounds last less than 300 ms and do not clip.
-- [x] The volume from the preferences is applied; the "Sounds" switch mutes them.
+- [x] The volume from the preferences is applied; the "Start and stop sounds" switch mutes them.
 
 ## Preferences
 
