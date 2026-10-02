@@ -254,6 +254,12 @@ fn model_row(
         })
     };
     refresh();
+    // The window is reused: re-read the disk each time it shows, files may have changed.
+    window.connect_show(glib::clone!(
+        #[strong]
+        refresh,
+        move |_| refresh()
+    ));
 
     download.connect_clicked(glib::clone!(
         #[strong]
