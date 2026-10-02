@@ -87,7 +87,9 @@ Pour lancer Parlotte à l'ouverture de session : copier
 1. La fenêtre de réglages s'ouvre : télécharger le modèle français.
 2. GNOME demande l'autorisation de « contrôler le clavier » (portail RemoteDesktop). Accepter ;
    l'autorisation est mémorisée.
-3. GNOME propose le raccourci `F12` : accepter ou en choisir un autre.
+3. GNOME propose le raccourci `F12` : accepter ou en choisir un autre. Sur beaucoup de
+   portables, la rangée F envoie des touches multimédia par défaut : F12 s'obtient alors
+   avec `Fn+F12` (ou en activant le verrouillage Fn).
 
 ## Raccourci de repli
 
