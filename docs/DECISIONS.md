@@ -26,7 +26,7 @@ Chaque entrée : contexte, choix, alternative écartée, raison.
 ## D4 — Bindings sherpa-onnx
 
 - **Contexte** : il faut un reconnaisseur transducteur streaming utilisable depuis Rust.
-- **Choix** : crate officielle `sherpa-onnx` 1.13.8 (k2-fsa, Apache-2.0), liaison statique. Son `build.rs` télécharge l'archive précompilée `sherpa-onnx-v1.13.8-linux-x64-static-lib.tar.bz2` depuis les releases GitHub, ou la prend dans `SHERPA_ONNX_ARCHIVE_DIR` pour un build hors ligne (Flatpak).
+- **Choix** : crate officielle `sherpa-onnx` 1.13.8 (k2-fsa, Apache-2.0), liaison statique. Son `build.rs` télécharge l'archive précompilée `sherpa-onnx-v1.13.8-linux-x64-static-lib.tar.bz2` depuis les releases GitHub, ou la prend dans `SHERPA_ONNX_ARCHIVE_DIR` pour un build hors ligne. Le Flatpak lie en partagé un sherpa-onnx compilé depuis les sources (D24).
 - **Écarté** : wrapper FFI maison sur l'API C ; crate tierce `sherpa-rs`.
 - **Raison** : les bindings officiels exposent tout ce qu'il faut (flux, endpointing, `input_finished`), un wrapper maison n'apporterait que de la maintenance.
 
@@ -129,7 +129,7 @@ Chaque entrée : contexte, choix, alternative écartée, raison.
 
 ## D20 — Flatpak : runtime GNOME 50, build hors ligne
 
-- **Choix** : `org.gnome.Platform//50` (la 51 existe mais la 50 est la plus déployée au moment du choix et déjà présente sur la machine de dev), extension `rust-stable//25.08` (version du SDK freedesktop de GNOME 50). Crates vendorisées par `flatpak-cargo-generator` (flatpak-builder-tools épinglé au commit `74697c75`) dans `build-aux/cargo-sources.json` ; archive statique sherpa-onnx v1.13.8 (x86_64 et aarch64) en source `file` avec SHA-256 identique au digest publié par GitHub, fournie au build via `SHERPA_ONNX_ARCHIVE_DIR`.
+- **Choix** : `org.gnome.Platform//50` (la 51 existe mais la 50 est la plus déployée au moment du choix et déjà présente sur la machine de dev), extension `rust-stable//25.08` (version du SDK freedesktop de GNOME 50). Crates vendorisées par `flatpak-cargo-generator` (flatpak-builder-tools épinglé au commit `74697c75`) dans `build-aux/cargo-sources.json` ; archive statique sherpa-onnx v1.13.8 (x86_64 et aarch64) en source `file` avec SHA-256 identique au digest publié par GitHub, fournie au build via `SHERPA_ONNX_ARCHIVE_DIR` (remplacée par une compilation depuis les sources, D24).
 - **Permissions** : celles demandées, plus `--talk-name=org.kde.StatusNotifierWatcher` pour l'icône SNI. Les portails (Background, RemoteDesktop, GlobalShortcuts, notifications) sont toujours accessibles depuis le bac à sable sans permission supplémentaire ; l'application appelle le portail Background au démarrage.
 - **Écarté** : `cargo vendor` versionné dans le dépôt (des centaines de Mo de sources).
 - **Vérifié** : `flatpak-builder` (org.flatpak.Builder 1.4.9) construit et exporte le paquet hors ligne ; le binaire démarre dans le runtime sans bibliothèque manquante. Sur la machine de dev, il a fallu `flatpak run --no-documents-portal … --disable-rofiles-fuse` (pas de FUSE dans le bac à sable de l'agent) ; ces options ne sont pas nécessaires sur un poste normal.
@@ -147,3 +147,13 @@ Chaque entrée : contexte, choix, alternative écartée, raison.
 
 - **Contexte** : « Parlotte » s'écrit aussi « parlote » et ne se lit bien qu'en français ; le nom doit se prononcer et s'écrire sans ambiguïté dans toutes les langues.
 - **Choix** : « Diktu » (« dicte ! » en espéranto, langue phonétique). Vérifié libre le 2026-10-02 : aucun dépôt GitHub de ce nom, absent de crates.io, PyPI et Flathub (registres de marques non consultés). Identifiant `fr.gwenael_leger.Diktu`, crates `diktu` et `diktu-core`.
+
+## D24 — sherpa-onnx compilé depuis les sources dans le Flatpak
+
+- **Contexte** : Flathub exige que tout logiciel dont les sources sont disponibles soit compilé depuis ces sources, sans réseau pendant le build ; des binaires de grands éditeurs sont acceptés au cas par cas quand l'outillage ne permet pas un build hors ligne (précédent : `net.mkiol.SpeechNote` embarque l'onnxruntime précompilé de Microsoft). L'archive statique de k2-fsa de D20 ne remplit pas cette condition.
+- **Choix** : le manifeste construit trois modules.
+  - `onnxruntime` : release officielle de Microsoft 1.28.2 (bibliothèque partagée, version qu'attend sherpa-onnx v1.13.8), installée dans `/app/lib` ; ses en-têtes sont retirés en fin de build. Raison : onnxruntime fait appel à des dizaines de dépendances `FetchContent` et sous-modules (abseil, protobuf, flatbuffers, onnx…), Microsoft est un grand éditeur et le précédent SpeechNote existe.
+  - `sherpa-onnx` : tag v1.13.8 épinglé au commit `11afbd009a7f8c08f4bcf2fc1b265d0df4670fbf`, CMake en `BUILD_SHARED_LIBS=ON` réduit à l'API C (TTS, diarisation, websocket, PortAudio, Python, tests et exécutables désactivés : Diktu n'utilise que la reconnaissance en streaming). Il trouve onnxruntime par `SHERPA_ONNXRUNTIME_LIB_DIR`/`SHERPA_ONNXRUNTIME_INCLUDE_DIR`. Chaque archive de ses `FetchContent` (kaldi-native-fbank, kissfft, kaldi-decoder, kaldifst, openfst, eigen, simple-sentencepiece, nlohmann/json) est une source `file` déposée dans le dossier des sources sous le nom que cherchent ses fichiers CMake, qui vérifient aussi le SHA-256.
+  - `diktu` : option Meson `shared_sherpa_onnx` → feature Cargo `diktu-core/shared-sherpa` (`sherpa-onnx/shared`) avec `SHERPA_ONNX_LIB_DIR=/app/lib` ; le binaire lie `libsherpa-onnx-c-api.so` et `libonnxruntime.so`, trouvées à l'exécution dans `/app/lib`.
+- Le build natif garde l'archive statique précompilée : la crate `sherpa-onnx` est déclarée sans ses features par défaut, et `sherpa-onnx-sys` lie en statique tant que `shared` n'est pas demandé.
+- La version de la crate `sherpa-onnx` reste égale au tag compilé : les structures FFI de `sherpa-onnx-sys` suivent l'API C de la même version. Des blocs `x-checker-data` sur la source git de sherpa-onnx et sur les archives onnxruntime font signaler les nouvelles versions par le bot de Flathub ; procédure de mise à jour dans `docs/MAINTENANCE.md`.

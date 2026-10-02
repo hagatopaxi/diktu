@@ -48,8 +48,10 @@ flatpak run org.flatpak.Builder --user --install --force-clean build-dir \
 flatpak run fr.gwenael_leger.Diktu
 ```
 
-Le build est hors ligne : les crates viennent de `build-aux/cargo-sources.json`, et la
-bibliothèque sherpa-onnx précompilée d'une archive épinglée par SHA-256.
+Le build est hors ligne : les crates viennent de `build-aux/cargo-sources.json`, sherpa-onnx
+est compilé depuis les sources (tag épinglé par commit) contre onnxruntime précompilé par
+Microsoft, et chaque archive est épinglée par SHA-256. Mise à jour de ces bibliothèques :
+[docs/MAINTENANCE.md](docs/MAINTENANCE.md).
 
 ## Installation native
 
