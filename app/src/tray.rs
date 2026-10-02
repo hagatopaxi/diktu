@@ -41,8 +41,8 @@ fn icon(name: &str) -> Vec<ksni::Icon> {
             let bytes = pixbuf.read_pixel_bytes();
             let mut data = Vec::with_capacity((w * h * 4) as usize);
             for row in bytes.chunks(stride).take(h as usize) {
-                for px in row[..w as usize * 4].chunks_exact(4) {
-                    data.extend_from_slice(&[px[3], px[0], px[1], px[2]]);
+                for &[r, g, b, a] in row[..w as usize * 4].as_chunks::<4>().0 {
+                    data.extend_from_slice(&[a, r, g, b]);
                 }
             }
             Some(ksni::Icon {
