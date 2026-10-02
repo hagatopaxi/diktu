@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="parlotte">
+  <schema id="fr.gwenael_leger.Parlotte" path="/fr/gwenael_leger/Parlotte/">
+    <key name="language" type="s">
+      <default>'fr'</default>
+      <summary>Dictation language</summary>
+    </key>
+  </schema>
+</schemalist>

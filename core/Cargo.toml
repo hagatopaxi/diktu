@@ -1,0 +1,9 @@
+[package]
+name = "parlotte-core"
+description = "Dictation pipeline: audio, streaming STT, text emission, model registry"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
