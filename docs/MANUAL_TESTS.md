@@ -56,7 +56,7 @@ Préparation : modèle français téléchargé depuis les réglages, une applica
 - [ ] Fermer la fenêtre pendant un téléchargement puis la rouvrir : la progression continue.
 - [ ] Couper le réseau pendant un téléchargement : un message d'erreur s'affiche dans la fenêtre ; relancer reprend.
 - [ ] Supprimer : le dossier du modèle disparaît, l'état repasse à « non installé ».
-- [ ] « Modifier… » du raccourci ouvre la boîte de dialogue GNOME (portail GlobalShortcuts version 2) ; le nouveau raccourci s'affiche ensuite dans la ligne.
+- [ ] « Modifier… » du raccourci ouvre la boîte de dialogue GNOME si le portail GlobalShortcuts est en version 2 ou plus, et le nouveau raccourci s'affiche ensuite dans la ligne ; en version 1 (GNOME 50.1 + xdg-desktop-portal 1.21.1), un toast renvoie à Paramètres → Applications → Parlotte.
 - [ ] Silence de fin, majuscule/point final, pause entre touches, sons, volume : chaque réglage s'applique à la dictée suivante sans redémarrage, et persiste après redémarrage.
 
 ## Flatpak

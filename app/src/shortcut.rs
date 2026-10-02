@@ -17,6 +17,11 @@ pub async fn run(
     on_trigger: impl Fn(String),
 ) -> ashpd::Result<()> {
     let proxy = GlobalShortcuts::new().await?;
+    // ConfigureShortcuts appeared in version 2 of the portal; closing tells the UI to point
+    // to GNOME Settings instead.
+    if proxy.version() < 2 {
+        configure.close();
+    }
     let session = proxy.create_session(Default::default()).await?;
     let shortcut = NewShortcut::new("toggle", "Démarrer ou arrêter la dictée")
         .preferred_trigger(PREFERRED_TRIGGER);
@@ -37,10 +42,7 @@ pub async fn run(
             }
             Some(c) = changed.next() => on_trigger(describe(c.shortcuts())),
             Some(()) = configure.recv() => {
-                // ConfigureShortcuts appeared in version 2 of the portal.
-                if proxy.version() >= 2 {
-                    proxy.configure_shortcuts(&session, None, Default::default()).await?;
-                }
+                proxy.configure_shortcuts(&session, None, Default::default()).await?;
             }
             else => return Ok(()),
         }

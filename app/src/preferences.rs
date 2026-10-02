@@ -106,8 +106,15 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
         .valign(gtk::Align::Center)
         .build();
     let configure = ui.configure.clone();
+    let win = window.downgrade();
     change.connect_clicked(move |_| {
-        let _ = configure.send(());
+        if configure.send(()).is_err()
+            && let Some(window) = win.upgrade()
+        {
+            window.add_toast(adw::Toast::new(
+                "À modifier dans Paramètres → Applications → Parlotte",
+            ));
+        }
     });
     shortcut.add_suffix(&change);
     group.add(&shortcut);
