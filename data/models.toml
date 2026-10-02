@@ -3,7 +3,7 @@
 
 [[model]]
 id = "kroko-fr-2025-08-06"
-name = "Kroko FR (zipformer streaming, 71 Mo)"
+name = "Kroko FR (zipformer streaming)"
 langs = ["fr"]
 engine = "sherpa-onnx-transducer"
 license = "CC-BY-SA (Banafo Kroko community model)"

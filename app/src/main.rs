@@ -1,4 +1,5 @@
 mod inject;
+mod preferences;
 mod shortcut;
 mod tray;
 
@@ -6,7 +7,7 @@ use std::cell::RefCell;
 use std::ops::ControlFlow;
 use std::path::PathBuf;
 use std::rc::Rc;
-use std::sync::atomic::{AtomicU32, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
 use std::sync::mpsc::{Sender, sync_channel};
 use std::sync::{Arc, OnceLock};
 
@@ -22,7 +23,7 @@ use tokio::sync::mpsc::{UnboundedSender, unbounded_channel};
 const APP_ID: &str = "fr.gwenael_leger.Parlotte";
 const RESOURCE_PREFIX: &str = "/fr/gwenael_leger/Parlotte";
 /// The launch itself activates the app: only later activations open a window.
-static FIRST_ACTIVATION: std::sync::Mutex<bool> = std::sync::Mutex::new(true);
+static LAUNCHED: AtomicBool = AtomicBool::new(false);
 
 /// Everything other threads ask of the GTK main thread.
 pub enum UiEvent {
@@ -76,10 +77,9 @@ fn main() -> glib::ExitCode {
     app.connect_startup(startup);
     // Launching the app again (e.g. from the app grid) opens the preferences.
     app.connect_activate(|app| {
-        if app.is_remote() || std::mem::replace(&mut *FIRST_ACTIVATION.lock().unwrap(), false) {
-            return;
+        if LAUNCHED.swap(true, Ordering::Relaxed) {
+            app.activate_action("preferences", None);
         }
-        app.activate_action("preferences", None);
     });
     app.run()
 }
@@ -167,16 +167,36 @@ fn play_sound(settings: &gio::Settings, name: &str) {
 }
 
 /// State owned by the main thread.
-struct Ui {
+pub struct Ui {
     app: adw::Application,
     settings: gio::Settings,
     tray: Option<ksni::Handle<tray::Tray>>,
+    events: UnboundedSender<UiEvent>,
+    engines: Sender<Box<dyn SttEngine>>,
+    /// Asks the GlobalShortcuts portal to show its configuration dialog.
+    configure: UnboundedSender<()>,
     /// Shortcut as bound by the compositor, once the portal answered.
     trigger: RefCell<Option<String>>,
+    preferences: RefCell<Option<adw::PreferencesWindow>>,
+    shortcut_row: RefCell<Option<adw::ActionRow>>,
 }
 
 impl Ui {
-    fn handle(&self, event: UiEvent) {
+    fn reload_engine(&self) {
+        load_engine(&self.settings, &self.engines, &self.events);
+    }
+
+    fn show_preferences(self: &Rc<Self>) {
+        let window = self
+            .preferences
+            .borrow_mut()
+            .get_or_insert_with(|| preferences::build(self))
+            .clone();
+        window.set_application(Some(&self.app));
+        window.present();
+    }
+
+    fn handle(self: &Rc<Self>, event: UiEvent) {
         if let UiEvent::Notice(n) = &event {
             glib::g_debug!("parlotte", "{n:?}");
         }
@@ -190,11 +210,16 @@ impl Ui {
                 self.set_recording(false);
             }
             UiEvent::Notice(Notice::Error(e)) => notify_error(&self.app, &e),
-            UiEvent::Trigger(t) => *self.trigger.borrow_mut() = Some(t),
+            UiEvent::Trigger(t) => {
+                if let Some(row) = self.shortcut_row.borrow().as_ref() {
+                    row.set_subtitle(&t);
+                }
+                *self.trigger.borrow_mut() = Some(t);
+            }
             UiEvent::RestoreToken(t) => {
                 let _ = self.settings.set_string("restore-token", &t);
             }
-            UiEvent::Preferences => self.app.activate_action("preferences", None),
+            UiEvent::Preferences => self.show_preferences(),
             UiEvent::Quit => self.app.quit(),
         }
     }
@@ -306,7 +331,12 @@ fn startup(app: &adw::Application) {
         app: app.clone(),
         settings,
         tray,
+        events,
+        engines: handles.engine.clone(),
+        configure,
         trigger: RefCell::new(None),
+        preferences: RefCell::new(None),
+        shortcut_row: RefCell::new(None),
     });
 
     let action = gio::SimpleAction::new("toggle", None);
@@ -317,9 +347,11 @@ fn startup(app: &adw::Application) {
     app.add_action(&action);
 
     let action = gio::SimpleAction::new("preferences", None);
-    action.connect_activate(move |_, _| {
-        let _ = &configure;
-    });
+    action.connect_activate(glib::clone!(
+        #[weak]
+        ui,
+        move |_, _| ui.show_preferences()
+    ));
     app.add_action(&action);
 
     let action = gio::SimpleAction::new("quit", None);
@@ -329,6 +361,11 @@ fn startup(app: &adw::Application) {
         move |_, _| app.quit()
     ));
     app.add_action(&action);
+
+    // Nothing to dictate with until a model is downloaded: show where to get one.
+    if selected_model(&ui.settings).is_none_or(|m| !download::is_installed(&models_root(), &m)) {
+        ui.show_preferences();
+    }
 
     glib::spawn_future_local(async move {
         while let Some(event) = event_rx.recv().await {

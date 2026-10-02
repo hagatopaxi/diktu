@@ -45,3 +45,15 @@ Préparation : modèle français téléchargé depuis les réglages, une applica
 
 - [ ] Les deux sons durent moins de 300 ms et ne saturent pas.
 - [ ] Le volume des réglages s'applique ; la case « Sons » les coupe.
+
+## Réglages
+
+- [ ] Premier lancement sans modèle : la fenêtre de réglages s'ouvre seule ; une fois un modèle installé, les lancements suivants n'ouvrent aucune fenêtre.
+- [ ] Le menu de l'icône « Réglages… » et un second lancement de `parlotte` ouvrent la même fenêtre (pas de doublon).
+- [ ] Télécharger : barre de progression « x / 71 Mo », puis état « installé » et bouton de suppression ; la dictée fonctionne sans redémarrer l'application.
+- [ ] Annuler en cours de téléchargement, puis relancer : le téléchargement reprend où il s'était arrêté (fichier `.part` dans `~/.local/share/parlotte/models/`, ou `~/.var/app/fr.gwenael_leger.Parlotte/data/parlotte/models/` en Flatpak).
+- [ ] Fermer la fenêtre pendant un téléchargement puis la rouvrir : la progression continue.
+- [ ] Couper le réseau pendant un téléchargement : un message d'erreur s'affiche dans la fenêtre ; relancer reprend.
+- [ ] Supprimer : le dossier du modèle disparaît, l'état repasse à « non installé ».
+- [ ] « Modifier… » du raccourci ouvre la boîte de dialogue GNOME (portail GlobalShortcuts version 2) ; le nouveau raccourci s'affiche ensuite dans la ligne.
+- [ ] Silence de fin, majuscule/point final, pause entre touches, sons, volume : chaque réglage s'applique à la dictée suivante sans redémarrage, et persiste après redémarrage.

@@ -90,3 +90,40 @@ Chaque entrée : contexte, choix, alternative écartée, raison.
 - **Choix** : option de ligne de commande locale qui enregistre l'application, active l'action `app.toggle` (transmise par D-Bus à l'instance principale) puis quitte. C'est la commande à associer à un raccourci personnalisé GNOME si le portail GlobalShortcuts manque.
 - **Écarté** : `gapplication action …`, qui exige une application activable par D-Bus (fichier service supplémentaire).
 - **Raison** : une seule commande, identique en natif et en Flatpak (`flatpak run fr.gwenael_leger.Parlotte --toggle`).
+
+## D14 — cpal 0.17 au lieu de 0.18
+
+- **Contexte** : rodio 0.22.2 (dernière version) dépend de cpal 0.17 ; deux versions de cpal ne peuvent pas coexister (même bibliothèque native `alsa-sys`).
+- **Choix** : `cpal = "0.17.3"` dans `core`, partagé avec rodio.
+- **Écarté** : cpal 0.18 avec un lecteur de sons maison sur cpal.
+- **Raison** : l'API utilisée est identique à une référence près ; une seule pile audio.
+
+## D15 — Sons : WAV synthétisés, GResource, flux de sortie éphémère
+
+- **Choix** : `tools/gen-sounds.py` synthétise deux sons de 160 ms (deux notes sinusoïdales montantes ou descendantes, fondus de 8 ms), versionnés dans `data/sounds/`, embarqués en GResource, joués par rodio sur un flux de sortie ouvert le temps du son. Le son de début est joué quand le micro est réellement ouvert. Œuvre originale générée par code, placée sous CC0.
+- **Écarté** : libcanberra (dépendance C supplémentaire, thème de sons système).
+- **Raison** : aucun fichier tiers, rien de bloqué sur le périphérique de sortie entre deux dictées.
+
+## D16 — Icône SNI en pixmap rendue depuis le SVG embarqué
+
+- **Choix** : les deux SVG colorés (micro gris clair, micro rouge) sont embarqués en GResource et rendus par gdk-pixbuf en pixmaps ARGB32 (22 et 44 px) transmis par `IconPixmap`. En Flatpak, l'icône est publiée sans nom D-Bus propre (`disable_dbus_name`), comme l'exige le bac à sable.
+- **Écarté** : `IconName` + `IconThemePath`, qui suppose des icônes installées et visibles du shell hôte (faux en lançant depuis les sources, et noms imposés par l'export Flatpak).
+- **Raison** : même rendu en développement, en natif et en Flatpak ; la couleur ne dépend pas du thème.
+
+## D17 — Un seul runtime tokio pour les portails et l'icône
+
+- **Contexte** : ashpd et ksni partagent une connexion zbus dont les tâches de fond tournent sur le runtime qui l'a créée ; tout objet zbus détruit hors contexte tokio fait paniquer le programme (constaté au premier test de fumée).
+- **Choix** : un runtime multi-thread (1 worker) global ; les threads principal et d'injection y entrent pour toute leur durée de vie (`Runtime::enter`).
+- **Raison** : plus aucun blocage ni panique quelle que soit la façon dont un thread attend.
+
+## D18 — Format du raccourci préféré et enregistrement de l'application hôte
+
+- **Choix** : déclencheur préféré `LOGO+ALT+d` (notation de la spécification XDG « shortcuts », équivalent de `<Super><Alt>d`). Au démarrage, l'application s'enregistre auprès de `org.freedesktop.host.portal.Registry` (sans effet en Flatpak).
+- **Constat** : sans cet enregistrement, le portail GlobalShortcuts refuse une application non sandboxée (« An app id is required ») ; l'enregistrement exige que `fr.gwenael_leger.Parlotte.desktop` soit installé. Lancer le binaire depuis l'arbre des sources sans `meson install` ne donne donc que le repli `--toggle`.
+
+## D19 — Fenêtre de réglages unique, masquée à la fermeture
+
+- **Choix** : la fenêtre `AdwPreferencesWindow` est construite une fois et masquée à la fermeture ; chaque modèle a une ligne dont la visibilité suit la langue choisie. Les téléchargements continuent fenêtre fermée.
+- **Écarté** : reconstruire la fenêtre et la liste à chaque ouverture ou changement de langue (il faudrait alors retrouver les téléchargements en cours).
+- **Raison** : état unique, aucune synchronisation à écrire.
+- Le sélecteur de modèle (case radio) n'apparaît que si une langue a plusieurs modèles.
