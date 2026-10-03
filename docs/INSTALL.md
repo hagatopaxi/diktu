@@ -220,7 +220,8 @@ rm ~/.local/bin/diktu \
    ~/.local/share/applications/fr.gwenael_leger.Diktu.desktop \
    ~/.local/share/glib-2.0/schemas/fr.gwenael_leger.Diktu.gschema.xml \
    ~/.local/share/metainfo/fr.gwenael_leger.Diktu.metainfo.xml \
-   ~/.local/share/icons/hicolor/scalable/apps/fr.gwenael_leger.Diktu.svg
+   ~/.local/share/icons/hicolor/scalable/apps/fr.gwenael_leger.Diktu.svg \
+   ~/.local/share/locale/*/LC_MESSAGES/diktu.mo
 glib-compile-schemas ~/.local/share/glib-2.0/schemas
 rm -r ~/.local/share/diktu/models    # downloaded models
 ```

@@ -8,6 +8,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use adw::prelude::*;
 use diktu_core::custom;
 use diktu_core::download::{self, Error};
+use diktu_core::i18n::{tr, trf};
 use diktu_core::registry::Model;
 use gtk::glib;
 
@@ -39,7 +40,7 @@ fn language_name(code: &str) -> &str {
 
 pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
     let window = adw::PreferencesWindow::builder()
-        .title(format!("{} Preferences", crate::APP_NAME))
+        .title(trf("{app} Preferences", &[("app", &crate::APP_NAME)]))
         .default_width(600)
         .default_height(680)
         .search_enabled(false)
@@ -56,23 +57,24 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
     languages.dedup();
     let names: Vec<&str> = languages.iter().map(|l| language_name(l)).collect();
     let language = adw::ComboRow::builder()
-        .title("Language")
+        .title(tr("Language"))
         .model(&gtk::StringList::new(&names))
         .build();
     let current = crate::language(settings);
     if let Some(i) = languages.iter().position(|l| *l == current.as_str()) {
         language.set_selected(i as u32);
     }
-    let group = adw::PreferencesGroup::builder().title("Dictation").build();
+    let group = adw::PreferencesGroup::builder()
+        .title(tr("Dictation"))
+        .build();
     group.add(&language);
     page.add(&group);
 
     let group = adw::PreferencesGroup::builder()
-        .title("Models")
-        .description(
-            "Download a model for the chosen language to start dictating. \
-             Models come from Hugging Face, are verified (SHA-256), then used offline.",
-        )
+        .title(tr("Models"))
+        .description(tr(
+            "Download a model for the chosen language to start dictating. Models come from Hugging Face, are verified (SHA-256), then used offline.",
+        ))
         .build();
     let mut first_check: Option<gtk::CheckButton> = None;
     let rows: Vec<(Model, adw::ActionRow)> = models
@@ -104,20 +106,22 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
     page.add(&group);
 
     let group = adw::PreferencesGroup::builder()
-        .title("Shortcut")
-        .description("GNOME assigns the shortcut. Fallback: a custom GNOME shortcut that runs “diktu --toggle”.")
+        .title(tr("Shortcut"))
+        .description(tr(
+            "GNOME assigns the shortcut. Fallback: a custom GNOME shortcut that runs “diktu --toggle”.",
+        ))
         .build();
     let shortcut = adw::ActionRow::builder()
-        .title("Start or stop dictation")
+        .title(tr("Start or stop dictation"))
         .subtitle(
             ui.trigger
                 .borrow()
-                .as_deref()
-                .unwrap_or("GlobalShortcuts portal unavailable"),
+                .clone()
+                .unwrap_or_else(|| tr("GlobalShortcuts portal unavailable")),
         )
         .build();
     let change = gtk::Button::builder()
-        .label("Change…")
+        .label(tr("Change…"))
         .valign(gtk::Align::Center)
         .build();
     let configure = ui.configure.clone();
@@ -126,7 +130,7 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
         if configure.send(()).is_err()
             && let Some(window) = win.upgrade()
         {
-            window.add_toast(adw::Toast::new("Change it in Settings → Apps → Diktu"));
+            window.add_toast(adw::Toast::new(&tr("Change it in Settings → Apps → Diktu")));
         }
     });
     shortcut.add_suffix(&change);
@@ -134,25 +138,27 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
     *ui.shortcut_row.borrow_mut() = Some(shortcut);
     page.add(&group);
 
-    let group = adw::PreferencesGroup::builder().title("Behavior").build();
+    let group = adw::PreferencesGroup::builder()
+        .title(tr("Behavior"))
+        .build();
     let silence = adw::SpinRow::with_range(0.5, 5.0, 0.1);
-    silence.set_title("End-of-speech silence (s)");
-    silence.set_subtitle("Silence after speech that stops listening");
+    silence.set_title(&tr("End-of-speech silence (s)"));
+    silence.set_subtitle(&tr("Silence after speech that stops listening"));
     silence.set_digits(1);
     settings.bind("end-silence", &silence, "value").build();
     group.add(&silence);
     let postprocess = adw::SwitchRow::builder()
-        .title("Capitalize and end with a period")
+        .title(tr("Capitalize and end with a period"))
         .build();
     settings.bind("postprocess", &postprocess, "active").build();
     group.add(&postprocess);
     let delay = adw::SpinRow::with_range(0.0, 100.0, 1.0);
-    delay.set_title("Delay between keys (ms)");
-    delay.set_subtitle("Increase it if some apps drop characters");
+    delay.set_title(&tr("Delay between keys (ms)"));
+    delay.set_subtitle(&tr("Increase it if some apps drop characters"));
     settings.bind("key-delay", &delay, "value").build();
     group.add(&delay);
     let sounds = adw::SwitchRow::builder()
-        .title("Start and stop sounds")
+        .title(tr("Start and stop sounds"))
         .build();
     settings.bind("sounds", &sounds, "active").build();
     group.add(&sounds);
@@ -162,7 +168,7 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
     settings
         .bind("volume", &volume.adjustment(), "value")
         .build();
-    let row = adw::ActionRow::builder().title("Volume").build();
+    let row = adw::ActionRow::builder().title(tr("Volume")).build();
     row.add_suffix(&volume);
     sounds
         .bind_property("active", &row, "sensitive")
@@ -173,8 +179,8 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
 
     let group = adw::PreferencesGroup::new();
     let about = adw::ActionRow::builder()
-        .title(format!("About {}", crate::APP_NAME))
-        .subtitle("Version, permissions, licenses, source code")
+        .title(trf("About {app}", &[("app", &crate::APP_NAME)]))
+        .subtitle(tr("Version, permissions, licenses, source code"))
         .activatable(true)
         .build();
     about.add_suffix(&gtk::Image::from_icon_name("go-next-symbolic"));
@@ -203,16 +209,25 @@ fn about_dialog() -> adw::AboutDialog {
         .website(REPOSITORY)
         .issue_url(format!("{REPOSITORY}/issues"))
         .comments(
-            "Permissions\n\n\
-             • Microphone: open only while you dictate; no audio leaves your machine.\n\
-             • Remote desktop (keyboard): types the recognized text at the cursor.\n\
-             • Global shortcut: starts and stops dictation from any app.\n\
-             • Run in background: listens for the shortcut with no window open.\n\
-             • Network: only to download models from Hugging Face, when you ask.\n\
-             • Status icon: the tray icon showing whether dictation is on.",
+            [
+                tr("Permissions"),
+                String::new(),
+                tr("• Microphone: open only while you dictate; no audio leaves your machine."),
+                tr("• Remote desktop (keyboard): types the recognized text at the cursor."),
+                tr("• Global shortcut: starts and stops dictation from any app."),
+                tr("• Run in background: listens for the shortcut with no window open."),
+                tr("• Network: only to download models from Hugging Face, when you ask."),
+                tr("• Status icon: the tray icon showing whether dictation is on."),
+            ]
+            .join("\n"),
         )
         .build();
-    dialog.add_link("Source code", REPOSITORY);
+    dialog.add_link(&tr("Source code"), REPOSITORY);
+    // Translators: your names and emails, one per line.
+    let credits = tr("translator-credits");
+    if credits != "translator-credits" {
+        dialog.set_translator_credits(&credits);
+    }
     dialog.add_legal_section(
         "sherpa-onnx",
         Some("© k2-fsa"),
@@ -230,7 +245,7 @@ fn about_dialog() -> adw::AboutDialog {
             &model.name,
             None,
             gtk::License::Custom,
-            Some(&format!("License: {}", model.license)),
+            Some(&trf("License: {license}", &[("license", &model.license)])),
         );
     }
     dialog
@@ -258,7 +273,10 @@ fn model_row(
     models: &[Model],
     first_check: &mut Option<gtk::CheckButton>,
 ) -> adw::ActionRow {
-    let size = format!("{} MB", (model.total_size() + 500_000) / 1_000_000);
+    let size = trf(
+        "{size} MB",
+        &[("size", &((model.total_size() + 500_000) / 1_000_000))],
+    );
     let row = adw::ActionRow::builder().title(&model.name).build();
 
     // A choice only exists when a language has several models.
@@ -288,9 +306,9 @@ fn model_row(
         .width_request(140)
         .show_text(true)
         .build();
-    let download = icon_button("folder-download-symbolic", "Download");
-    let cancel = icon_button("process-stop-symbolic", "Cancel download");
-    let remove = icon_button("user-trash-symbolic", "Remove");
+    let download = icon_button("folder-download-symbolic", &tr("Download"));
+    let cancel = icon_button("process-stop-symbolic", &tr("Cancel download"));
+    let remove = icon_button("user-trash-symbolic", &tr("Remove"));
     for w in [
         progress.upcast_ref::<gtk::Widget>(),
         download.upcast_ref(),
@@ -314,13 +332,16 @@ fn model_row(
             let busy = running.borrow().is_some();
             let installed = !busy && download::is_installed(&models_root(), &model);
             let state = if busy {
-                "downloading"
+                tr("downloading")
             } else if installed {
-                "installed"
+                tr("installed")
             } else {
-                "not installed"
+                tr("not installed")
             };
-            row.set_subtitle(&format!("{size} · {state} · license {license}"));
+            row.set_subtitle(&trf(
+                "{size} · {state} · license {license}",
+                &[("size", &size), ("state", &state), ("license", &license)],
+            ));
             progress.set_visible(busy);
             cancel.set_visible(busy);
             // An imported model has no source to download again from.
@@ -384,10 +405,12 @@ fn model_row(
                         match p {
                             Progress::Bytes(done, total) => {
                                 progress.set_fraction(done as f64 / total.max(1) as f64);
-                                progress.set_text(Some(&format!(
-                                    "{} / {} MB",
-                                    done / 1_000_000,
-                                    (total + 500_000) / 1_000_000
+                                progress.set_text(Some(&trf(
+                                    "{done} / {total} MB",
+                                    &[
+                                        ("done", &(done / 1_000_000)),
+                                        ("total", &((total + 500_000) / 1_000_000)),
+                                    ],
                                 )));
                             }
                             Progress::Done(result) => {
@@ -428,7 +451,10 @@ fn model_row(
         model,
         move |_| {
             if let Err(e) = download::remove(&models_root(), &model) {
-                window.add_toast(adw::Toast::new(&format!("Could not remove: {e}")));
+                window.add_toast(adw::Toast::new(&trf(
+                    "Could not remove: {error}",
+                    &[("error", &e)],
+                )));
             }
             if custom::is_custom(&model) {
                 if ui.settings.string("model") == model.id.as_str() {
@@ -485,11 +511,13 @@ fn import(
 /// “Add a model”: a Hugging Face repository or a local folder, for a chosen language.
 fn import_row(ui: &Rc<Ui>, window: &adw::PreferencesWindow) -> adw::ActionRow {
     let row = adw::ActionRow::builder()
-        .title("Add a model")
-        .subtitle("sherpa-onnx streaming transducer, from Hugging Face or a folder")
+        .title(tr("Add a model"))
+        .subtitle(tr(
+            "sherpa-onnx streaming transducer, from Hugging Face or a folder",
+        ))
         .build();
-    let add = icon_button("list-add-symbolic", "Add a model");
-    let cancel = icon_button("process-stop-symbolic", "Cancel");
+    let add = icon_button("list-add-symbolic", &tr("Add a model"));
+    let cancel = icon_button("process-stop-symbolic", &tr("Cancel"));
     cancel.set_visible(false);
     row.add_suffix(&add);
     row.add_suffix(&cancel);
@@ -513,7 +541,7 @@ fn import_row(ui: &Rc<Ui>, window: &adw::PreferencesWindow) -> adw::ActionRow {
             *running.borrow_mut() = Some(flag.clone());
             add.set_visible(false);
             cancel.set_visible(true);
-            row.set_subtitle("Preparing…");
+            row.set_subtitle(&tr("Preparing…"));
             let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel();
             let thread_lang = lang.clone();
             std::thread::spawn(move || {
@@ -528,16 +556,18 @@ fn import_row(ui: &Rc<Ui>, window: &adw::PreferencesWindow) -> adw::ActionRow {
                 async move {
                     while let Some(p) = rx.recv().await {
                         match p {
-                            ImportProgress::Bytes(done, total) => row.set_subtitle(&format!(
-                                "Downloading… {} / {} MB",
-                                done / 1_000_000,
-                                (total + 500_000) / 1_000_000
+                            ImportProgress::Bytes(done, total) => row.set_subtitle(&trf(
+                                "Downloading… {done} / {total} MB",
+                                &[
+                                    ("done", &(done / 1_000_000)),
+                                    ("total", &((total + 500_000) / 1_000_000)),
+                                ],
                             )),
                             ImportProgress::Checking => {
                                 cancel.set_visible(false);
-                                row.set_subtitle(
+                                row.set_subtitle(&tr(
                                     "Checking the model (loading, speed, test sentence)…",
-                                );
+                                ));
                             }
                             ImportProgress::Done(Ok((model, summary))) => {
                                 *running.borrow_mut() = None;
@@ -547,13 +577,15 @@ fn import_row(ui: &Rc<Ui>, window: &adw::PreferencesWindow) -> adw::ActionRow {
                                 if let Some(w) = ui.preferences.borrow().as_ref() {
                                     let toast = match summary {
                                         Some(s) => {
-                                            adw::Toast::new(&format!("{} added: {s}", model.name))
+                                            adw::Toast::new(&trf(
+                                                "{name} added: {summary}",
+                                                &[("name", &model.name), ("summary", &s)],
+                                            ))
                                         }
                                         None => adw::Toast::builder()
-                                            .title(format!(
-                                                "{} added, but its tests did not finish: \
-                                                 you can still try it, it may misbehave",
-                                                model.name
+                                            .title(trf(
+                                                "{name} added, but its tests did not finish: you can still try it, it may misbehave",
+                                                &[("name", &model.name)],
                                             ))
                                             .timeout(0)
                                             .build(),
@@ -565,8 +597,8 @@ fn import_row(ui: &Rc<Ui>, window: &adw::PreferencesWindow) -> adw::ActionRow {
                                 *running.borrow_mut() = None;
                                 add.set_visible(true);
                                 cancel.set_visible(false);
-                                row.set_subtitle(&format!("Not added: {e}"));
-                                window.add_toast(adw::Toast::new("The model was not added"));
+                                row.set_subtitle(&trf("Not added: {error}", &[("error", &e)]));
+                                window.add_toast(adw::Toast::new(&tr("The model was not added")));
                             }
                         }
                     }
@@ -588,11 +620,11 @@ fn import_row(ui: &Rc<Ui>, window: &adw::PreferencesWindow) -> adw::ActionRow {
         window,
         move |_| {
             let repo = adw::EntryRow::builder()
-                .title("Hugging Face repository (owner/name)")
+                .title(tr("Hugging Face repository (owner/name)"))
                 .build();
             let names: Vec<&str> = LANGUAGES.iter().map(|(_, n)| *n).collect();
             let language = adw::ComboRow::builder()
-                .title("Language")
+                .title(tr("Language"))
                 .model(&gtk::StringList::new(&names))
                 .build();
             let current = crate::language(&settings);
@@ -606,17 +638,16 @@ fn import_row(ui: &Rc<Ui>, window: &adw::PreferencesWindow) -> adw::ActionRow {
             list.append(&repo);
             list.append(&language);
             let dialog = adw::AlertDialog::builder()
-                .heading("Add a model")
-                .body(
-                    "Only sherpa-onnx streaming transducers work (encoder, decoder, joiner, \
-                     tokens). The model is copied, then tested before use.",
-                )
+                .heading(tr("Add a model"))
+                .body(tr(
+                    "Only sherpa-onnx streaming transducers work (encoder, decoder, joiner, tokens). The model is copied, then tested before use.",
+                ))
                 .extra_child(&list)
                 .build();
             dialog.add_responses(&[
-                ("cancel", "Cancel"),
-                ("folder", "From a Folder…"),
-                ("download", "Download"),
+                ("cancel", &tr("Cancel")),
+                ("folder", &tr("From a Folder…")),
+                ("download", &tr("Download")),
             ]);
             dialog.set_response_appearance("download", adw::ResponseAppearance::Suggested);
             dialog.set_response_enabled("download", false);
@@ -634,7 +665,7 @@ fn import_row(ui: &Rc<Ui>, window: &adw::PreferencesWindow) -> adw::ActionRow {
                     "folder" => {
                         let start = start.clone();
                         gtk::FileDialog::builder()
-                            .title("Folder containing the model")
+                            .title(tr("Folder containing the model"))
                             .build()
                             .select_folder(Some(&parent), gtk::gio::Cancellable::NONE, move |r| {
                                 if let Some(path) = r.ok().and_then(|f| f.path()) {

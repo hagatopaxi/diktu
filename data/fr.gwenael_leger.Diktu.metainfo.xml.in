@@ -3,11 +3,10 @@
   <id>fr.gwenael_leger.Diktu</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
-  <name>Diktu</name>
+  <name translate="no">Diktu</name>
   <summary>Dictate text at the cursor with local speech recognition</summary>
-  <summary xml:lang="fr">Dicter du texte au curseur, reconnaissance vocale locale</summary>
   <developer id="fr.gwenael_leger">
-    <name>Gwenaël Léger</name>
+    <name translate="no">Gwenaël Léger</name>
   </developer>
   <description>
     <p>
@@ -17,16 +16,7 @@
     </p>
     <p>
       Speech recognition runs entirely on your computer with a streaming model downloaded once
-      from Hugging Face. No audio leaves your machine.
-    </p>
-    <p xml:lang="fr">
-      Diktu tourne en tâche de fond. Appuyez sur un raccourci global, parlez : le texte est
-      tapé au curseur de l'application active au fil de la parole. L'écoute s'arrête seule
-      quand vous cessez de parler.
-    </p>
-    <p xml:lang="fr">
-      La reconnaissance vocale tourne entièrement sur votre ordinateur, avec un modèle de
-      streaming téléchargé une fois depuis Hugging Face. Aucun son ne quitte votre machine.
+      from Hugging Face. No audio leaves your machine. No telemetry is collected: Diktu does nothing but speech-to-text.
     </p>
   </description>
   <url type="homepage">https://github.com/hagatopaxi/diktu</url>

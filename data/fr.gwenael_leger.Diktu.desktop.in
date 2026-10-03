@@ -2,14 +2,11 @@
 Type=Application
 Name=@NAME@
 GenericName=Voice Dictation
-GenericName[fr]=Dictée vocale
 Comment=Dictate text at the cursor with local speech recognition
-Comment[fr]=Dicter du texte au curseur, reconnaissance vocale locale
 Exec=@BINDIR@/@BIN@
 Icon=@APP_ID@
 Terminal=false
 Categories=Utility;Accessibility;
 Keywords=speech;dictation;voice;recognition;
-Keywords[fr]=dictée;voix;parole;reconnaissance;
 StartupNotify=false
 X-GNOME-UsesNotifications=true

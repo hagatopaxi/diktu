@@ -1,6 +1,7 @@
 project('diktu', version: '0.1.0', license: 'GPL-3.0-or-later', meson_version: '>= 1.0')
 
 gnome = import('gnome')
+i18n = import('i18n')
 base_id = 'fr.gwenael_leger.Diktu'
 if get_option('profile') == 'development'
   app_id = base_id + '.Devel'
@@ -58,17 +59,23 @@ rename_id = ['sed', '-e', 's|"' + base_id + '"|"' + app_id + '"|',
              '@INPUT@']
 configure_file(input: 'data' / base_id + '.gschema.xml', output: app_id + '.gschema.xml',
   command: rename_id, capture: true, install_dir: datadir / 'glib-2.0' / 'schemas')
-metainfo = configure_file(input: 'data' / base_id + '.metainfo.xml', output: app_id + '.metainfo.xml',
-  command: rename_id, capture: true, install_dir: datadir / 'metainfo')
+metainfo_in = configure_file(input: 'data' / base_id + '.metainfo.xml.in', output: app_id + '.metainfo.xml.in',
+  command: rename_id, capture: true)
+metainfo = i18n.merge_file(input: metainfo_in, output: app_id + '.metainfo.xml',
+  po_dir: 'po', install: true, install_dir: datadir / 'metainfo')
 # Absolute Exec: xdg-desktop-portal resolves it with its own PATH, which lacks ~/.local/bin.
-desktop_file = configure_file(
+desktop_in = configure_file(
   input: 'data' / base_id + '.desktop.in',
-  output: app_id + '.desktop',
+  output: app_id + '.desktop.in',
   configuration: {'BINDIR': get_option('prefix') / get_option('bindir'), 'BIN': bin_name,
                   'NAME': app_name, 'APP_ID': app_id},
-  install_dir: datadir / 'applications',
 )
+desktop_file = i18n.merge_file(input: desktop_in, output: app_id + '.desktop',
+  po_dir: 'po', type: 'desktop', install: true, install_dir: datadir / 'applications')
 install_data('data' / 'icons' / app_id + '.svg', install_dir: datadir / 'icons' / 'hicolor' / 'scalable' / 'apps')
+
+subdir('po')
+test('translations', find_program('python3'), args: [meson.project_source_root() / 'po' / 'check.py'])
 
 test('gschema', find_program('glib-compile-schemas'),
   args: ['--strict', '--dry-run', meson.project_source_root() / 'data'])

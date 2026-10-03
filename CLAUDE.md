@@ -7,6 +7,7 @@ Local streaming voice dictation for GNOME (Rust, GPL-3.0-or-later). Text is type
 - Build: `cargo build` (or `meson setup _build && meson compile -C _build` for the full installation)
 - Tests: `cargo test`; real network/model tests: `cargo test -- --ignored`
 - Lint: `cargo fmt --all && cargo clippy --all-targets -- -D warnings`
+- Translations: `po/update.sh` after changing a user-visible message, then translate every catalog; `meson test` (`po/check.py`) fails on a missing, untranslated or fuzzy message or a changed `{placeholder}` (D28)
 - Schema, .desktop, metainfo: `meson test -C _build`
 - Flatpak: `flatpak run org.flatpak.Builder --user --force-clean build-dir build-aux/fr.gwenael_leger.Diktu.json`; development build: `build-aux/fr.gwenael_leger.Diktu.Devel.json` (regenerate it after editing the release manifest, D26); after any change to `Cargo.lock`, regenerate `build-aux/cargo-sources.json` (see README). Updating sherpa-onnx and onnxruntime: `docs/MAINTENANCE.md` (the `sherpa-onnx` crate version stays equal to the manifest's tag).
 - Without system GTK headers (current dev machine): `. <sysroot>/env.sh` before cargo, see docs/DECISIONS.md D2.

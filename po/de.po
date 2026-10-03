@@ -1,0 +1,530 @@
+# German translation of Diktu.
+# This file is distributed under the same license as the diktu package.
+msgid ""
+msgstr ""
+"Project-Id-Version: diktu\n"
+"Report-Msgid-Bugs-To: me@gwenael-leger.fr\n"
+"PO-Revision-Date: 2026-10-03 22:00+0200\n"
+"Last-Translator: Gwenaël Léger <me@gwenael-leger.fr>\n"
+"Language-Team: none\n"
+"POT-Creation-Date: 2026-10-03 21:15+0200\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: core/src/audio.rs:26
+msgid "no microphone found"
+msgstr "kein Mikrofon gefunden"
+
+#: core/src/audio.rs:39
+msgid "unsupported audio format: {format}"
+msgstr "nicht unterstütztes Audioformat: {format}"
+
+#: core/src/custom.rs:86
+msgid "Whisper models only transcribe whole recordings, not a live stream"
+msgstr "Whisper-Modelle transkribieren nur ganze Aufnahmen, keinen Live-Stream"
+
+#: core/src/custom.rs:91
+msgid "no .onnx file found: Diktu needs a sherpa-onnx (ONNX) model"
+msgstr ""
+"keine .onnx-Datei gefunden: Diktu braucht ein sherpa-onnx-Modell (ONNX)"
+
+#: core/src/custom.rs:96
+msgid ""
+"encoder-decoder model without a joiner (Whisper, Moonshine, SenseVoice…): "
+"only streaming transducers are supported"
+msgstr ""
+"Encoder-Decoder-Modell ohne Joiner (Whisper, Moonshine, SenseVoice…): nur "
+"Streaming-Transducer werden unterstützt"
+
+#: core/src/custom.rs:101
+msgid ""
+"single-file model (CTC, Paraformer…): only streaming transducers (encoder, "
+"decoder, joiner) are supported"
+msgstr ""
+"Ein-Datei-Modell (CTC, Paraformer…): nur Streaming-Transducer (encoder, "
+"decoder, joiner) werden unterstützt"
+
+#: core/src/custom.rs:119
+msgid "missing `{role}` file"
+msgstr "Datei `{role}` fehlt"
+
+#: core/src/custom.rs:139
+msgid "the model needs a name"
+msgstr "das Modell braucht einen Namen"
+
+#: core/src/custom.rs:143
+msgid "`{lang}` is not a language code (ISO 639-1, e.g. fr)"
+msgstr "`{lang}` ist kein Sprachcode (ISO 639-1, z. B. de)"
+
+#: core/src/custom.rs:150
+msgid "a model named “{name}” is already imported"
+msgstr "ein Modell namens „{name}“ ist bereits importiert"
+
+#: core/src/custom.rs:209
+msgid "copying {name}: {error}"
+msgstr "Kopieren von {name}: {error}"
+
+#: core/src/custom.rs:267
+msgid "“{input}” is not a Hugging Face repository (owner/name)"
+msgstr "„{input}“ ist kein Hugging-Face-Repository (Besitzer/Name)"
+
+#: core/src/custom.rs:290 core/src/download.rs:33
+msgid "network error: {error}"
+msgstr "Netzwerkfehler: {error}"
+
+#: core/src/custom.rs:295
+msgid "{repo}: private or gated repository"
+msgstr "{repo}: privates oder zugangsbeschränktes Repository"
+
+#: core/src/custom.rs:299
+msgid "{repo}: no such repository"
+msgstr "{repo}: Repository existiert nicht"
+
+#: core/src/custom.rs:304
+msgid "{repo}: unexpected answer: {error}"
+msgstr "{repo}: unerwartete Antwort: {error}"
+
+#: core/src/custom.rs:312
+msgid "{name}: unsafe path"
+msgstr "{name}: unsicherer Pfad"
+
+#: core/src/custom.rs:330
+msgid "see huggingface.co/{repo}"
+msgstr "siehe huggingface.co/{repo}"
+
+#: core/src/custom.rs:366
+msgid "{file}: changed since import"
+msgstr "{file}: seit dem Import verändert"
+
+#: core/src/custom.rs:370
+msgid "{file}: not an ONNX file"
+msgstr "{file}: keine ONNX-Datei"
+
+#: core/src/custom.rs:377
+msgid "missing tokens file"
+msgstr "Tokens-Datei fehlt"
+
+#: core/src/custom.rs:383
+msgid "{count} tokens"
+msgstr "{count} Tokens"
+
+#: core/src/custom.rs:389
+msgid "transcribes silence as “{text}”: files likely mismatched"
+msgstr "transkribiert Stille als „{text}“: Dateien passen wohl nicht zusammen"
+
+#: core/src/custom.rs:405
+msgid "too slow for live dictation (real-time factor {rtf})"
+msgstr "zu langsam für Live-Diktat (Echtzeitfaktor {rtf})"
+
+#: core/src/custom.rs:410
+msgid "real-time factor {rtf}"
+msgstr "Echtzeitfaktor {rtf}"
+
+#: core/src/custom.rs:419
+msgid ""
+"poor transcription of the {lang} test sentence ({percent} % word errors): "
+"“{text}”. Wrong language or broken model?"
+msgstr ""
+"schlechte Transkription des {lang}-Testsatzes ({percent} % Wortfehler): "
+"„{text}“. Falsche Sprache oder defektes Modell?"
+
+#: core/src/custom.rs:428
+msgid "{percent} % word errors on the {lang} test sentence"
+msgstr "{percent} % Wortfehler beim {lang}-Testsatz"
+
+#: core/src/custom.rs:433
+msgid "accuracy not checked: no {lang} test sentence"
+msgstr "Genauigkeit nicht geprüft: kein {lang}-Testsatz"
+
+#: core/src/custom.rs:461
+msgid "tokens line {line}: expected “symbol id”"
+msgstr "tokens Zeile {line}: „Symbol ID“ erwartet"
+
+#: core/src/custom.rs:469
+msgid "tokens: ids must run from 0 without gaps"
+msgstr "tokens: IDs müssen lückenlos bei 0 beginnen"
+
+#: core/src/custom.rs:479
+msgid "not a WAV file"
+msgstr "keine WAV-Datei"
+
+#: core/src/custom.rs:503
+msgid "WAV must be 16 kHz mono 16-bit PCM"
+msgstr "WAV muss 16 kHz Mono 16-Bit-PCM sein"
+
+#: core/src/download.rs:32
+msgid "download cancelled"
+msgstr "Download abgebrochen"
+
+#: core/src/download.rs:34
+msgid "disk error: {error}"
+msgstr "Datenträgerfehler: {error}"
+
+#: core/src/download.rs:35
+msgid "{file}: SHA-256 mismatch"
+msgstr "{file}: SHA-256 stimmt nicht überein"
+
+#: core/src/pipeline.rs:75
+msgid "no model installed"
+msgstr "kein Modell installiert"
+
+#: core/src/stt.rs:35
+msgid "no `{prefix}*` file in model"
+msgstr "keine `{prefix}*`-Datei im Modell"
+
+#: core/src/stt.rs:47
+msgid "sherpa-onnx could not load the model in {dir}"
+msgstr "sherpa-onnx konnte das Modell in {dir} nicht laden"
+
+#: app/src/main.rs:194
+msgid "could not start the model check: {error}"
+msgstr "Modellprüfung konnte nicht gestartet werden: {error}"
+
+#: app/src/main.rs:230
+msgid "no message"
+msgstr "keine Meldung"
+
+#: app/src/main.rs:227
+msgid "the speech engine crashed loading this model ({message})"
+msgstr ""
+"die Spracherkennung ist beim Laden dieses Modells abgestürzt ({message})"
+
+#: app/src/main.rs:400
+msgid "keyboard access denied: {error}"
+msgstr "Tastaturzugriff verweigert: {error}"
+
+#: app/src/main.rs:414
+msgid ""
+"global shortcut unavailable ({error}): bind a GNOME shortcut to “diktu --"
+"toggle”"
+msgstr ""
+"globales Tastenkürzel nicht verfügbar ({error}): legen Sie ein GNOME-"
+"Tastenkürzel für „diktu --toggle“ an"
+
+#: app/src/main.rs:423
+msgid "Listen for the dictation shortcut with no window open"
+msgstr "Auf das Diktat-Tastenkürzel achten, ohne dass ein Fenster offen ist"
+
+#: app/src/preferences.rs:43
+msgid "{app} Preferences"
+msgstr "{app}-Einstellungen"
+
+#: app/src/preferences.rs:60 app/src/preferences.rs:627
+msgid "Language"
+msgstr "Sprache"
+
+#: app/src/preferences.rs:68
+msgid "Dictation"
+msgstr "Diktat"
+
+#: app/src/preferences.rs:74
+msgid "Models"
+msgstr "Modelle"
+
+#: app/src/preferences.rs:76
+msgid ""
+"Download a model for the chosen language to start dictating. Models come "
+"from Hugging Face, are verified (SHA-256), then used offline."
+msgstr ""
+"Laden Sie ein Modell für die gewählte Sprache herunter, um mit dem Diktieren "
+"zu beginnen. Modelle stammen von Hugging Face, werden geprüft (SHA-256) und "
+"dann offline verwendet."
+
+#: app/src/preferences.rs:109
+msgid "Shortcut"
+msgstr "Tastenkürzel"
+
+#: app/src/preferences.rs:111
+msgid ""
+"GNOME assigns the shortcut. Fallback: a custom GNOME shortcut that runs "
+"“diktu --toggle”."
+msgstr ""
+"GNOME vergibt das Tastenkürzel. Alternative: ein eigenes GNOME-Tastenkürzel, "
+"das „diktu --toggle“ ausführt."
+
+#: app/src/preferences.rs:115 app/src/shortcut.rs:27
+msgid "Start or stop dictation"
+msgstr "Diktat starten oder beenden"
+
+#: app/src/preferences.rs:120
+msgid "GlobalShortcuts portal unavailable"
+msgstr "GlobalShortcuts-Portal nicht verfügbar"
+
+#: app/src/preferences.rs:124
+msgid "Change…"
+msgstr "Ändern…"
+
+#: app/src/preferences.rs:133
+msgid "Change it in Settings → Apps → Diktu"
+msgstr "Ändern Sie es in Einstellungen → Apps → Diktu"
+
+#: app/src/preferences.rs:142
+msgid "Behavior"
+msgstr "Verhalten"
+
+#: app/src/preferences.rs:145
+msgid "End-of-speech silence (s)"
+msgstr "Stille am Sprechende (s)"
+
+#: app/src/preferences.rs:146
+msgid "Silence after speech that stops listening"
+msgstr "Stille nach dem Sprechen, die das Zuhören beendet"
+
+#: app/src/preferences.rs:151
+msgid "Capitalize and end with a period"
+msgstr "Großschreiben und mit Punkt beenden"
+
+#: app/src/preferences.rs:156
+msgid "Delay between keys (ms)"
+msgstr "Verzögerung zwischen Tasten (ms)"
+
+#: app/src/preferences.rs:157
+msgid "Increase it if some apps drop characters"
+msgstr "Erhöhen, wenn manche Apps Zeichen verlieren"
+
+#: app/src/preferences.rs:161
+msgid "Start and stop sounds"
+msgstr "Start- und Stopptöne"
+
+#: app/src/preferences.rs:171
+msgid "Volume"
+msgstr "Lautstärke"
+
+#: app/src/preferences.rs:182
+msgid "About {app}"
+msgstr "Info zu {app}"
+
+#: app/src/preferences.rs:183
+msgid "Version, permissions, licenses, source code"
+msgstr "Version, Berechtigungen, Lizenzen, Quellcode"
+
+#: app/src/preferences.rs:213
+msgid "Permissions"
+msgstr "Berechtigungen"
+
+#: app/src/preferences.rs:215
+msgid ""
+"• Microphone: open only while you dictate; no audio leaves your machine."
+msgstr ""
+"• Mikrofon: nur während des Diktats geöffnet; kein Ton verlässt Ihren "
+"Rechner."
+
+#: app/src/preferences.rs:216
+msgid "• Remote desktop (keyboard): types the recognized text at the cursor."
+msgstr ""
+"• Fernzugriff (Tastatur): tippt den erkannten Text an der Cursorposition."
+
+#: app/src/preferences.rs:217
+msgid "• Global shortcut: starts and stops dictation from any app."
+msgstr "• Globales Tastenkürzel: startet und beendet das Diktat aus jeder App."
+
+#: app/src/preferences.rs:218
+msgid "• Run in background: listens for the shortcut with no window open."
+msgstr ""
+"• Hintergrundbetrieb: wartet ohne offenes Fenster auf das Tastenkürzel."
+
+#: app/src/preferences.rs:219
+msgid "• Network: only to download models from Hugging Face, when you ask."
+msgstr ""
+"• Netzwerk: nur zum Herunterladen von Modellen von Hugging Face, auf Ihren "
+"Wunsch."
+
+#: app/src/preferences.rs:220
+msgid "• Status icon: the tray icon showing whether dictation is on."
+msgstr "• Statussymbol: das Symbol im Infobereich zeigt, ob das Diktat läuft."
+
+#: app/src/preferences.rs:225
+msgid "Source code"
+msgstr "Quellcode"
+
+#. Translators: your names and emails, one per line.
+#: app/src/preferences.rs:227
+msgid "translator-credits"
+msgstr ""
+
+#: app/src/preferences.rs:248
+msgid "License: {license}"
+msgstr "Lizenz: {license}"
+
+#: app/src/preferences.rs:277
+msgid "{size} MB"
+msgstr "{size} MB"
+
+#: app/src/preferences.rs:309 app/src/preferences.rs:650
+msgid "Download"
+msgstr "Herunterladen"
+
+#: app/src/preferences.rs:310
+msgid "Cancel download"
+msgstr "Download abbrechen"
+
+#: app/src/preferences.rs:311
+msgid "Remove"
+msgstr "Entfernen"
+
+#: app/src/preferences.rs:335
+msgid "downloading"
+msgstr "wird heruntergeladen"
+
+#: app/src/preferences.rs:337
+msgid "installed"
+msgstr "installiert"
+
+#: app/src/preferences.rs:339
+msgid "not installed"
+msgstr "nicht installiert"
+
+#: app/src/preferences.rs:342
+msgid "{size} · {state} · license {license}"
+msgstr "{size} · {state} · Lizenz {license}"
+
+#: app/src/preferences.rs:409
+msgid "{done} / {total} MB"
+msgstr "{done} / {total} MB"
+
+#: app/src/preferences.rs:455
+msgid "Could not remove: {error}"
+msgstr "Entfernen nicht möglich: {error}"
+
+#: app/src/preferences.rs:514 app/src/preferences.rs:519
+#: app/src/preferences.rs:641
+msgid "Add a model"
+msgstr "Modell hinzufügen"
+
+#: app/src/preferences.rs:516
+msgid "sherpa-onnx streaming transducer, from Hugging Face or a folder"
+msgstr ""
+"sherpa-onnx-Streaming-Transducer, von Hugging Face oder aus einem Ordner"
+
+#: app/src/preferences.rs:520 app/src/preferences.rs:648
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: app/src/preferences.rs:544
+msgid "Preparing…"
+msgstr "Vorbereitung…"
+
+#: app/src/preferences.rs:560
+msgid "Downloading… {done} / {total} MB"
+msgstr "Herunterladen… {done} / {total} MB"
+
+#: app/src/preferences.rs:569
+msgid "Checking the model (loading, speed, test sentence)…"
+msgstr "Modell wird geprüft (Laden, Geschwindigkeit, Testsatz)…"
+
+#: app/src/preferences.rs:581
+msgid "{name} added: {summary}"
+msgstr "{name} hinzugefügt: {summary}"
+
+#: app/src/preferences.rs:587
+msgid ""
+"{name} added, but its tests did not finish: you can still try it, it may "
+"misbehave"
+msgstr ""
+"{name} hinzugefügt, aber die Tests wurden nicht beendet: Sie können es "
+"ausprobieren, es könnte sich fehlerhaft verhalten"
+
+#: app/src/preferences.rs:600
+msgid "Not added: {error}"
+msgstr "Nicht hinzugefügt: {error}"
+
+#: app/src/preferences.rs:601
+msgid "The model was not added"
+msgstr "Das Modell wurde nicht hinzugefügt"
+
+#: app/src/preferences.rs:623
+msgid "Hugging Face repository (owner/name)"
+msgstr "Hugging-Face-Repository (Besitzer/Name)"
+
+#: app/src/preferences.rs:643
+msgid ""
+"Only sherpa-onnx streaming transducers work (encoder, decoder, joiner, "
+"tokens). The model is copied, then tested before use."
+msgstr ""
+"Nur sherpa-onnx-Streaming-Transducer funktionieren (encoder, decoder, "
+"joiner, tokens). Das Modell wird kopiert und vor der Verwendung getestet."
+
+#: app/src/preferences.rs:649
+msgid "From a Folder…"
+msgstr "Aus einem Ordner…"
+
+#: app/src/preferences.rs:668
+msgid "Folder containing the model"
+msgstr "Ordner mit dem Modell"
+
+#: app/src/shortcut.rs:59
+msgid "not assigned"
+msgstr "nicht zugewiesen"
+
+#: app/src/tray.rs:73
+msgid "{app}: listening…"
+msgstr "{app}: hört zu…"
+
+#: app/src/tray.rs:97
+msgid "Stop dictation"
+msgstr "Diktat beenden"
+
+#: app/src/tray.rs:99
+msgid "Start dictation"
+msgstr "Diktat starten"
+
+#: app/src/tray.rs:105
+msgid "Preferences…"
+msgstr "Einstellungen…"
+
+#: app/src/tray.rs:109
+msgid "Quit"
+msgstr "Beenden"
+
+#: data/fr.gwenael_leger.Diktu.desktop.in:4
+msgid "Voice Dictation"
+msgstr "Sprachdiktat"
+
+#: data/fr.gwenael_leger.Diktu.desktop.in:5
+msgid "Dictate text at the cursor with local speech recognition"
+msgstr "Text an der Cursorposition diktieren, mit lokaler Spracherkennung"
+
+#: data/fr.gwenael_leger.Diktu.desktop.in:10
+msgid "speech;dictation;voice;recognition;"
+msgstr "Sprache;Diktat;Stimme;Erkennung;"
+
+#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:12
+msgid ""
+"Diktu runs in the background. Press a global shortcut, speak, and the text "
+"is typed at the cursor of the focused application as you talk. Listening "
+"stops by itself when you stop speaking."
+msgstr ""
+"Diktu läuft im Hintergrund. Drücken Sie ein globales Tastenkürzel und "
+"sprechen Sie: Der Text wird während des Sprechens an der Cursorposition der "
+"aktiven Anwendung getippt. Das Zuhören endet von selbst, wenn Sie aufhören "
+"zu sprechen."
+
+#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:17
+msgid ""
+"Speech recognition runs entirely on your computer with a streaming model "
+"downloaded once from Hugging Face. No audio leaves your machine. No "
+"telemetry is collected: Diktu does nothing but speech-to-text."
+msgstr ""
+"Die Spracherkennung läuft vollständig auf Ihrem Rechner, mit einem Streaming-"
+"Modell, das einmalig von Hugging Face heruntergeladen wird. Kein Ton "
+"verlässt Ihren Rechner. Es werden keine Telemetriedaten erhoben: Diktu macht "
+"nichts außer Sprache in Text umzuwandeln."
+
+#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:46
+msgid ""
+"Add your own speech models from Hugging Face or a local folder, in the "
+"language of your choice: Diktu checks that each one works before using it."
+msgstr ""
+"Fügen Sie eigene Sprachmodelle von Hugging Face oder aus einem lokalen "
+"Ordner hinzu, in der Sprache Ihrer Wahl: Diktu prüft vor der Verwendung, ob "
+"jedes funktioniert."
+
+#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:51
+msgid ""
+"First release: French streaming dictation, global shortcut, model manager."
+msgstr ""
+"Erste Version: Streaming-Diktat auf Französisch, globales Tastenkürzel, "
+"Modellverwaltung."

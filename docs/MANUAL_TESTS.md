@@ -85,13 +85,16 @@ equivalent label.
 - [x] Close the window during a download then reopen it: progress continues.
 - [x] Cut the network during a download: an error message is shown in the window; starting again resumes.
 - [x] Remove: the model folder disappears, the state goes back to "not installed".
-- [x] The shortcut's "Change…" button opens the GNOME dialog if the GlobalShortcuts portal is version 2 or later, and the new shortcut is then shown in the row; with version 1 (GNOME 50.1 + xdg-desktop-portal 1.21.1), a toast points to Settings → Apps → Diktu.
+- [x] The shortcut's "Change…" button opens the GNOME dialog if the GlobalShortcuts portal is version 2 or later, and the new shortcut is then shown in the row.
+- [ ] With version 1 (GNOME 50.1 + xdg-desktop-portal 1.21.1), "Change…" shows the same dialog as at first launch; the chosen shortcut is shown in the row and works, the previous one no longer does.
 - [x] End silence, capitalization/final period, pause between keys, sounds, volume: each setting applies to the next dictation without a restart, and persists after a restart.
 - [ ] Add a model → Hugging Face `csukuangfj/sherpa-onnx-streaming-zipformer-fr-kroko-2025-08-06`, French: progress "Downloading… x / 71 MB", then "Checking…", then a toast with the check summary; the new model appears, is selected, and dictation works.
 - [ ] Add a model → From a Folder… on a folder holding a streaming transducer (in Flatpak, through the file chooser portal): same result, and a copy is in the models folder.
 - [ ] Add a Whisper repository (e.g. `csukuangfj/sherpa-onnx-whisper-tiny`): refused with an explanation, nothing left in the models folder (no `.staging-*`).
 - [ ] Add a model in a language without a registered one (e.g. English): the language appears in the Language list.
 - [ ] Remove an imported model: its row disappears; if it was selected, the default model is used again.
+- [ ] Desktop in German, Spanish, Russian or Esperanto (`LANGUAGE=eo diktu`): menus, preferences, toasts, the About dialog and the app grid entry are translated; with no Diktu setting yet, the Language row shows the desktop language, and English when no model exists for it (e.g. Esperanto).
+- [ ] Switch the Language row to each built-in language, download its model and dictate a sentence: the text is typed correctly.
 - [ ] "About Diktu" (bottom of the preferences): the dialog shows the version, the GitHub links (website, issues, source code), the permissions list under Details, and under Legal the GPL-3.0, sherpa-onnx (Apache-2.0), ONNX Runtime (MIT) and one license section per model.
 
 ## Flatpak

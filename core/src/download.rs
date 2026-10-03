@@ -4,6 +4,7 @@
 //! then renamed atomically. A model counts as installed only once the marker file,
 //! written last, holds its revision.
 
+use crate::i18n::{tr, trf};
 use std::fmt;
 use std::fs::{self, File, OpenOptions};
 use std::io::{self, Read, Write};
@@ -28,10 +29,10 @@ pub enum Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Error::Cancelled => write!(f, "download cancelled"),
-            Error::Http(e) => write!(f, "network error: {e}"),
-            Error::Io(e) => write!(f, "disk error: {e}"),
-            Error::HashMismatch(p) => write!(f, "{p}: SHA-256 mismatch"),
+            Error::Cancelled => f.write_str(&tr("download cancelled")),
+            Error::Http(e) => f.write_str(&trf("network error: {error}", &[("error", e)])),
+            Error::Io(e) => f.write_str(&trf("disk error: {error}", &[("error", e)])),
+            Error::HashMismatch(p) => f.write_str(&trf("{file}: SHA-256 mismatch", &[("file", p)])),
         }
     }
 }

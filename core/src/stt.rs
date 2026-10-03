@@ -31,7 +31,9 @@ impl SherpaTransducer {
                 .iter()
                 .find(|f| f.starts_with(prefix))
                 .map(|f| dir.join(f).to_string_lossy().into_owned())
-                .ok_or_else(|| format!("no `{prefix}*` file in model"))
+                .ok_or_else(|| {
+                    crate::i18n::trf("no `{prefix}*` file in model", &[("prefix", &prefix)])
+                })
         };
         let mut config = OnlineRecognizerConfig::default();
         config.model_config.transducer.encoder = Some(find("encoder")?);
@@ -40,8 +42,12 @@ impl SherpaTransducer {
         config.model_config.tokens = Some(find("tokens")?);
         config.model_config.num_threads = 2;
         config.decoding_method = Some("greedy_search".into());
-        let recognizer = OnlineRecognizer::create(&config)
-            .ok_or_else(|| format!("sherpa-onnx could not load model in {}", dir.display()))?;
+        let recognizer = OnlineRecognizer::create(&config).ok_or_else(|| {
+            crate::i18n::trf(
+                "sherpa-onnx could not load the model in {dir}",
+                &[("dir", &dir.display())],
+            )
+        })?;
         let stream = recognizer.create_stream();
         Ok(Self { recognizer, stream })
     }

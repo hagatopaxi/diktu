@@ -1,0 +1,11 @@
+core/src/audio.rs
+core/src/custom.rs
+core/src/download.rs
+core/src/pipeline.rs
+core/src/stt.rs
+app/src/main.rs
+app/src/preferences.rs
+app/src/shortcut.rs
+app/src/tray.rs
+data/fr.gwenael_leger.Diktu.desktop.in
+data/fr.gwenael_leger.Diktu.metainfo.xml.in

@@ -12,6 +12,7 @@ use std::sync::mpsc::{Sender, sync_channel};
 use std::sync::{Arc, OnceLock};
 
 use adw::prelude::*;
+use diktu_core::i18n::{self, tr, trf};
 use diktu_core::pipeline::{self, Notice};
 use diktu_core::registry::{self, Model};
 use diktu_core::stt::{SherpaTransducer, SttEngine};
@@ -58,6 +59,13 @@ pub fn runtime() -> &'static tokio::runtime::Runtime {
 }
 
 fn main() -> glib::ExitCode {
+    // Catalogs are installed under <prefix>/share/locale, next to <prefix>/bin.
+    if let Some(prefix) = std::env::current_exe()
+        .ok()
+        .and_then(|exe| exe.parent()?.parent().map(PathBuf::from))
+    {
+        i18n::init(&prefix.join("share/locale"));
+    }
     if let [_, flag, dir] = &std::env::args().collect::<Vec<_>>()[..]
         && flag == CHECK_FLAG
     {
@@ -183,7 +191,7 @@ pub fn check_model(dir: &std::path::Path) -> Result<Option<String>, String> {
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()
-        .map_err(|e| format!("could not start the model check: {e}"))?;
+        .map_err(|e| trf("could not start the model check: {error}", &[("error", &e)]))?;
     // Pipes are drained on threads: a full pipe would block the child until the timeout.
     let drain = |pipe: Option<Box<dyn Read + Send>>| {
         std::thread::spawn(move || {
@@ -215,9 +223,12 @@ pub fn check_model(dir: &std::path::Path) -> Result<Option<String>, String> {
         Some(_) if !message.is_empty() => Err(message),
         _ => {
             let last = stderr.lines().rev().find(|l| !l.trim().is_empty());
-            Err(format!(
-                "the speech engine crashed loading this model ({})",
-                last.unwrap_or("no message")
+            Err(trf(
+                "the speech engine crashed loading this model ({message})",
+                &[(
+                    "message",
+                    &last.map_or_else(|| tr("no message"), str::to_owned),
+                )],
             ))
         }
     }
@@ -386,7 +397,7 @@ fn startup(app: &adw::Application) {
             // Ask for keyboard access now rather than in the middle of the first dictation;
             // `run` closes this session once idle.
             if let Err(e) = sink.connect() {
-                error(format!("keyboard access denied: {e}"));
+                error(trf("keyboard access denied: {error}", &[("error", &e)]));
             }
             inject::run(text_rx, sink, error);
         })
@@ -399,8 +410,9 @@ fn startup(app: &adw::Application) {
             let _ = trigger_events.send(UiEvent::Trigger(t));
         };
         if let Err(e) = shortcut::run(toggle, configure_rx, on_trigger).await {
-            let message = format!(
-                "global shortcut unavailable ({e}): bind a GNOME shortcut to “diktu --toggle”"
+            let message = trf(
+                "global shortcut unavailable ({error}): bind a GNOME shortcut to “diktu --toggle”",
+                &[("error", &e)],
             );
             let _ = trigger_events.send(UiEvent::Notice(Notice::Error(message)));
         }
@@ -408,7 +420,7 @@ fn startup(app: &adw::Application) {
 
     let background = runtime().block_on(async {
         ashpd::desktop::background::Background::request()
-            .reason("Listen for the dictation shortcut with no window open")
+            .reason(tr("Listen for the dictation shortcut with no window open").as_str())
             .send()
             .await
     });

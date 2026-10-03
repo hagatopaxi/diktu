@@ -1,5 +1,6 @@
 //! Microphone capture: cpal callback → lock-free ring buffer → 16 kHz mono f32.
 
+use crate::i18n::{tr, trf};
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use cpal::{FromSample, SizedSample};
 use ringbuf::traits::{Consumer, Producer, Split};
@@ -22,7 +23,7 @@ impl Capture {
     pub fn start() -> Result<Self, String> {
         let device = cpal::default_host()
             .default_input_device()
-            .ok_or("no microphone found")?;
+            .ok_or_else(|| tr("no microphone found"))?;
         let config = device.default_input_config().map_err(|e| e.to_string())?;
         let rate = config.sample_rate();
         let channels = usize::from(config.channels());
@@ -33,7 +34,12 @@ impl Capture {
             cpal::SampleFormat::I16 => open::<i16>(&device, &config.into(), channels, producer),
             cpal::SampleFormat::I32 => open::<i32>(&device, &config.into(), channels, producer),
             cpal::SampleFormat::U16 => open::<u16>(&device, &config.into(), channels, producer),
-            other => return Err(format!("unsupported audio format: {other}")),
+            other => {
+                return Err(trf(
+                    "unsupported audio format: {format}",
+                    &[("format", &other)],
+                ));
+            }
         }?;
         stream.play().map_err(|e| e.to_string())?;
         Ok(Self {

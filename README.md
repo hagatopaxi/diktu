@@ -25,6 +25,9 @@ language works with an imported sherpa-onnx streaming model.
   indicator shows when you are being listened to. A short sound tells you when the microphone is open.
 - **Local.** Recognition runs on the CPU with [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx).
   No account, no online service.
+- **Multilingual.** Dictation in English, French, German, Russian and Spanish; the interface
+  is also translated into Esperanto. The dictation language follows your desktop's by
+  default.
 
 ## Privacy
 
@@ -63,8 +66,9 @@ build with Meson, starting at login, and uninstalling.
 
 ## First launch
 
-1. The preferences window opens. Download the French model (71 MB). The download can be
-   cancelled and resumed, and is checked with SHA-256.
+1. The preferences window opens on your desktop's language (English if Diktu has no model
+   for it). Pick the language you dictate in, then download its model (71 to 156 MB). The
+   download can be cancelled and resumed, and is checked with SHA-256.
 2. GNOME asks for permission to control the keyboard. Accept: this is how Diktu types. The
    answer is remembered.
 3. GNOME proposes the `F12` shortcut. Accept it or choose another key. On many laptops the
@@ -142,6 +146,11 @@ Flatpak sources with
 ```sh
 uv run flatpak-cargo-generator.py Cargo.lock -o build-aux/cargo-sources.json
 ```
+
+Translations live in `po/` (gettext). After changing a user-visible message, run
+`po/update.sh` to refresh `po/diktu.pot` and the catalogs, then translate the new entries.
+To add a language, add its code to `po/LINGUAS` and run the script. Messages built from
+values use named placeholders (`{name}`) that translations must keep.
 
 ## License and credits
 

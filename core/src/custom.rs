@@ -13,6 +13,7 @@ use std::time::Instant;
 use serde::Deserialize;
 
 use crate::download::{self, MARKER};
+use crate::i18n::{tr, trf};
 use crate::registry::{Model, ModelFile};
 use crate::stt::{SAMPLE_RATE, SherpaTransducer, SttEngine};
 
@@ -81,22 +82,24 @@ pub fn pick(names: &[String]) -> Result<[String; 4], String> {
         .collect();
     let has = |role: &str| onnx.iter().any(|n| base(n).starts_with(role));
     if names.iter().any(|n| base(n).contains("whisper")) {
-        return Err("Whisper models only transcribe whole recordings, not a live stream".into());
+        return Err(tr(
+            "Whisper models only transcribe whole recordings, not a live stream",
+        ));
     }
     if onnx.is_empty() {
-        return Err("no .onnx file found: Diktu needs a sherpa-onnx (ONNX) model".into());
+        return Err(tr(
+            "no .onnx file found: Diktu needs a sherpa-onnx (ONNX) model",
+        ));
     }
     if has("encoder") && has("decoder") && !has("joiner") {
-        return Err(
-            "encoder-decoder model without a joiner (Whisper, Moonshine, SenseVoice…): \
-                    only streaming transducers are supported"
-                .into(),
-        );
+        return Err(tr(
+            "encoder-decoder model without a joiner (Whisper, Moonshine, SenseVoice…): only streaming transducers are supported",
+        ));
     }
     if !has("encoder") {
-        return Err("single-file model (CTC, Paraformer…): \
-                    only streaming transducers (encoder, decoder, joiner) are supported"
-            .into());
+        return Err(tr(
+            "single-file model (CTC, Paraformer…): only streaming transducers (encoder, decoder, joiner) are supported",
+        ));
     }
     let mut picked = ROLES.map(|_| String::new());
     for (slot, role) in picked.iter_mut().zip(ROLES) {
@@ -113,7 +116,7 @@ pub fn pick(names: &[String]) -> Result<[String; 4], String> {
         *slot = candidates
             .first()
             .map(|n| (*n).clone())
-            .ok_or_else(|| format!("missing `{role}` file"))?;
+            .ok_or_else(|| trf("missing `{role}` file", &[("role", &role)]))?;
     }
     Ok(picked)
 }
@@ -133,16 +136,20 @@ fn slug(name: &str) -> String {
 fn new_model(root: &Path, name: &str, lang: &str) -> Result<Model, String> {
     let slug = slug(name);
     if slug.is_empty() {
-        return Err("the model needs a name".into());
+        return Err(tr("the model needs a name"));
     }
     if !is_lang_code(lang) {
-        return Err(format!(
-            "`{lang}` is not a language code (ISO 639-1, e.g. fr)"
+        return Err(trf(
+            "`{lang}` is not a language code (ISO 639-1, e.g. fr)",
+            &[("lang", &lang)],
         ));
     }
     let id = format!("{PREFIX}{slug}");
     if root.join(&id).exists() {
-        return Err(format!("a model named “{name}” is already imported"));
+        return Err(trf(
+            "a model named “{name}” is already imported",
+            &[("name", &name)],
+        ));
     }
     Ok(Model {
         id,
@@ -198,7 +205,10 @@ pub fn stage_folder(root: &Path, src: &Path, lang: &str) -> Result<Model, String
     for name in picked {
         if let Err(e) = fs::copy(src.join(&name), dir.join(&name)) {
             discard(root, &model);
-            return Err(format!("copying {name}: {e}"));
+            return Err(trf(
+                "copying {name}: {error}",
+                &[("name", &name), ("error", &e)],
+            ));
         }
         model.files.push(ModelFile {
             path: name,
@@ -253,9 +263,9 @@ pub fn parse_repo(input: &str) -> Result<String, String> {
     };
     match parts[..] {
         [owner, name] if ok(owner) && ok(name) => Ok(format!("{owner}/{name}")),
-        _ => Err(format!(
-            "“{}” is not a Hugging Face repository (owner/name)",
-            input.trim()
+        _ => Err(trf(
+            "“{input}” is not a Hugging Face repository (owner/name)",
+            &[("input", &input.trim())],
         )),
     }
 }
@@ -277,20 +287,29 @@ pub fn stage_hf(
         .user_agent(concat!("diktu/", env!("CARGO_PKG_VERSION")))
         .build()
         .and_then(|c| c.get(&url).send())
-        .map_err(|e| format!("network error: {e}"))?;
+        .map_err(|e| trf("network error: {error}", &[("error", &e)]))?;
     match response.status().as_u16() {
         200 => {}
-        401 | 403 => return Err(format!("{repo}: private or gated repository")),
-        404 => return Err(format!("{repo}: no such repository")),
+        401 | 403 => {
+            return Err(trf(
+                "{repo}: private or gated repository",
+                &[("repo", &repo)],
+            ));
+        }
+        404 => return Err(trf("{repo}: no such repository", &[("repo", &repo)])),
         s => return Err(format!("{repo}: HTTP {s}")),
     }
-    let info: HfModel =
-        serde_json::from_reader(response).map_err(|e| format!("{repo}: unexpected answer: {e}"))?;
+    let info: HfModel = serde_json::from_reader(response).map_err(|e| {
+        trf(
+            "{repo}: unexpected answer: {error}",
+            &[("repo", &repo), ("error", &e)],
+        )
+    })?;
     let names: Vec<String> = info.siblings.iter().map(|f| f.rfilename.clone()).collect();
     let picked = pick(&names)?;
     for name in &picked {
         if name.contains("..") || name.starts_with('/') {
-            return Err(format!("{name}: unsafe path"));
+            return Err(trf("{name}: unsafe path", &[("name", name)]));
         }
         let file = info.siblings.iter().find(|f| &f.rfilename == name).unwrap();
         model.files.push(ModelFile {
@@ -308,7 +327,7 @@ pub fn stage_hf(
     model.revision = info.sha;
     model.license = match info.card.and_then(|c| c.license) {
         Some(serde_json::Value::String(l)) => l,
-        _ => format!("see huggingface.co/{repo}"),
+        _ => trf("see huggingface.co/{repo}", &[("repo", &repo)]),
     };
     // `install` writes into `<root>/<id>`: point it at the staging directory.
     let mut staged = model.clone();
@@ -344,30 +363,31 @@ pub fn check(dir: &Path) -> Result<String, String> {
         let path = dir.join(&file.path);
         let bytes = fs::read(&path).map_err(|e| format!("{}: {e}", file.path))?;
         if bytes.len() as u64 != file.size || download::hex_sha256(&bytes) != file.sha256 {
-            return Err(format!("{}: changed since import", file.path));
+            return Err(trf("{file}: changed since import", &[("file", &file.path)]));
         }
         if file.path.ends_with(".onnx") && bytes.first() != Some(&0x08) {
             // An ONNX ModelProto starts with its `ir_version` field (tag 0x08).
-            return Err(format!("{}: not an ONNX file", file.path));
+            return Err(trf("{file}: not an ONNX file", &[("file", &file.path)]));
         }
     }
     let tokens = model
         .files
         .iter()
         .find(|f| f.path.rsplit('/').next().unwrap().starts_with("tokens"))
-        .ok_or("missing tokens file")?;
+        .ok_or_else(|| tr("missing tokens file"))?;
     let vocab =
         check_tokens(&fs::read_to_string(dir.join(&tokens.path)).map_err(|e| e.to_string())?)?;
 
     let load = || SherpaTransducer::load(dir, model.files.iter().map(|f| f.path.as_str()));
     let mut engine = load()?;
-    let mut report = vec![format!("{vocab} tokens")];
+    let mut report = vec![trf("{count} tokens", &[("count", &vocab)])];
 
     let silence = vec![0.0; 2 * SAMPLE_RATE as usize];
     let text = transcribe(&mut engine, &silence);
     if text.split_whitespace().count() > 2 {
-        return Err(format!(
-            "transcribes silence as “{text}”: files likely mismatched"
+        return Err(trf(
+            "transcribes silence as “{text}”: files likely mismatched",
+            &[("text", &text)],
         ));
     }
 
@@ -381,28 +401,38 @@ pub fn check(dir: &Path) -> Result<String, String> {
     let text = transcribe(&mut engine, &audio);
     let rtf = start.elapsed().as_secs_f64() / (audio.len() as f64 / f64::from(SAMPLE_RATE));
     if rtf > MAX_RTF {
-        return Err(format!(
-            "too slow for live dictation (real-time factor {rtf:.2})"
+        return Err(trf(
+            "too slow for live dictation (real-time factor {rtf})",
+            &[("rtf", &format!("{rtf:.2}"))],
         ));
     }
-    report.push(format!("real-time factor {rtf:.2}"));
+    report.push(trf(
+        "real-time factor {rtf}",
+        &[("rtf", &format!("{rtf:.2}"))],
+    ));
     match sample {
         Some((_, _, expected)) => {
             let (errors, total) = word_errors(expected, &text);
             let wer = errors as f64 / total.max(1) as f64;
             if wer > MAX_WER {
-                return Err(format!(
-                    "poor transcription of the {lang} test sentence ({:.0} % word errors): \
-                     “{text}”. Wrong language or broken model?",
-                    wer * 100.0
+                return Err(trf(
+                    "poor transcription of the {lang} test sentence ({percent} % word errors): “{text}”. Wrong language or broken model?",
+                    &[
+                        ("lang", &lang),
+                        ("percent", &format!("{:.0}", wer * 100.0)),
+                        ("text", &text),
+                    ],
                 ));
             }
-            report.push(format!(
-                "{:.0} % word errors on the {lang} test sentence",
-                wer * 100.0
+            report.push(trf(
+                "{percent} % word errors on the {lang} test sentence",
+                &[("percent", &format!("{:.0}", wer * 100.0)), ("lang", &lang)],
             ));
         }
-        None => report.push(format!("accuracy not checked: no {lang} test sentence")),
+        None => report.push(trf(
+            "accuracy not checked: no {lang} test sentence",
+            &[("lang", &lang)],
+        )),
     }
     Ok(report.join(", "))
 }
@@ -426,12 +456,17 @@ fn check_tokens(text: &str) -> Result<usize, String> {
         let id = line
             .rsplit_once(char::is_whitespace)
             .and_then(|(_, id)| id.parse::<usize>().ok())
-            .ok_or_else(|| format!("tokens line {}: expected “symbol id”", i + 1))?;
+            .ok_or_else(|| {
+                trf(
+                    "tokens line {line}: expected “symbol id”",
+                    &[("line", &(i + 1))],
+                )
+            })?;
         ids.push(id);
     }
     ids.sort_unstable();
     if ids.len() < 2 || ids.iter().enumerate().any(|(i, &id)| i != id) {
-        return Err("tokens: ids must run from 0 without gaps".into());
+        return Err(tr("tokens: ids must run from 0 without gaps"));
     }
     Ok(ids.len())
 }
@@ -441,7 +476,7 @@ fn wav_samples(wav: &[u8]) -> Result<Vec<f32>, String> {
     let mut rest = wav
         .get(12..)
         .filter(|_| wav.starts_with(b"RIFF"))
-        .ok_or("not a WAV file")?;
+        .ok_or_else(|| tr("not a WAV file"))?;
     let mut format_ok = false;
     while rest.len() >= 8 {
         let len = u32::from_le_bytes(rest[4..8].try_into().unwrap()) as usize;
@@ -465,7 +500,7 @@ fn wav_samples(wav: &[u8]) -> Result<Vec<f32>, String> {
         }
         rest = &rest[(8 + len + len % 2).min(rest.len())..];
     }
-    Err("WAV must be 16 kHz mono 16-bit PCM".into())
+    Err(tr("WAV must be 16 kHz mono 16-bit PCM"))
 }
 
 /// Quiet deterministic noise, for languages without a reference clip.

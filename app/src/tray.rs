@@ -1,5 +1,6 @@
 //! StatusNotifierItem icon (shown by the AppIndicator extension in GNOME).
 
+use diktu_core::i18n::{tr, trf};
 use std::sync::mpsc::Sender;
 
 use gtk::gdk_pixbuf::Pixbuf;
@@ -69,11 +70,10 @@ impl ksni::Tray for Tray {
     fn tool_tip(&self) -> ksni::ToolTip {
         ksni::ToolTip {
             title: if self.recording {
-                "Diktu: listening…"
+                trf("{app}: listening…", &[("app", &APP_NAME)])
             } else {
-                "Diktu"
-            }
-            .into(),
+                APP_NAME.into()
+            },
             ..Default::default()
         }
     }
@@ -93,20 +93,20 @@ impl ksni::Tray for Tray {
         };
         vec![
             item(
-                if self.recording {
-                    "Stop dictation"
+                &if self.recording {
+                    tr("Stop dictation")
                 } else {
-                    "Start dictation"
+                    tr("Start dictation")
                 },
                 |t| {
                     let _ = t.toggle.send(());
                 },
             ),
-            item("Preferences…", |t| {
+            item(&tr("Preferences…"), |t| {
                 let _ = t.events.send(UiEvent::Preferences);
             }),
             MenuItem::Separator,
-            item("Quit", |t| {
+            item(&tr("Quit"), |t| {
                 let _ = t.events.send(UiEvent::Quit);
             }),
         ]

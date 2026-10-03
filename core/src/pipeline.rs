@@ -72,7 +72,7 @@ fn run(
         }
         let Some(d) = &mut dictation else {
             if toggles.poll() {
-                notify(Notice::Error("no model installed".into()));
+                notify(Notice::Error(crate::i18n::tr("no model installed")));
             }
             thread::sleep(Duration::from_millis(20));
             continue;
