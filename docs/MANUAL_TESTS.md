@@ -8,6 +8,25 @@ extension installed), natively (`meson install`) and in Flatpak.
 Setup: French model downloaded from the preferences, a target application open
 (text editor, browser input field, terminal).
 
+### Dictating without speaking
+
+Where you cannot talk, `build-aux/fake-mic.sh` replaces the microphone with recordings
+(PipeWire's `pw-loopback`, `wpctl`, `pw-play`; nothing is heard on the speakers):
+
+```sh
+build-aux/fake-mic.sh on        # virtual microphone becomes the default input
+build-aux/fake-mic.sh play core/tests/data/common_voice_fr_27024649.wav   # dictation + clip after 3 s
+build-aux/fake-mic.sh off       # previous input back, virtual microphone removed
+```
+
+During the 3 s countdown (`play FILE 5` for 5 s), put the cursor in the target application: the
+script then starts dictation itself (`--toggle` of the development Flatpak; set `DIKTU_TOGGLE`, e.g.
+`DIKTU_TOGGLE="flatpak run fr.gwenael_leger.Diktu --toggle"`, for another build) and plays the clip, so the
+two stay in step. Do not press the shortcut. Expected texts are in `core/tests/data/trans.txt`; listening
+should stop by itself about 1.2 s after the clip. Any 16 kHz-or-more WAV works, e.g. one made
+with `espeak-ng -v fr -w phrase.wav "Bonjour"` (synthetic voices are transcribed less well).
+Run `off` when done: the virtual microphone otherwise lasts until the end of the session.
+
 UI labels are quoted in English; when the interface runs in another language, look for the
 equivalent label.
 
