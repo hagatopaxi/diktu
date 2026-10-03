@@ -15,7 +15,7 @@ use sha2::{Digest, Sha256};
 use crate::registry::{Model, ModelFile};
 
 pub const HF_BASE_URL: &str = "https://huggingface.co";
-const MARKER: &str = ".installed";
+pub(crate) const MARKER: &str = ".installed";
 
 #[derive(Debug)]
 pub enum Error {
@@ -166,7 +166,7 @@ fn fetch(
     out.sync_all()?;
     drop(out);
 
-    if hex(&hasher.finalize()) != file.sha256 {
+    if !file.sha256.is_empty() && hex(&hasher.finalize()) != file.sha256 {
         fs::remove_file(&part)?;
         return Err(Error::HashMismatch(file.path.clone()));
     }
@@ -174,7 +174,7 @@ fn fetch(
     Ok(())
 }
 
-fn hash_file(path: &Path) -> io::Result<String> {
+pub(crate) fn hash_file(path: &Path) -> io::Result<String> {
     let mut hasher = Sha256::new();
     hash_reader(File::open(path)?, &mut hasher)?;
     Ok(hex(&hasher.finalize()))
@@ -192,6 +192,10 @@ fn hash_reader(mut reader: impl Read, hasher: &mut Sha256) -> io::Result<u64> {
             }
         }
     }
+}
+
+pub(crate) fn hex_sha256(bytes: &[u8]) -> String {
+    hex(&Sha256::digest(bytes))
 }
 
 fn hex(bytes: &[u8]) -> String {

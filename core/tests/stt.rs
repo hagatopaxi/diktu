@@ -7,6 +7,7 @@
 use std::path::PathBuf;
 use std::time::Instant;
 
+use diktu_core::custom::word_errors;
 use diktu_core::session::{Dictation, State, Trigger};
 use diktu_core::stt::{SAMPLE_RATE, SherpaTransducer};
 
@@ -24,42 +25,6 @@ fn model_dir() -> PathBuf {
                 .join("models")
                 .join(model.id)
         })
-}
-
-fn words(text: &str) -> Vec<String> {
-    text.to_lowercase()
-        .replace(['’', '\'', '-'], " ")
-        .chars()
-        .filter(|c| c.is_alphanumeric() || c.is_whitespace())
-        .collect::<String>()
-        .split_whitespace()
-        .map(str::to_owned)
-        .collect()
-}
-
-fn edit_distance(a: &[String], b: &[String]) -> usize {
-    let mut row: Vec<usize> = (0..=b.len()).collect();
-    for x in a {
-        let mut prev = row[0];
-        row[0] += 1;
-        for (j, y) in b.iter().enumerate() {
-            let cur = row[j + 1];
-            row[j + 1] = (prev + usize::from(x != y)).min(row[j] + 1).min(cur + 1);
-            prev = cur;
-        }
-    }
-    row[b.len()]
-}
-
-#[test]
-fn edit_distance_counts_word_errors() {
-    let w = |s: &str| words(s);
-    assert_eq!(edit_distance(&w("le chat dort"), &w("le chat dort")), 0);
-    assert_eq!(
-        edit_distance(&w("le chat dort"), &w("le chien dort bien")),
-        2
-    );
-    assert_eq!(edit_distance(&w("L’histoire"), &w("l'histoire")), 0);
 }
 
 /// Fires once, on the first poll.
@@ -129,14 +94,12 @@ fn dictates_french_within_wer_threshold_and_stops_on_silence() {
         );
         audio_s += wave.samples().len() as f64 / f64::from(SAMPLE_RATE);
 
-        let (exp, got) = (words(expected), words(&typed));
-        let e = edit_distance(&exp, &got);
+        let (e, n) = word_errors(expected, &typed);
         println!(
-            "{name}: {e}/{} errors, stopped {silence:.1} s after the clip\n  expected: {expected}\n  typed:    {typed:?}",
-            exp.len()
+            "{name}: {e}/{n} errors, stopped {silence:.1} s after the clip\n  expected: {expected}\n  typed:    {typed:?}"
         );
         errors += e;
-        total += exp.len();
+        total += n;
     }
     let wer = errors as f64 / total as f64;
     println!(

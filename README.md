@@ -78,12 +78,24 @@ away about 3 s after the last word.
 
 Open the preferences from the icon menu ("Preferences…") or by running `diktu` again. There
 you can choose the language and model, download or remove models, change the shortcut, and
-set the end-of-speech silence (0.5 to 5 s), automatic capitalization and final period, the
+add your own model, and set the end-of-speech silence (0.5 to 5 s), automatic capitalization and final period, the
 delay between typed keys, and the sounds and their volume.
+
+### Your own models
+
+"Add a model" in the preferences imports a model from a Hugging Face repository (`owner/name`)
+or from a folder, for the language you choose. Only sherpa-onnx **streaming transducers** work
+(files `encoder*.onnx`, `decoder*.onnx`, `joiner*.onnx`, `tokens.txt`, as in the
+[sherpa-onnx streaming models](https://k2-fsa.github.io/sherpa/onnx/pretrained_models/online-transducer/index.html));
+Whisper, CTC, Paraformer and other offline models are refused. The model is copied under
+`~/.local/share/diktu/models/`, then tested before use: file integrity, loading, silence,
+decoding speed, and for French the transcription of a test sentence. Imported models can be
+removed like the others.
 
 ## Known limitations
 
-- French only for now.
+- Only French has a ready-made model; other languages need a model you import, whose accuracy
+  is not tested (no test sentence yet).
 - The model decodes speech in 1.28 s chunks, so words arrive in bursts, 1 to 2 s behind
   your voice.
 - Accuracy is limited: the model sometimes invents words. Words already typed are never

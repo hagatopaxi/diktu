@@ -12,10 +12,10 @@ use std::sync::mpsc::{Sender, sync_channel};
 use std::sync::{Arc, OnceLock};
 
 use adw::prelude::*;
-use diktu_core::download;
 use diktu_core::pipeline::{self, Notice};
 use diktu_core::registry::{self, Model};
 use diktu_core::stt::{SherpaTransducer, SttEngine};
+use diktu_core::{custom, download};
 use gtk::{gio, glib};
 use ksni::TrayMethods;
 use tokio::sync::mpsc::{UnboundedSender, unbounded_channel};
@@ -23,6 +23,7 @@ use tokio::sync::mpsc::{UnboundedSender, unbounded_channel};
 const APP_ID: &str = "fr.gwenael_leger.Diktu";
 const RESOURCE_PREFIX: &str = "/fr/gwenael_leger/Diktu";
 /// The launch itself activates the app: only later activations open a window.
+const CHECK_FLAG: &str = "--check-model";
 static LAUNCHED: AtomicBool = AtomicBool::new(false);
 
 /// Everything other threads ask of the GTK main thread.
@@ -49,6 +50,21 @@ pub fn runtime() -> &'static tokio::runtime::Runtime {
 }
 
 fn main() -> glib::ExitCode {
+    if let [_, flag, dir] = &std::env::args().collect::<Vec<_>>()[..]
+        && flag == CHECK_FLAG
+    {
+        // Our result goes to stdout: sherpa-onnx logs to stderr.
+        return match custom::check(std::path::Path::new(dir)) {
+            Ok(summary) => {
+                println!("{summary}");
+                glib::ExitCode::SUCCESS
+            }
+            Err(e) => {
+                println!("{e}");
+                glib::ExitCode::FAILURE
+            }
+        };
+    }
     // zbus objects (portal proxies, tray) may only be dropped inside a tokio context.
     let _tokio = runtime().enter();
     gio::resources_register_include!("diktu.gresource").expect("embedded resources");
@@ -101,13 +117,80 @@ pub fn models_root() -> PathBuf {
     glib::user_data_dir().join("diktu").join("models")
 }
 
-/// The model selected for the current language, if any is registered.
+/// Registered models, then the imported ones.
+pub fn all_models() -> Vec<Model> {
+    let mut models = registry::models();
+    models.extend(custom::list(&models_root()));
+    models
+}
+
+/// The model selected for the current language, if any exists.
 pub fn selected_model(settings: &gio::Settings) -> Option<Model> {
     let (lang, id) = (settings.string("language"), settings.string("model"));
-    registry::models()
+    let models: Vec<Model> = all_models()
         .into_iter()
-        .find(|m| m.id == id.as_str() && m.langs.iter().any(|l| l == lang.as_str()))
-        .or_else(|| registry::default_for(&lang))
+        .filter(|m| m.langs.iter().any(|l| l == lang.as_str()))
+        .collect();
+    models
+        .iter()
+        .find(|m| m.id == id.as_str())
+        .or(models.first())
+        .cloned()
+}
+
+/// Time the model check may take; a large model on a slow CPU loads in tens of seconds.
+const CHECK_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(120);
+
+/// Runs [`custom::check`] in a child process, so a model that crashes sherpa-onnx
+/// cannot take the application down. `Ok(None)` means the check did not finish in time.
+pub fn check_model(dir: &std::path::Path) -> Result<Option<String>, String> {
+    use std::io::Read;
+    use std::process::Stdio;
+    let exe = std::env::current_exe().map_err(|e| e.to_string())?;
+    let mut child = std::process::Command::new(exe)
+        .arg(CHECK_FLAG)
+        .arg(dir)
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .map_err(|e| format!("could not start the model check: {e}"))?;
+    // Pipes are drained on threads: a full pipe would block the child until the timeout.
+    let drain = |pipe: Option<Box<dyn Read + Send>>| {
+        std::thread::spawn(move || {
+            let mut buf = Vec::new();
+            if let Some(mut p) = pipe {
+                let _ = p.read_to_end(&mut buf);
+            }
+            String::from_utf8_lossy(&buf).into_owned()
+        })
+    };
+    let stdout = drain(child.stdout.take().map(|p| Box::new(p) as _));
+    let stderr = drain(child.stderr.take().map(|p| Box::new(p) as _));
+    let start = std::time::Instant::now();
+    let status = loop {
+        if let Some(status) = child.try_wait().map_err(|e| e.to_string())? {
+            break status;
+        }
+        if start.elapsed() > CHECK_TIMEOUT {
+            let _ = child.kill();
+            let _ = child.wait();
+            return Ok(None);
+        }
+        std::thread::sleep(std::time::Duration::from_millis(100));
+    };
+    let message = stdout.join().unwrap_or_default().trim().to_owned();
+    let stderr = stderr.join().unwrap_or_default();
+    match status.code() {
+        Some(0) => Ok(Some(message)),
+        Some(_) if !message.is_empty() => Err(message),
+        _ => {
+            let last = stderr.lines().rev().find(|l| !l.trim().is_empty());
+            Err(format!(
+                "the speech engine crashed loading this model ({})",
+                last.unwrap_or("no message")
+            ))
+        }
+    }
 }
 
 /// Loads the selected model off the main thread and hands it to the pipeline.
@@ -184,6 +267,14 @@ pub struct Ui {
 impl Ui {
     fn reload_engine(&self) {
         load_engine(&self.settings, &self.engines, &self.events);
+    }
+
+    /// Builds the window anew, for when the list of models changed.
+    fn rebuild_preferences(self: &Rc<Self>) {
+        if let Some(old) = self.preferences.take() {
+            old.destroy();
+        }
+        self.show_preferences();
     }
 
     fn show_preferences(self: &Rc<Self>) {

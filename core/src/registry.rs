@@ -1,6 +1,6 @@
 //! Embedded catalogue of downloadable models.
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 const REGISTRY: &str = include_str!("../../data/models.toml");
 
@@ -9,7 +9,7 @@ struct Registry {
     model: Vec<Model>,
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Model {
     pub id: String,
     pub name: String,
@@ -21,7 +21,7 @@ pub struct Model {
     pub files: Vec<ModelFile>,
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ModelFile {
     pub path: String,
     pub size: u64,

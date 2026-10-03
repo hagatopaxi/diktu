@@ -50,6 +50,23 @@ invents words. Already typed words are never corrected. Speaking clearly, close 
 microphone and in a quiet room helps. More accurate models are being evaluated: see
 [STT_LANDSCAPE.md](STT_LANDSCAPE.md).
 
+## A model I add is refused
+
+The message says which check failed:
+
+- *Whisper…*, *encoder-decoder…*, *single-file model…*: the architecture cannot stream; pick a
+  repository from the sherpa-onnx *online* (streaming) transducers.
+- *transcribes silence…* or *poor transcription of the test sentence*: the files do not belong
+  together (encoder and joiner of different exports, wrong `tokens.txt`) or the model is not
+  for the chosen language.
+- *too slow for live dictation*: the model takes more than 80 % of real time on this CPU.
+- *the speech engine crashed loading this model*: sherpa-onnx rejected the files (often an
+  offline model named like a streaming one); the application itself keeps running.
+- *added, but its tests did not finish*: the check took more than 2 minutes and was stopped. The
+  model is installed and can be tried; if dictation lags or produces nonsense, remove it.
+- *private or gated repository*: Diktu does not log in to Hugging Face; download the files
+  yourself and add the folder.
+
 ## Listening does not stop by itself
 
 End of speech is detected from the signal energy. Loud, irregular background noise (music,

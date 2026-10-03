@@ -9,7 +9,7 @@
     <key name="model" type="s">
       <default>''</default>
       <summary>Speech model</summary>
-      <description>Registry id of the model to use; empty means the first model registered for the language.</description>
+      <description>Registry or imported (custom-*) id of the model to use; empty means the first model registered for the language.</description>
     </key>
     <key name="end-silence" type="d">
       <range min="0.5" max="5.0"/>

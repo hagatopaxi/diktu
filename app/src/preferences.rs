@@ -6,21 +6,35 @@ use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 
 use adw::prelude::*;
+use diktu_core::custom;
 use diktu_core::download::{self, Error};
-use diktu_core::registry::{self, Model};
+use diktu_core::registry::Model;
 use gtk::glib;
 
-use crate::{Ui, models_root, selected_model};
+use crate::{Ui, all_models, check_model, models_root, selected_model};
+
+/// Languages offered when importing a model.
+const LANGUAGES: &[(&str, &str)] = &[
+    ("fr", "Français"),
+    ("en", "English"),
+    ("de", "Deutsch"),
+    ("es", "Español"),
+    ("it", "Italiano"),
+    ("pt", "Português"),
+    ("nl", "Nederlands"),
+    ("pl", "Polski"),
+    ("ru", "Русский"),
+    ("zh", "中文"),
+    ("ja", "日本語"),
+    ("ko", "한국어"),
+    ("ar", "العربية"),
+];
 
 fn language_name(code: &str) -> &str {
-    match code {
-        "fr" => "Français",
-        "en" => "English",
-        "de" => "Deutsch",
-        "es" => "Español",
-        "it" => "Italiano",
-        other => other,
-    }
+    LANGUAGES
+        .iter()
+        .find(|(c, _)| *c == code)
+        .map_or(code, |(_, name)| name)
 }
 
 pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
@@ -36,10 +50,8 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
     window.add(&page);
     let settings = &ui.settings;
 
-    let mut languages: Vec<String> = registry::models()
-        .into_iter()
-        .flat_map(|m| m.langs)
-        .collect();
+    let models = all_models();
+    let mut languages: Vec<String> = models.iter().flat_map(|m| m.langs.clone()).collect();
     languages.sort();
     languages.dedup();
     let names: Vec<&str> = languages.iter().map(|l| language_name(l)).collect();
@@ -60,10 +72,11 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
         .description("Downloaded from Hugging Face, verified (SHA-256), then used offline.")
         .build();
     let mut first_check: Option<gtk::CheckButton> = None;
-    let rows: Vec<(Model, adw::ActionRow)> = registry::models()
-        .into_iter()
+    let rows: Vec<(Model, adw::ActionRow)> = models
+        .iter()
+        .cloned()
         .map(|m| {
-            let row = model_row(ui, &window, &m, &mut first_check);
+            let row = model_row(ui, &window, &m, &models, &mut first_check);
             group.add(&row);
             (m, row)
         })
@@ -74,6 +87,7 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
         }
     };
     show_language(&current);
+    group.add(&import_row(ui, &window));
     language.connect_selected_notify(glib::clone!(
         #[strong]
         settings,
@@ -176,13 +190,14 @@ fn model_row(
     ui: &Rc<Ui>,
     window: &adw::PreferencesWindow,
     model: &Model,
+    models: &[Model],
     first_check: &mut Option<gtk::CheckButton>,
 ) -> adw::ActionRow {
     let size = format!("{} MB", (model.total_size() + 500_000) / 1_000_000);
     let row = adw::ActionRow::builder().title(&model.name).build();
 
     // A choice only exists when a language has several models.
-    let alternatives = registry::models()
+    let alternatives = models
         .iter()
         .filter(|m| m.langs.iter().any(|l| model.langs.contains(l)))
         .count();
@@ -243,7 +258,8 @@ fn model_row(
             row.set_subtitle(&format!("{size} · {state} · license {license}"));
             progress.set_visible(busy);
             cancel.set_visible(busy);
-            download.set_visible(!busy && !installed);
+            // An imported model has no source to download again from.
+            download.set_visible(!busy && !installed && !custom::is_custom(&model));
             remove.set_visible(installed);
         })
     };
@@ -339,6 +355,8 @@ fn model_row(
     });
 
     remove.connect_clicked(glib::clone!(
+        #[strong]
+        ui,
         #[weak]
         window,
         #[to_owned]
@@ -347,9 +365,223 @@ fn model_row(
             if let Err(e) = download::remove(&models_root(), &model) {
                 window.add_toast(adw::Toast::new(&format!("Could not remove: {e}")));
             }
-            refresh();
+            if custom::is_custom(&model) {
+                if ui.settings.string("model") == model.id.as_str() {
+                    let _ = ui.settings.set_string("model", "");
+                }
+                ui.rebuild_preferences();
+            } else {
+                refresh();
+            }
         }
     ));
 
+    row
+}
+
+enum Source {
+    HuggingFace(String),
+    Folder(std::path::PathBuf),
+}
+
+enum ImportProgress {
+    Bytes(u64, u64),
+    Checking,
+    /// The check summary, `None` when it did not finish in time.
+    Done(Result<(Model, Option<String>), String>),
+}
+
+/// Downloads or copies a model to the staging area, checks it, then installs it.
+fn import(
+    source: Source,
+    lang: &str,
+    cancel: &AtomicBool,
+    tx: &tokio::sync::mpsc::UnboundedSender<ImportProgress>,
+) -> Result<(Model, Option<String>), String> {
+    let root = models_root();
+    std::fs::create_dir_all(&root).map_err(|e| e.to_string())?;
+    let model = match source {
+        Source::HuggingFace(repo) => {
+            custom::stage_hf(download::HF_BASE_URL, &root, &repo, lang, cancel, |d, t| {
+                let _ = tx.send(ImportProgress::Bytes(d, t));
+            })?
+        }
+        Source::Folder(dir) => custom::stage_folder(&root, &dir, lang)?,
+    };
+    let _ = tx.send(ImportProgress::Checking);
+    let checked = check_model(&custom::staging_dir(&root, &model))
+        .and_then(|summary| custom::commit(&root, &model).map(|()| summary));
+    if checked.is_err() {
+        custom::discard(&root, &model);
+    }
+    checked.map(|summary| (model, summary))
+}
+
+/// “Add a model”: a Hugging Face repository or a local folder, for a chosen language.
+fn import_row(ui: &Rc<Ui>, window: &adw::PreferencesWindow) -> adw::ActionRow {
+    let row = adw::ActionRow::builder()
+        .title("Add a model")
+        .subtitle("sherpa-onnx streaming transducer, from Hugging Face or a folder")
+        .build();
+    let add = icon_button("list-add-symbolic", "Add a model");
+    let cancel = icon_button("process-stop-symbolic", "Cancel");
+    cancel.set_visible(false);
+    row.add_suffix(&add);
+    row.add_suffix(&cancel);
+    let running: Rc<RefCell<Option<Arc<AtomicBool>>>> = Rc::default();
+
+    let start = Rc::new(glib::clone!(
+        #[strong]
+        ui,
+        #[weak]
+        window,
+        #[weak]
+        row,
+        #[weak]
+        add,
+        #[weak]
+        cancel,
+        #[strong]
+        running,
+        move |source: Source, lang: String| {
+            let flag = Arc::new(AtomicBool::new(false));
+            *running.borrow_mut() = Some(flag.clone());
+            add.set_visible(false);
+            cancel.set_visible(true);
+            row.set_subtitle("Preparing…");
+            let (tx, mut rx) = tokio::sync::mpsc::unbounded_channel();
+            let thread_lang = lang.clone();
+            std::thread::spawn(move || {
+                let result = import(source, &thread_lang, &flag, &tx);
+                let _ = tx.send(ImportProgress::Done(result));
+            });
+            glib::spawn_future_local(glib::clone!(
+                #[strong]
+                ui,
+                #[strong]
+                running,
+                async move {
+                    while let Some(p) = rx.recv().await {
+                        match p {
+                            ImportProgress::Bytes(done, total) => row.set_subtitle(&format!(
+                                "Downloading… {} / {} MB",
+                                done / 1_000_000,
+                                (total + 500_000) / 1_000_000
+                            )),
+                            ImportProgress::Checking => {
+                                cancel.set_visible(false);
+                                row.set_subtitle(
+                                    "Checking the model (loading, speed, test sentence)…",
+                                );
+                            }
+                            ImportProgress::Done(Ok((model, summary))) => {
+                                *running.borrow_mut() = None;
+                                let _ = ui.settings.set_string("language", &lang);
+                                let _ = ui.settings.set_string("model", &model.id);
+                                ui.rebuild_preferences();
+                                if let Some(w) = ui.preferences.borrow().as_ref() {
+                                    let toast = match summary {
+                                        Some(s) => {
+                                            adw::Toast::new(&format!("{} added: {s}", model.name))
+                                        }
+                                        None => adw::Toast::builder()
+                                            .title(format!(
+                                                "{} added, but its tests did not finish: \
+                                                 you can still try it, it may misbehave",
+                                                model.name
+                                            ))
+                                            .timeout(0)
+                                            .build(),
+                                    };
+                                    w.add_toast(toast);
+                                }
+                            }
+                            ImportProgress::Done(Err(e)) => {
+                                *running.borrow_mut() = None;
+                                add.set_visible(true);
+                                cancel.set_visible(false);
+                                row.set_subtitle(&format!("Not added: {e}"));
+                                window.add_toast(adw::Toast::new("The model was not added"));
+                            }
+                        }
+                    }
+                }
+            ));
+        }
+    ));
+
+    let flag = running.clone();
+    cancel.connect_clicked(move |_| {
+        if let Some(f) = flag.borrow().as_ref() {
+            f.store(true, Ordering::Relaxed);
+        }
+    });
+
+    let settings = ui.settings.clone();
+    add.connect_clicked(glib::clone!(
+        #[weak]
+        window,
+        move |_| {
+            let repo = adw::EntryRow::builder()
+                .title("Hugging Face repository (owner/name)")
+                .build();
+            let names: Vec<&str> = LANGUAGES.iter().map(|(_, n)| *n).collect();
+            let language = adw::ComboRow::builder()
+                .title("Language")
+                .model(&gtk::StringList::new(&names))
+                .build();
+            let current = settings.string("language");
+            if let Some(i) = LANGUAGES.iter().position(|(c, _)| *c == current.as_str()) {
+                language.set_selected(i as u32);
+            }
+            let list = gtk::ListBox::builder()
+                .css_classes(["boxed-list"])
+                .selection_mode(gtk::SelectionMode::None)
+                .build();
+            list.append(&repo);
+            list.append(&language);
+            let dialog = adw::AlertDialog::builder()
+                .heading("Add a model")
+                .body(
+                    "Only sherpa-onnx streaming transducers work (encoder, decoder, joiner, \
+                     tokens). The model is copied, then tested before use.",
+                )
+                .extra_child(&list)
+                .build();
+            dialog.add_responses(&[
+                ("cancel", "Cancel"),
+                ("folder", "From a Folder…"),
+                ("download", "Download"),
+            ]);
+            dialog.set_response_appearance("download", adw::ResponseAppearance::Suggested);
+            dialog.set_response_enabled("download", false);
+            repo.connect_changed(glib::clone!(
+                #[weak]
+                dialog,
+                move |e| dialog
+                    .set_response_enabled("download", custom::parse_repo(&e.text()).is_ok())
+            ));
+            let (start, parent) = (start.clone(), window.clone());
+            dialog.connect_response(None, move |_, response| {
+                let lang = LANGUAGES[language.selected() as usize].0.to_owned();
+                match response {
+                    "download" => start(Source::HuggingFace(repo.text().to_string()), lang),
+                    "folder" => {
+                        let start = start.clone();
+                        gtk::FileDialog::builder()
+                            .title("Folder containing the model")
+                            .build()
+                            .select_folder(Some(&parent), gtk::gio::Cancellable::NONE, move |r| {
+                                if let Some(path) = r.ok().and_then(|f| f.path()) {
+                                    start(Source::Folder(path), lang);
+                                }
+                            });
+                    }
+                    _ => {}
+                }
+            });
+            dialog.present(Some(&window));
+        }
+    ));
     row
 }
