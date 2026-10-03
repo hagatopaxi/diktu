@@ -6,7 +6,7 @@ use gtk::gdk_pixbuf::Pixbuf;
 use ksni::menu::{MenuItem, StandardItem};
 use tokio::sync::mpsc::UnboundedSender;
 
-use crate::{RESOURCE_PREFIX, UiEvent};
+use crate::{APP_NAME, RESOURCE_PREFIX, UiEvent};
 
 pub struct Tray {
     pub recording: bool,
@@ -56,11 +56,11 @@ fn icon(name: &str) -> Vec<ksni::Icon> {
 
 impl ksni::Tray for Tray {
     fn id(&self) -> String {
-        "diktu".into()
+        APP_NAME.to_lowercase().replace(' ', "-")
     }
 
     fn title(&self) -> String {
-        "Diktu".into()
+        APP_NAME.into()
     }
 
     fn icon_pixmap(&self) -> Vec<ksni::Icon> {

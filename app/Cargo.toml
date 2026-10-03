@@ -16,5 +16,9 @@ futures-util = { version = "0.3", default-features = false }
 rodio = { version = "0.22.2", default-features = false, features = ["playback", "wav"] }
 ksni = { version = "0.3.6", default-features = false, features = ["tokio"] }
 
+[features]
+# Development build, installable next to the release (D26).
+devel = []
+
 [build-dependencies]
 glib-build-tools = "0.22.8"

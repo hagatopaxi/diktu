@@ -1,12 +1,12 @@
 [Desktop Entry]
 Type=Application
-Name=Diktu
+Name=@NAME@
 GenericName=Voice Dictation
 GenericName[fr]=Dictée vocale
 Comment=Dictate text at the cursor with local speech recognition
 Comment[fr]=Dicter du texte au curseur, reconnaissance vocale locale
-Exec=@BINDIR@/diktu
-Icon=fr.gwenael_leger.Diktu
+Exec=@BINDIR@/@BIN@
+Icon=@APP_ID@
 Terminal=false
 Categories=Utility;Accessibility;
 Keywords=speech;dictation;voice;recognition;

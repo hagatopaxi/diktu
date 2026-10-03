@@ -123,6 +123,31 @@ Installing (not just running `cargo build`) is required: the portals only accept
 non-sandboxed application whose `fr.gwenael_leger.Diktu.desktop` file is installed. Make sure
 `~/.local/bin` is in your `PATH`.
 
+## Development build ("Diktu dev")
+
+A development build is a separate application, with its own icon (orange, striped), name,
+settings and models folder, so it installs and runs next to the release without touching it.
+
+| | Release | Development |
+|---|---|---|
+| App ID | `fr.gwenael_leger.Diktu` | `fr.gwenael_leger.Diktu.Devel` |
+| Command | `diktu` | `diktu-dev` |
+| Models | `…/diktu/models/` | `…/diktu-dev/models/` |
+
+```sh
+# Flatpak
+flatpak run org.flatpak.Builder --user --install --force-clean build-dir \
+    build-aux/fr.gwenael_leger.Diktu.Devel.json
+flatpak run fr.gwenael_leger.Diktu.Devel
+# Native
+meson setup _build-dev --prefix=$HOME/.local -Dprofile=development
+meson install -C _build-dev
+diktu-dev
+```
+
+Each build has its own global shortcut: give them different keys in Settings → Apps.
+`cargo run --features diktu/devel` runs the development build from the source tree.
+
 ## Start Diktu at login
 
 Copy the application's `.desktop` file into `~/.config/autostart/`.
@@ -185,6 +210,8 @@ flatpak uninstall --user fr.gwenael_leger.Diktu
 
 Add `--delete-data` to also remove `~/.var/app/fr.gwenael_leger.Diktu`, which holds the
 downloaded model.
+
+Replace the ID by `fr.gwenael_leger.Diktu.Devel` to remove the development build.
 
 ### Native
 

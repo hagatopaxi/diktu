@@ -20,7 +20,15 @@ use gtk::{gio, glib};
 use ksni::TrayMethods;
 use tokio::sync::mpsc::{UnboundedSender, unbounded_channel};
 
-const APP_ID: &str = "fr.gwenael_leger.Diktu";
+/// The development build (feature `devel`) is a separate app that installs and runs
+/// next to the release: its own ID, settings, data folder, name and icon.
+const DEVEL: bool = cfg!(feature = "devel");
+const APP_ID: &str = if DEVEL {
+    "fr.gwenael_leger.Diktu.Devel"
+} else {
+    "fr.gwenael_leger.Diktu"
+};
+pub const APP_NAME: &str = if DEVEL { "Diktu dev" } else { "Diktu" };
 const RESOURCE_PREFIX: &str = "/fr/gwenael_leger/Diktu";
 /// The launch itself activates the app: only later activations open a window.
 const CHECK_FLAG: &str = "--check-model";
@@ -114,7 +122,9 @@ pub fn settings() -> gio::Settings {
 }
 
 pub fn models_root() -> PathBuf {
-    glib::user_data_dir().join("diktu").join("models")
+    glib::user_data_dir()
+        .join(if DEVEL { "diktu-dev" } else { "diktu" })
+        .join("models")
 }
 
 /// Registered models, then the imported ones.
@@ -221,7 +231,7 @@ fn load_engine(
 }
 
 fn notify_error(app: &adw::Application, message: &str) {
-    let n = gio::Notification::new("Diktu");
+    let n = gio::Notification::new(APP_NAME);
     n.set_body(Some(message));
     app.send_notification(Some("error"), &n);
 }

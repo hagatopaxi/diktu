@@ -39,7 +39,7 @@ fn language_name(code: &str) -> &str {
 
 pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
     let window = adw::PreferencesWindow::builder()
-        .title("Diktu Preferences")
+        .title(format!("{} Preferences", crate::APP_NAME))
         .default_width(600)
         .default_height(680)
         .search_enabled(false)
