@@ -48,18 +48,19 @@ equivalent label.
 
 ## Icon (AppIndicator extension)
 
-- [x] The light grey microphone icon appears in the top bar.
+- [ ] The light grey Diktu icon (a D holding a microphone) appears in the top bar.
 - [x] The menu offers "Start dictation", "Preferences…", "Quit".
-- [x] While listening the icon is red and the menu entry becomes "Stop dictation"; it turns grey again at the end.
+- [ ] While listening the icon does not change and the menu entry becomes "Stop dictation"; it goes back to "Start dictation" at the end.
+- [ ] The new application icon (blue tile, D holding a microphone) appears in the app grid, the About dialog and Settings → Apps; the development build shows the orange striped variant.
 - [x] The icon keeps its color in light and dark themes.
 - [ ] Fedora without the extension: the application works (shortcut, dictation) without an icon, and the error message is only logged.
 
 ## Shortcut and dictation
 
-- [x] `F12` starts listening: short rising sound, red icon, GNOME microphone indicator visible.
+- [x] `F12` starts listening: short rising sound, GNOME microphone indicator visible.
 - [x] Text is typed at the cursor as you speak, word by word (never a half word), without erasing.
 - [x] Accents (é, è, à, ç, ù, œ) and the typographic apostrophe (’) are typed correctly, including with a non-French keyboard layout (e.g. US).
-- [x] After ~1.2 s of silence, listening stops by itself: the rest of the text is typed, followed by a period and a space; falling sound; grey icon; GNOME microphone indicator off.
+- [x] After ~1.2 s of silence, listening stops by itself: the rest of the text is typed, followed by a period and a space; falling sound; GNOME microphone indicator off.
 - [x] A second press of the shortcut while listening stops it immediately and types the rest.
 - [x] Nothing said for 6 s: listening stops without typing anything.
 - [x] The start beep is not transcribed as a word (speakers, no headset).

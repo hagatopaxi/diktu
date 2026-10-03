@@ -105,9 +105,10 @@ Each entry: context, choice, rejected alternative, reason.
 
 ## D16 — SNI icon as a pixmap rendered from the embedded SVG
 
-- **Choice**: the two colored SVGs (light grey microphone, red microphone) are embedded as a GResource and rendered by gdk-pixbuf into ARGB32 pixmaps (22 and 44 px) sent through `IconPixmap`. In Flatpak, the icon is published without its own D-Bus name (`disable_dbus_name`), as the sandbox requires.
+- **Choice**: a single light grey SVG (a D holding a microphone, the logo) is embedded as a GResource and rendered by gdk-pixbuf into ARGB32 pixmaps (22 and 44 px) sent through `IconPixmap`. In Flatpak, the icon is published without its own D-Bus name (`disable_dbus_name`), as the sandbox requires.
 - **Rejected**: `IconName` + `IconThemePath`, which assumes icons installed and visible to the host shell (false when running from the sources, and names constrained by the Flatpak export).
 - **Reason**: the same rendering in development, native and Flatpak; the color does not depend on the theme.
+- **Update**: the icon no longer turns red while listening; GNOME's own microphone indicator already shows it, and the menu entry reads "Stop dictation".
 
 ## D17 — A single tokio runtime for the portals and the icon
 

@@ -12,8 +12,7 @@ pub struct Tray {
     pub recording: bool,
     toggle: Sender<()>,
     events: UnboundedSender<UiEvent>,
-    idle: Vec<ksni::Icon>,
-    active: Vec<ksni::Icon>,
+    icon: Vec<ksni::Icon>,
 }
 
 impl Tray {
@@ -22,8 +21,7 @@ impl Tray {
             recording: false,
             toggle,
             events,
-            idle: icon("status-idle"),
-            active: icon("status-recording"),
+            icon: icon("status"),
         }
     }
 }
@@ -63,12 +61,9 @@ impl ksni::Tray for Tray {
         APP_NAME.into()
     }
 
+    /// The same icon while listening: GNOME already shows its own microphone indicator.
     fn icon_pixmap(&self) -> Vec<ksni::Icon> {
-        if self.recording {
-            self.active.clone()
-        } else {
-            self.idle.clone()
-        }
+        self.icon.clone()
     }
 
     fn tool_tip(&self) -> ksni::ToolTip {

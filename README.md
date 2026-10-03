@@ -15,8 +15,8 @@ Diktu currently understands French only.
   word, never a backspace.
 - **Stops by itself.** Listening ends after a short silence (1.2 s by default). The first
   letter is capitalized and a final period is added (this can be turned off).
-- **Stays out of the way.** No window, just a microphone icon in the top bar: grey when idle,
-  red while listening. A short sound tells you when the microphone is open.
+- **Stays out of the way.** No window, just the Diktu icon in the top bar; GNOME's microphone
+  indicator shows when you are being listened to. A short sound tells you when the microphone is open.
 - **Local.** Recognition runs on the CPU with [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx).
   No account, no online service.
 
