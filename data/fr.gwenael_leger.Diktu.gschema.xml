@@ -41,6 +41,11 @@
       <default>0.5</default>
       <summary>Sound volume</summary>
     </key>
+    <key name="onboarded" type="b">
+      <default>false</default>
+      <summary>Onboarding done</summary>
+      <description>Whether the first-launch assistant (language, permissions, shortcut) was completed.</description>
+    </key>
     <key name="restore-token" type="s">
       <default>''</default>
       <summary>RemoteDesktop portal restore token</summary>

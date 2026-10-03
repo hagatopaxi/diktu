@@ -38,12 +38,17 @@ equivalent label.
 
 ## Startup
 
-- [x] First launch (no model installed): the preferences window opens, as does the RemoteDesktop dialog (next item).
+- [ ] First launch (`gsettings reset fr.gwenael_leger.Diktu onboarded` and `restore-token`): only the assistant opens, on the language step; no system dialog appears before the permissions step.
+- [ ] Assistant, language: the model row shows the size and license; "Continue" starts the download, whose progress stays visible at the bottom during the next steps; going back and picking another model cancels the first download.
+- [ ] Assistant, permissions: "Allow…" opens the Background dialog, then the RemoteDesktop one only once the first is answered; each row then shows a check mark (or a warning with the reason), and the next step follows.
+- [ ] Assistant, shortcut: "Choose the Shortcut…" opens GNOME's dialog proposing `F12`; once confirmed, the shortcut appears in the row and the last step follows; the last step names it.
+- [ ] Assistant: "Start Using Diktu" closes it; the next launch shows no assistant and no dialog. Closing the assistant before the end shows it again at the next launch.
+- [ ] Assistant in another interface language (`LANGUAGE=fr diktu`, then `eo`, `de`, `es`, `ru`, after resetting `onboarded`): every step (titles, descriptions, buttons, rows, progress bar, final step naming the shortcut) is translated, with no truncated text; the interface language chosen in the preferences afterwards applies at the next assistant launch only.
+- [ ] The symbolic icons of the assistant (lock, keyboard, check mark) are sharp (they looked pixelated under the Broadway backend only).
 - [x] Later launches (model installed, consent remembered): `diktu` started from a terminal shows no window and only returns control to the shell on "Quit".
 - [x] A second `diktu` command does not create a second instance; it opens the preferences.
-- [x] First launch: the "Remote control" (RemoteDesktop) dialog appears at startup, not during the first dictation; it only asks for the keyboard.
+- [x] First launch: the "Remote control" (RemoteDesktop) dialog appears before the first dictation; it only asks for the keyboard.
 - [x] After accepting and restarting the application, the RemoteDesktop dialog does not reappear (`restore-token` saved: `gsettings get fr.gwenael_leger.Diktu restore-token` is not empty).
-- [x] First launch: the GNOME global shortcut dialog proposes `F12`.
 - [x] GNOME's red remote-control icon disappears about 3 s after the consent dialog, then only appears while a dictation is being typed (up to 3 s after the last word), without the consent dialog coming back.
 
 ## Icon (AppIndicator extension)

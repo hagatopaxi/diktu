@@ -1,4 +1,5 @@
 mod inject;
+mod onboarding;
 mod preferences;
 mod shortcut;
 mod tray;
@@ -234,6 +235,24 @@ pub fn check_model(dir: &std::path::Path) -> Result<Option<String>, String> {
     }
 }
 
+/// A request for the keyboard permission, answered once the portal replied.
+pub type Consent = tokio::sync::oneshot::Sender<Result<(), String>>;
+
+/// Lets the app keep running, and listen for the shortcut, with no window open.
+pub async fn request_background() -> Result<(), String> {
+    let response = ashpd::desktop::background::Background::request()
+        .reason(tr("Listen for the dictation shortcut with no window open").as_str())
+        .send()
+        .await
+        .and_then(|r| r.response())
+        .map_err(|e| e.to_string())?;
+    if response.run_in_background() {
+        Ok(())
+    } else {
+        Err(tr("not allowed"))
+    }
+}
+
 /// Loads the selected model off the main thread and hands it to the pipeline.
 fn load_engine(
     settings: &gio::Settings,
@@ -302,7 +321,8 @@ pub struct Ui {
     /// Shortcut as bound by the compositor, once the portal answered.
     trigger: RefCell<Option<String>>,
     preferences: RefCell<Option<adw::PreferencesWindow>>,
-    shortcut_row: RefCell<Option<adw::ActionRow>>,
+    /// Rows showing the shortcut, in the preferences and the onboarding.
+    shortcut_rows: RefCell<Vec<glib::WeakRef<adw::ActionRow>>>,
 }
 
 impl Ui {
@@ -343,10 +363,11 @@ impl Ui {
             }
             UiEvent::Notice(Notice::Error(e)) => notify_error(&self.app, &e),
             UiEvent::Trigger(t) => {
-                if let Some(row) = self.shortcut_row.borrow().as_ref() {
-                    row.set_subtitle(&t);
-                }
-                *self.trigger.borrow_mut() = Some(t);
+                // Stored first: a row change may show a page that reads it.
+                *self.trigger.borrow_mut() = Some(t.clone());
+                self.shortcut_rows
+                    .borrow_mut()
+                    .retain(|row| row.upgrade().inspect(|r| r.set_subtitle(&t)).is_some());
             }
             UiEvent::RestoreToken(t) => {
                 let _ = self.settings.set_string("restore-token", &t);
@@ -381,6 +402,9 @@ fn startup(app: &adw::Application) {
         let _ = notices.send(UiEvent::Notice(n));
     });
 
+    // Users from before the onboarding already gave the keyboard permission.
+    let onboarded = settings.boolean("onboarded") || !settings.string("restore-token").is_empty();
+    let (consent_tx, consent_rx) = std::sync::mpsc::channel::<Consent>();
     let delay = Arc::new(AtomicU32::new(settings.uint("key-delay")));
     let token = Some(settings.string("restore-token").to_string()).filter(|t| !t.is_empty());
     let (sink_delay, sink_events) = (delay.clone(), events.clone());
@@ -395,10 +419,18 @@ fn startup(app: &adw::Application) {
             let error = |e: String| {
                 let _ = sink_events.send(UiEvent::Notice(Notice::Error(e)));
             };
-            // Ask for keyboard access now rather than in the middle of the first dictation;
-            // `run` closes this session once idle.
-            if let Err(e) = sink.connect() {
-                error(trf("keyboard access denied: {error}", &[("error", &e)]));
+            // Ask for keyboard access when asked to (at launch, or from the onboarding) rather
+            // than in the middle of the first dictation; `run` closes this session once idle.
+            while let Ok(reply) = consent_rx.recv() {
+                let result = sink.connect().map_err(|e| e.to_string());
+                if let Err(e) = &result {
+                    error(trf("keyboard access denied: {error}", &[("error", &e)]));
+                }
+                let granted = result.is_ok();
+                let _ = reply.send(result);
+                if granted {
+                    break;
+                }
             }
             inject::run(text_rx, sink, error);
         })
@@ -406,7 +438,10 @@ fn startup(app: &adw::Application) {
 
     let (configure, configure_rx) = unbounded_channel();
     let (toggle, trigger_events) = (handles.toggle.clone(), events.clone());
+    // The shortcut dialog waits for the onboarding's shortcut step, or for nothing.
+    let (bind_tx, bind_rx) = tokio::sync::oneshot::channel::<()>();
     runtime().spawn(async move {
+        let _ = bind_rx.await;
         let on_trigger = |t| {
             let _ = trigger_events.send(UiEvent::Trigger(t));
         };
@@ -419,14 +454,12 @@ fn startup(app: &adw::Application) {
         }
     });
 
-    let background = runtime().block_on(async {
-        ashpd::desktop::background::Background::request()
-            .reason(tr("Listen for the dictation shortcut with no window open").as_str())
-            .send()
-            .await
-    });
-    if let Err(e) = background {
-        eprintln!("diktu: Background portal: {e}");
+    if onboarded {
+        if let Err(e) = runtime().block_on(request_background()) {
+            eprintln!("diktu: Background portal: {e}");
+        }
+        let (reply, _) = tokio::sync::oneshot::channel();
+        let _ = consent_tx.send(reply);
     }
 
     let tray = tray::Tray::new(handles.toggle.clone(), events.clone());
@@ -471,7 +504,7 @@ fn startup(app: &adw::Application) {
         configure,
         trigger: RefCell::new(None),
         preferences: RefCell::new(None),
-        shortcut_row: RefCell::new(None),
+        shortcut_rows: RefCell::default(),
     });
 
     ui.settings.connect_changed(
@@ -511,8 +544,12 @@ fn startup(app: &adw::Application) {
     ));
     app.add_action(&action);
 
-    // Nothing to dictate with until a model is downloaded: show where to get one.
-    if selected_model(&ui.settings).is_none_or(|m| !download::is_installed(&models_root(), &m)) {
+    if !onboarded {
+        onboarding::show(&ui, consent_tx, bind_tx);
+    } else if selected_model(&ui.settings)
+        .is_none_or(|m| !download::is_installed(&models_root(), &m))
+    {
+        // Nothing to dictate with until a model is downloaded: show where to get one.
         ui.show_preferences();
     }
 

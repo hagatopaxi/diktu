@@ -179,24 +179,32 @@ msgstr "keine `{prefix}*`-Datei im Modell"
 msgid "sherpa-onnx could not load the model in {dir}"
 msgstr "sherpa-onnx konnte das Modell in {dir} nicht laden"
 
-#: app/src/main.rs:194
+#: app/src/main.rs:195
 msgid "could not start the model check: {error}"
 msgstr "Modellprüfung konnte nicht gestartet werden: {error}"
 
-#: app/src/main.rs:230
+#: app/src/main.rs:231
 msgid "no message"
 msgstr "keine Meldung"
 
-#: app/src/main.rs:227
+#: app/src/main.rs:228
 msgid "the speech engine crashed loading this model ({message})"
 msgstr ""
 "die Spracherkennung ist beim Laden dieses Modells abgestürzt ({message})"
 
-#: app/src/main.rs:401
+#: app/src/main.rs:244
+msgid "Listen for the dictation shortcut with no window open"
+msgstr "Auf das Diktat-Tastenkürzel achten, ohne dass ein Fenster offen ist"
+
+#: app/src/main.rs:252
+msgid "not allowed"
+msgstr "nicht erlaubt"
+
+#: app/src/main.rs:427
 msgid "keyboard access denied: {error}"
 msgstr "Tastaturzugriff verweigert: {error}"
 
-#: app/src/main.rs:415
+#: app/src/main.rs:450
 msgid ""
 "global shortcut unavailable ({error}): bind a GNOME shortcut to “diktu --"
 "toggle”"
@@ -204,17 +212,168 @@ msgstr ""
 "globales Tastenkürzel nicht verfügbar ({error}): legen Sie ein GNOME-"
 "Tastenkürzel für „diktu --toggle“ an"
 
-#: app/src/main.rs:424
-msgid "Listen for the dictation shortcut with no window open"
-msgstr "Auf das Diktat-Tastenkürzel achten, ohne dass ein Fenster offen ist"
+#: app/src/onboarding.rs:129 app/src/preferences.rs:64
+#: app/src/preferences.rs:674
+msgid "Language"
+msgstr "Sprache"
+
+#: app/src/onboarding.rs:136
+msgid "Model"
+msgstr "Modell"
+
+#: app/src/onboarding.rs:146
+msgid "{size} MB · license {license}"
+msgstr "{size} MB · Lizenz {license}"
+
+#: app/src/onboarding.rs:184 app/src/onboarding.rs:378
+msgid "Continue"
+msgstr "Weiter"
+
+#: app/src/onboarding.rs:188
+msgid "Welcome to {app}"
+msgstr "Willkommen bei {app}"
+
+#: app/src/onboarding.rs:190
+msgid ""
+"Dictate text anywhere, recognized on your computer. Which language will you "
+"speak? Its model downloads while you set up the rest."
+msgstr ""
+"Diktieren Sie Text überall, erkannt auf Ihrem Computer. Welche Sprache "
+"sprechen Sie? Das Modell wird heruntergeladen, während Sie den Rest "
+"einrichten."
+
+#: app/src/onboarding.rs:235
+msgid "Downloading {model}…"
+msgstr "{model} wird heruntergeladen …"
+
+#: app/src/onboarding.rs:263
+msgid "Downloading {model}… {done} / {total} MB"
+msgstr "{model} wird heruntergeladen … {done} / {total} MB"
+
+#: app/src/onboarding.rs:274
+msgid "{model} is ready"
+msgstr "{model} ist bereit"
+
+#: app/src/onboarding.rs:279
+msgid "Download failed: {error}. Retry from the preferences."
+msgstr ""
+"Download fehlgeschlagen: {error}. Versuchen Sie es in den Einstellungen "
+"erneut."
+
+#: app/src/onboarding.rs:303
+msgid "Microphone"
+msgstr "Mikrofon"
+
+#: app/src/onboarding.rs:304
+msgid "Open only while you dictate. No audio leaves your computer."
+msgstr "Nur geöffnet, solange Sie diktieren. Kein Ton verlässt Ihren Computer."
+
+#: app/src/onboarding.rs:308
+msgid "Run in the background"
+msgstr "Im Hintergrund laufen"
+
+#: app/src/onboarding.rs:309
+msgid "Listen for the shortcut with no window open."
+msgstr "Auf den Kurzbefehl lauschen, ohne dass ein Fenster geöffnet ist."
+
+#: app/src/onboarding.rs:313
+msgid "Type at the cursor"
+msgstr "Am Cursor tippen"
+
+#: app/src/onboarding.rs:315
+msgid ""
+"Type the recognized text in the focused app. GNOME shows a remote control "
+"icon while {app} types."
+msgstr ""
+"Den erkannten Text in der aktiven Anwendung tippen. GNOME zeigt ein Symbol "
+"für die Fernsteuerung, während {app} tippt."
+
+#: app/src/onboarding.rs:319
+msgid "Allow…"
+msgstr "Erlauben …"
+
+#: app/src/onboarding.rs:320 app/src/onboarding.rs:402
+msgid "Skip"
+msgstr "Überspringen"
+
+#: app/src/onboarding.rs:324 app/src/preferences.rs:260
+msgid "Permissions"
+msgstr "Berechtigungen"
+
+#: app/src/onboarding.rs:325
+msgid "GNOME asks you to confirm each one, one dialog after the other."
+msgstr ""
+"GNOME bittet Sie, jede Berechtigung zu bestätigen, ein Dialog nach dem "
+"anderen."
+
+#: app/src/onboarding.rs:342
+msgid "Not granted ({error}). It will be asked again later."
+msgstr "Nicht erteilt ({error}). Sie wird später erneut abgefragt."
+
+#: app/src/onboarding.rs:397 app/src/preferences.rs:120 app/src/shortcut.rs:20
+msgid "Start or stop dictation"
+msgstr "Diktat starten oder beenden"
+
+#: app/src/onboarding.rs:398
+msgid "Not chosen yet"
+msgstr "Noch nicht gewählt"
+
+#: app/src/onboarding.rs:401
+msgid "Choose the Shortcut…"
+msgstr "Tastenkürzel wählen …"
+
+#: app/src/onboarding.rs:406
+msgid "Keyboard Shortcut"
+msgstr "Tastenkürzel"
+
+#: app/src/onboarding.rs:408
+msgid ""
+"Press it anywhere to start dictating, and again to stop. {app} suggests "
+"{key}; GNOME lets you confirm it or pick another one.\n"
+"\n"
+"On a laptop, {key} often controls the volume or brightness: press Fn+{key}, "
+"or turn on Fn Lock (often Fn+Esc)."
+msgstr ""
+"Drücken Sie es überall, um das Diktieren zu starten, und erneut, um es zu "
+"beenden. {app} schlägt {key} vor; GNOME lässt Sie es bestätigen oder eine "
+"andere Taste wählen.\n"
+"\n"
+"Auf einem Laptop steuert {key} oft Lautstärke oder Helligkeit: Drücken Sie "
+"Fn+{key} oder aktivieren Sie die Fn-Sperre (oft Fn+Esc)."
+
+#: app/src/onboarding.rs:445
+msgid "Start Using {app}"
+msgstr "{app} verwenden"
+
+#: app/src/onboarding.rs:449
+msgid "All Set"
+msgstr "Alles bereit"
+
+#: app/src/onboarding.rs:459
+msgid "Press {key} anywhere"
+msgstr "Drücken Sie überall {key}"
+
+#: app/src/onboarding.rs:461
+msgid "Choose “Start dictation” in the {app} menu of the top bar"
+msgstr "Wählen Sie „Diktat starten“ im Menü {app} der oberen Leiste"
+
+#: app/src/onboarding.rs:470
+msgid "Dictation works once the model is downloaded."
+msgstr "Das Diktieren funktioniert, sobald das Modell heruntergeladen ist."
+
+#: app/src/onboarding.rs:481
+msgid "{start}, speak, then pause: the text is typed at the cursor."
+msgstr ""
+"{start}, sprechen Sie, und machen Sie dann eine Pause: Der Text wird am "
+"Cursor getippt."
+
+#: app/src/onboarding.rs:485
+msgid "The {app} menu in the top bar also opens the preferences."
+msgstr "Das Menü {app} in der oberen Leiste öffnet auch die Einstellungen."
 
 #: app/src/preferences.rs:47
 msgid "{app} Preferences"
 msgstr "{app}-Einstellungen"
-
-#: app/src/preferences.rs:64 app/src/preferences.rs:674
-msgid "Language"
-msgstr "Sprache"
 
 #: app/src/preferences.rs:72
 msgid "Dictation"
@@ -244,10 +403,6 @@ msgid ""
 msgstr ""
 "GNOME vergibt das Tastenkürzel. Alternative: ein eigenes GNOME-Tastenkürzel, "
 "das „diktu --toggle“ ausführt."
-
-#: app/src/preferences.rs:120 app/src/shortcut.rs:20
-msgid "Start or stop dictation"
-msgstr "Diktat starten oder beenden"
 
 #: app/src/preferences.rs:125
 msgid "GlobalShortcuts portal unavailable"
@@ -312,10 +467,6 @@ msgstr "Sprache der Oberfläche"
 #: app/src/preferences.rs:239
 msgid "Interface"
 msgstr "Oberfläche"
-
-#: app/src/preferences.rs:260
-msgid "Permissions"
-msgstr "Berechtigungen"
 
 #: app/src/preferences.rs:262
 msgid ""

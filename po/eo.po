@@ -178,23 +178,31 @@ msgstr "neniu dosiero `{prefix}*` en la modelo"
 msgid "sherpa-onnx could not load the model in {dir}"
 msgstr "sherpa-onnx ne povis ŝargi la modelon en {dir}"
 
-#: app/src/main.rs:194
+#: app/src/main.rs:195
 msgid "could not start the model check: {error}"
 msgstr "ne eblis lanĉi la kontrolon de la modelo: {error}"
 
-#: app/src/main.rs:230
+#: app/src/main.rs:231
 msgid "no message"
 msgstr "neniu mesaĝo"
 
-#: app/src/main.rs:227
+#: app/src/main.rs:228
 msgid "the speech engine crashed loading this model ({message})"
 msgstr "la parolrekonilo kraŝis ŝargante ĉi tiun modelon ({message})"
 
-#: app/src/main.rs:401
+#: app/src/main.rs:244
+msgid "Listen for the dictation shortcut with no window open"
+msgstr "Atendi la diktan klavkombinon sen malfermita fenestro"
+
+#: app/src/main.rs:252
+msgid "not allowed"
+msgstr "ne permesite"
+
+#: app/src/main.rs:427
 msgid "keyboard access denied: {error}"
 msgstr "aliro al klavaro rifuzita: {error}"
 
-#: app/src/main.rs:415
+#: app/src/main.rs:450
 msgid ""
 "global shortcut unavailable ({error}): bind a GNOME shortcut to “diktu --"
 "toggle”"
@@ -202,17 +210,160 @@ msgstr ""
 "ĝenerala klavkombino ne disponebla ({error}): asignu GNOME-klavkombinon al "
 "“diktu --toggle”"
 
-#: app/src/main.rs:424
-msgid "Listen for the dictation shortcut with no window open"
-msgstr "Atendi la diktan klavkombinon sen malfermita fenestro"
+#: app/src/onboarding.rs:129 app/src/preferences.rs:64
+#: app/src/preferences.rs:674
+msgid "Language"
+msgstr "Lingvo"
+
+#: app/src/onboarding.rs:136
+msgid "Model"
+msgstr "Modelo"
+
+#: app/src/onboarding.rs:146
+msgid "{size} MB · license {license}"
+msgstr "{size} MB · permesilo {license}"
+
+#: app/src/onboarding.rs:184 app/src/onboarding.rs:378
+msgid "Continue"
+msgstr "Daŭrigi"
+
+#: app/src/onboarding.rs:188
+msgid "Welcome to {app}"
+msgstr "Bonvenon al {app}"
+
+#: app/src/onboarding.rs:190
+msgid ""
+"Dictate text anywhere, recognized on your computer. Which language will you "
+"speak? Its model downloads while you set up the rest."
+msgstr ""
+"Diktu tekston ie ajn, rekonitan sur via komputilo. Kiun lingvon vi parolos? "
+"Ĝia modelo elŝutiĝas dum vi agordas la reston."
+
+#: app/src/onboarding.rs:235
+msgid "Downloading {model}…"
+msgstr "Elŝutado de {model}…"
+
+#: app/src/onboarding.rs:263
+msgid "Downloading {model}… {done} / {total} MB"
+msgstr "Elŝutado de {model}… {done} / {total} MB"
+
+#: app/src/onboarding.rs:274
+msgid "{model} is ready"
+msgstr "{model} estas preta"
+
+#: app/src/onboarding.rs:279
+msgid "Download failed: {error}. Retry from the preferences."
+msgstr "Elŝuto malsukcesis: {error}. Reprovu el la agordoj."
+
+#: app/src/onboarding.rs:303
+msgid "Microphone"
+msgstr "Mikrofono"
+
+#: app/src/onboarding.rs:304
+msgid "Open only while you dictate. No audio leaves your computer."
+msgstr "Malfermita nur dum vi diktas. Neniu sono forlasas vian komputilon."
+
+#: app/src/onboarding.rs:308
+msgid "Run in the background"
+msgstr "Funkcii en la fono"
+
+#: app/src/onboarding.rs:309
+msgid "Listen for the shortcut with no window open."
+msgstr "Aŭskulti la fulmklavon sen malfermita fenestro."
+
+#: app/src/onboarding.rs:313
+msgid "Type at the cursor"
+msgstr "Tajpi ĉe la kursoro"
+
+#: app/src/onboarding.rs:315
+msgid ""
+"Type the recognized text in the focused app. GNOME shows a remote control "
+"icon while {app} types."
+msgstr ""
+"Tajpi la rekonitan tekston en la aktiva aplikaĵo. GNOME montras piktogramon "
+"de fora regado dum {app} tajpas."
+
+#: app/src/onboarding.rs:319
+msgid "Allow…"
+msgstr "Permesi…"
+
+#: app/src/onboarding.rs:320 app/src/onboarding.rs:402
+msgid "Skip"
+msgstr "Preterpasi"
+
+#: app/src/onboarding.rs:324 app/src/preferences.rs:260
+msgid "Permissions"
+msgstr "Permesoj"
+
+#: app/src/onboarding.rs:325
+msgid "GNOME asks you to confirm each one, one dialog after the other."
+msgstr "GNOME petas vin konfirmi ĉiun, unu dialogon post la alia."
+
+#: app/src/onboarding.rs:342
+msgid "Not granted ({error}). It will be asked again later."
+msgstr "Ne donita ({error}). Ĝi estos denove petita poste."
+
+#: app/src/onboarding.rs:397 app/src/preferences.rs:120 app/src/shortcut.rs:20
+msgid "Start or stop dictation"
+msgstr "Komenci aŭ ĉesigi diktadon"
+
+#: app/src/onboarding.rs:398
+msgid "Not chosen yet"
+msgstr "Ankoraŭ ne elektita"
+
+#: app/src/onboarding.rs:401
+msgid "Choose the Shortcut…"
+msgstr "Elekti la fulmklavon…"
+
+#: app/src/onboarding.rs:406
+msgid "Keyboard Shortcut"
+msgstr "Fulmklavo"
+
+#: app/src/onboarding.rs:408
+msgid ""
+"Press it anywhere to start dictating, and again to stop. {app} suggests "
+"{key}; GNOME lets you confirm it or pick another one.\n"
+"\n"
+"On a laptop, {key} often controls the volume or brightness: press Fn+{key}, "
+"or turn on Fn Lock (often Fn+Esc)."
+msgstr ""
+"Premu ĝin ie ajn por komenci diktadon, kaj denove por halti. {app} sugestas "
+"{key}; GNOME lasas vin konfirmi ĝin aŭ elekti alian klavon.\n"
+"\n"
+"Sur tekokomputilo, {key} ofte regas la laŭtecon aŭ la helecon: premu Fn+"
+"{key}, aŭ ŝaltu la Fn-baskulon (ofte Fn+Esc)."
+
+#: app/src/onboarding.rs:445
+msgid "Start Using {app}"
+msgstr "Komenci uzi {app}"
+
+#: app/src/onboarding.rs:449
+msgid "All Set"
+msgstr "Ĉio preta"
+
+#: app/src/onboarding.rs:459
+msgid "Press {key} anywhere"
+msgstr "Premu {key} ie ajn"
+
+#: app/src/onboarding.rs:461
+msgid "Choose “Start dictation” in the {app} menu of the top bar"
+msgstr "Elektu «Komenci diktadon» en la menuo {app} de la supra breto"
+
+#: app/src/onboarding.rs:470
+msgid "Dictation works once the model is downloaded."
+msgstr "Diktado funkcias post kiam la modelo estas elŝutita."
+
+#: app/src/onboarding.rs:481
+msgid "{start}, speak, then pause: the text is typed at the cursor."
+msgstr "{start}, parolu, poste paŭzu: la teksto estas tajpita ĉe la kursoro."
+
+#: app/src/onboarding.rs:485
+msgid "The {app} menu in the top bar also opens the preferences."
+msgstr "La menuo {app} de la supra breto ankaŭ malfermas la agordojn."
 
 #: app/src/preferences.rs:47
 msgid "{app} Preferences"
 msgstr "Agordoj de {app}"
-
-#: app/src/preferences.rs:64 app/src/preferences.rs:674
-msgid "Language"
-msgstr "Lingvo"
 
 #: app/src/preferences.rs:72
 msgid "Dictation"
@@ -241,10 +392,6 @@ msgid ""
 msgstr ""
 "GNOME asignas la klavkombinon. Alternativo: propra GNOME-klavkombino, kiu "
 "lanĉas “diktu --toggle”."
-
-#: app/src/preferences.rs:120 app/src/shortcut.rs:20
-msgid "Start or stop dictation"
-msgstr "Komenci aŭ ĉesigi diktadon"
 
 #: app/src/preferences.rs:125
 msgid "GlobalShortcuts portal unavailable"
@@ -309,10 +456,6 @@ msgstr "Lingvo de la interfaco"
 #: app/src/preferences.rs:239
 msgid "Interface"
 msgstr "Interfaco"
-
-#: app/src/preferences.rs:260
-msgid "Permissions"
-msgstr "Permesoj"
 
 #: app/src/preferences.rs:262
 msgid ""

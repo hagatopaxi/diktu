@@ -35,7 +35,7 @@ const LANGUAGES: &[(&str, &str)] = &[
 /// Languages of the catalogs in `po/LINGUAS`, plus English, the messages' own language.
 const INTERFACE_LANGUAGES: &[&str] = &["de", "en", "eo", "es", "fr", "ru"];
 
-fn language_name(code: &str) -> &str {
+pub fn language_name(code: &str) -> &str {
     LANGUAGES
         .iter()
         .find(|(c, _)| *c == code)
@@ -140,7 +140,7 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
     });
     shortcut.add_suffix(&change);
     group.add(&shortcut);
-    *ui.shortcut_row.borrow_mut() = Some(shortcut);
+    ui.shortcut_rows.borrow_mut().push(shortcut.downgrade());
     page.add(&group);
 
     let group = adw::PreferencesGroup::builder()
@@ -298,7 +298,7 @@ fn about_dialog() -> adw::AboutDialog {
     dialog
 }
 
-enum Progress {
+pub enum Progress {
     Bytes(u64, u64),
     Done(Result<(), Error>),
 }

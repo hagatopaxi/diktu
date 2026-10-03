@@ -66,12 +66,14 @@ build with Meson, starting at login, and uninstalling.
 
 ## First launch
 
-1. The preferences window opens on your desktop's language (English if Diktu has no model
-   for it). Pick the language you dictate in, then download its model (71 to 156 MB). The
-   download can be cancelled and resumed, and is checked with SHA-256.
-2. GNOME asks for permission to control the keyboard. Accept: this is how Diktu types. The
-   answer is remembered.
-3. GNOME proposes the `F12` shortcut. Accept it or choose another key. On many laptops the
+An assistant walks you through the setup, one step at a time:
+
+1. **Language.** Pick the language you will speak. Its model (about 70 MB) downloads while
+   you go through the next steps; the download is checked with SHA-256.
+2. **Permissions.** Diktu explains what it needs, then GNOME asks you to confirm, one dialog
+   after the other: running in the background, and controlling the keyboard (this is how
+   Diktu types). The answers are remembered.
+3. **Shortcut.** GNOME proposes `F12`. Accept it or choose another key. On many laptops the
    F row sends media keys by default; press `Fn+F12` then, or turn on Fn-lock.
 
 ## Everyday use

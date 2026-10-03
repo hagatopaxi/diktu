@@ -183,24 +183,32 @@ msgstr "в модели нет файла `{prefix}*`"
 msgid "sherpa-onnx could not load the model in {dir}"
 msgstr "sherpa-onnx не смог загрузить модель из {dir}"
 
-#: app/src/main.rs:194
+#: app/src/main.rs:195
 msgid "could not start the model check: {error}"
 msgstr "не удалось запустить проверку модели: {error}"
 
-#: app/src/main.rs:230
+#: app/src/main.rs:231
 msgid "no message"
 msgstr "нет сообщения"
 
-#: app/src/main.rs:227
+#: app/src/main.rs:228
 msgid "the speech engine crashed loading this model ({message})"
 msgstr ""
 "движок распознавания аварийно завершился при загрузке этой модели ({message})"
 
-#: app/src/main.rs:401
+#: app/src/main.rs:244
+msgid "Listen for the dictation shortcut with no window open"
+msgstr "Ожидать сочетание клавиш диктовки без открытых окон"
+
+#: app/src/main.rs:252
+msgid "not allowed"
+msgstr "не разрешено"
+
+#: app/src/main.rs:427
 msgid "keyboard access denied: {error}"
 msgstr "доступ к клавиатуре запрещён: {error}"
 
-#: app/src/main.rs:415
+#: app/src/main.rs:450
 msgid ""
 "global shortcut unavailable ({error}): bind a GNOME shortcut to “diktu --"
 "toggle”"
@@ -208,17 +216,163 @@ msgstr ""
 "глобальное сочетание клавиш недоступно ({error}): назначьте в GNOME "
 "сочетание для «diktu --toggle»"
 
-#: app/src/main.rs:424
-msgid "Listen for the dictation shortcut with no window open"
-msgstr "Ожидать сочетание клавиш диктовки без открытых окон"
+#: app/src/onboarding.rs:129 app/src/preferences.rs:64
+#: app/src/preferences.rs:674
+msgid "Language"
+msgstr "Язык"
+
+#: app/src/onboarding.rs:136
+msgid "Model"
+msgstr "Модель"
+
+#: app/src/onboarding.rs:146
+msgid "{size} MB · license {license}"
+msgstr "{size} МБ · лицензия {license}"
+
+#: app/src/onboarding.rs:184 app/src/onboarding.rs:378
+msgid "Continue"
+msgstr "Продолжить"
+
+#: app/src/onboarding.rs:188
+msgid "Welcome to {app}"
+msgstr "Добро пожаловать в {app}"
+
+#: app/src/onboarding.rs:190
+msgid ""
+"Dictate text anywhere, recognized on your computer. Which language will you "
+"speak? Its model downloads while you set up the rest."
+msgstr ""
+"Диктуйте текст где угодно, распознавание происходит на вашем компьютере. На "
+"каком языке вы будете говорить? Его модель загружается, пока вы настраиваете "
+"остальное."
+
+#: app/src/onboarding.rs:235
+msgid "Downloading {model}…"
+msgstr "Загрузка {model}…"
+
+#: app/src/onboarding.rs:263
+msgid "Downloading {model}… {done} / {total} MB"
+msgstr "Загрузка {model}… {done} / {total} МБ"
+
+#: app/src/onboarding.rs:274
+msgid "{model} is ready"
+msgstr "{model} готова"
+
+#: app/src/onboarding.rs:279
+msgid "Download failed: {error}. Retry from the preferences."
+msgstr "Не удалось загрузить: {error}. Повторите в настройках."
+
+#: app/src/onboarding.rs:303
+msgid "Microphone"
+msgstr "Микрофон"
+
+#: app/src/onboarding.rs:304
+msgid "Open only while you dictate. No audio leaves your computer."
+msgstr "Открыт только во время диктовки. Звук не покидает ваш компьютер."
+
+#: app/src/onboarding.rs:308
+msgid "Run in the background"
+msgstr "Работа в фоне"
+
+#: app/src/onboarding.rs:309
+msgid "Listen for the shortcut with no window open."
+msgstr "Ждать сочетание клавиш без открытого окна."
+
+#: app/src/onboarding.rs:313
+msgid "Type at the cursor"
+msgstr "Печатать у курсора"
+
+#: app/src/onboarding.rs:315
+msgid ""
+"Type the recognized text in the focused app. GNOME shows a remote control "
+"icon while {app} types."
+msgstr ""
+"Печатать распознанный текст в активном приложении. GNOME показывает значок "
+"удалённого управления, пока {app} печатает."
+
+#: app/src/onboarding.rs:319
+msgid "Allow…"
+msgstr "Разрешить…"
+
+#: app/src/onboarding.rs:320 app/src/onboarding.rs:402
+msgid "Skip"
+msgstr "Пропустить"
+
+#: app/src/onboarding.rs:324 app/src/preferences.rs:260
+msgid "Permissions"
+msgstr "Разрешения"
+
+#: app/src/onboarding.rs:325
+msgid "GNOME asks you to confirm each one, one dialog after the other."
+msgstr "GNOME попросит подтвердить каждое разрешение, одно окно за другим."
+
+#: app/src/onboarding.rs:342
+msgid "Not granted ({error}). It will be asked again later."
+msgstr "Не предоставлено ({error}). Разрешение будет запрошено снова позже."
+
+#: app/src/onboarding.rs:397 app/src/preferences.rs:120 app/src/shortcut.rs:20
+msgid "Start or stop dictation"
+msgstr "Начать или остановить диктовку"
+
+#: app/src/onboarding.rs:398
+msgid "Not chosen yet"
+msgstr "Ещё не выбрано"
+
+#: app/src/onboarding.rs:401
+msgid "Choose the Shortcut…"
+msgstr "Выбрать сочетание клавиш…"
+
+#: app/src/onboarding.rs:406
+msgid "Keyboard Shortcut"
+msgstr "Сочетание клавиш"
+
+#: app/src/onboarding.rs:408
+msgid ""
+"Press it anywhere to start dictating, and again to stop. {app} suggests "
+"{key}; GNOME lets you confirm it or pick another one.\n"
+"\n"
+"On a laptop, {key} often controls the volume or brightness: press Fn+{key}, "
+"or turn on Fn Lock (often Fn+Esc)."
+msgstr ""
+"Нажмите его где угодно, чтобы начать диктовку, и снова, чтобы остановить. "
+"{app} предлагает {key}; GNOME позволит подтвердить его или выбрать другую "
+"клавишу.\n"
+"\n"
+"На ноутбуке {key} часто управляет громкостью или яркостью: нажмите Fn+{key} "
+"или включите блокировку Fn (часто Fn+Esc)."
+
+#: app/src/onboarding.rs:445
+msgid "Start Using {app}"
+msgstr "Начать работу с {app}"
+
+#: app/src/onboarding.rs:449
+msgid "All Set"
+msgstr "Всё готово"
+
+#: app/src/onboarding.rs:459
+msgid "Press {key} anywhere"
+msgstr "Нажмите {key} где угодно"
+
+#: app/src/onboarding.rs:461
+msgid "Choose “Start dictation” in the {app} menu of the top bar"
+msgstr "Выберите «Начать диктовку» в меню {app} верхней панели"
+
+#: app/src/onboarding.rs:470
+msgid "Dictation works once the model is downloaded."
+msgstr "Диктовка заработает, когда модель будет загружена."
+
+#: app/src/onboarding.rs:481
+msgid "{start}, speak, then pause: the text is typed at the cursor."
+msgstr ""
+"{start}, говорите, затем сделайте паузу: текст будет напечатан у курсора."
+
+#: app/src/onboarding.rs:485
+msgid "The {app} menu in the top bar also opens the preferences."
+msgstr "Меню {app} верхней панели также открывает настройки."
 
 #: app/src/preferences.rs:47
 msgid "{app} Preferences"
 msgstr "Параметры {app}"
-
-#: app/src/preferences.rs:64 app/src/preferences.rs:674
-msgid "Language"
-msgstr "Язык"
 
 #: app/src/preferences.rs:72
 msgid "Dictation"
@@ -247,10 +401,6 @@ msgid ""
 msgstr ""
 "Сочетание назначает GNOME. Запасной вариант: своё сочетание клавиш GNOME, "
 "запускающее «diktu --toggle»."
-
-#: app/src/preferences.rs:120 app/src/shortcut.rs:20
-msgid "Start or stop dictation"
-msgstr "Начать или остановить диктовку"
 
 #: app/src/preferences.rs:125
 msgid "GlobalShortcuts portal unavailable"
@@ -315,10 +465,6 @@ msgstr "Язык интерфейса"
 #: app/src/preferences.rs:239
 msgid "Interface"
 msgstr "Интерфейс"
-
-#: app/src/preferences.rs:260
-msgid "Permissions"
-msgstr "Разрешения"
 
 #: app/src/preferences.rs:262
 msgid ""
