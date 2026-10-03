@@ -6,6 +6,11 @@ recognition runs entirely on your computer.
 
 Diktu currently understands French only.
 
+## Pronunciation
+
+*Diktu* is said **DEEK-too** (/ˈdik.tu/). It is Esperanto for "dictate!", the imperative of
+*dikti*, "to dictate".
+
 ## Features
 
 - **Types where you are.** Text goes to the focused application: editor, browser, terminal,
