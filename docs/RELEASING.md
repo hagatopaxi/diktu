@@ -42,22 +42,3 @@ flatpak run fr.gwenael_leger.Diktu
 ```
 
 Then go through [MANUAL_TESTS.md](MANUAL_TESTS.md) and record the result in its table.
-
-## Flathub
-
-Diktu is not on Flathub. GitHub releases are the distribution channel.
-
-Flathub's [generative AI policy](https://docs.flathub.org/docs/for-app-authors/requirements#generative-ai-policy)
-applies to any submission:
-
-- AI-generated code, documentation and packaging must be disclosed, with the affected parts and
-  their extent. Most of this repository was written with an AI assistant, so the disclosure covers
-  nearly all of it, and reviewers may reject the submission on that ground.
-- The Flathub manifest must contain no AI-generated or AI-assisted content, disclosed or not.
-  `build-aux/fr.gwenael_leger.Diktu.json` was written with AI and cannot be submitted as is.
-  A Flathub manifest would have to be written by hand by the maintainer.
-- The submission pull request, its commit messages, description and replies to reviewers must be
-  written by a human, without AI tools.
-
-Process and rules: [submission](https://docs.flathub.org/docs/for-app-authors/submission),
-[requirements](https://docs.flathub.org/docs/for-app-authors/requirements).
