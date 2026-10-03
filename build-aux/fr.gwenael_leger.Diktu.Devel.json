@@ -7,6 +7,7 @@
     "org.freedesktop.Sdk.Extension.rust-stable"
   ],
   "command": "diktu-dev",
+  "separate-locales": false,
   "finish-args": [
     "--socket=wayland",
     "--socket=fallback-x11",

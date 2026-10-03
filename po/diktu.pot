@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: diktu\n"
 "Report-Msgid-Bugs-To: me@gwenael-leger.fr\n"
-"POT-Creation-Date: 2026-10-03 21:15+0200\n"
+"POT-Creation-Date: 2026-10-03 21:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -187,252 +187,264 @@ msgstr ""
 msgid "the speech engine crashed loading this model ({message})"
 msgstr ""
 
-#: app/src/main.rs:400
+#: app/src/main.rs:401
 msgid "keyboard access denied: {error}"
 msgstr ""
 
-#: app/src/main.rs:414
+#: app/src/main.rs:415
 msgid ""
 "global shortcut unavailable ({error}): bind a GNOME shortcut to “diktu --"
 "toggle”"
 msgstr ""
 
-#: app/src/main.rs:423
+#: app/src/main.rs:424
 msgid "Listen for the dictation shortcut with no window open"
 msgstr ""
 
-#: app/src/preferences.rs:43
+#: app/src/preferences.rs:47
 msgid "{app} Preferences"
 msgstr ""
 
-#: app/src/preferences.rs:60 app/src/preferences.rs:627
+#: app/src/preferences.rs:64 app/src/preferences.rs:674
 msgid "Language"
 msgstr ""
 
-#: app/src/preferences.rs:68
+#: app/src/preferences.rs:72
 msgid "Dictation"
 msgstr ""
 
-#: app/src/preferences.rs:74
+#: app/src/preferences.rs:79
 msgid "Models"
 msgstr ""
 
-#: app/src/preferences.rs:76
+#: app/src/preferences.rs:81
 msgid ""
 "Download a model for the chosen language to start dictating. Models come "
 "from Hugging Face, are verified (SHA-256), then used offline."
 msgstr ""
 
-#: app/src/preferences.rs:109
+#: app/src/preferences.rs:114
 msgid "Shortcut"
 msgstr ""
 
-#: app/src/preferences.rs:111
+#: app/src/preferences.rs:116
 msgid ""
 "GNOME assigns the shortcut. Fallback: a custom GNOME shortcut that runs "
 "“diktu --toggle”."
 msgstr ""
 
-#: app/src/preferences.rs:115 app/src/shortcut.rs:27
+#: app/src/preferences.rs:120 app/src/shortcut.rs:20
 msgid "Start or stop dictation"
 msgstr ""
 
-#: app/src/preferences.rs:120
+#: app/src/preferences.rs:125
 msgid "GlobalShortcuts portal unavailable"
 msgstr ""
 
-#: app/src/preferences.rs:124
+#: app/src/preferences.rs:129
 msgid "Change…"
 msgstr ""
 
-#: app/src/preferences.rs:133
+#: app/src/preferences.rs:138
 msgid "Change it in Settings → Apps → Diktu"
 msgstr ""
 
-#: app/src/preferences.rs:142
+#: app/src/preferences.rs:147
 msgid "Behavior"
 msgstr ""
 
-#: app/src/preferences.rs:145
+#: app/src/preferences.rs:150
 msgid "End-of-speech silence (s)"
 msgstr ""
 
-#: app/src/preferences.rs:146
+#: app/src/preferences.rs:151
 msgid "Silence after speech that stops listening"
 msgstr ""
 
-#: app/src/preferences.rs:151
+#: app/src/preferences.rs:156
 msgid "Capitalize and end with a period"
 msgstr ""
 
-#: app/src/preferences.rs:156
+#: app/src/preferences.rs:161
 msgid "Delay between keys (ms)"
 msgstr ""
 
-#: app/src/preferences.rs:157
+#: app/src/preferences.rs:162
 msgid "Increase it if some apps drop characters"
 msgstr ""
 
-#: app/src/preferences.rs:161
+#: app/src/preferences.rs:166
 msgid "Start and stop sounds"
 msgstr ""
 
-#: app/src/preferences.rs:171
+#: app/src/preferences.rs:176
 msgid "Volume"
 msgstr ""
 
-#: app/src/preferences.rs:182
+#: app/src/preferences.rs:187
 msgid "About {app}"
 msgstr ""
 
-#: app/src/preferences.rs:183
+#: app/src/preferences.rs:188
 msgid "Version, permissions, licenses, source code"
 msgstr ""
 
+#: app/src/preferences.rs:205
+msgid "Same as the system"
+msgstr ""
+
 #: app/src/preferences.rs:213
+msgid "Interface language"
+msgstr ""
+
+#: app/src/preferences.rs:239
+msgid "Interface"
+msgstr ""
+
+#: app/src/preferences.rs:260
 msgid "Permissions"
 msgstr ""
 
-#: app/src/preferences.rs:215
+#: app/src/preferences.rs:262
 msgid ""
 "• Microphone: open only while you dictate; no audio leaves your machine."
 msgstr ""
 
-#: app/src/preferences.rs:216
+#: app/src/preferences.rs:263
 msgid "• Remote desktop (keyboard): types the recognized text at the cursor."
 msgstr ""
 
-#: app/src/preferences.rs:217
+#: app/src/preferences.rs:264
 msgid "• Global shortcut: starts and stops dictation from any app."
 msgstr ""
 
-#: app/src/preferences.rs:218
+#: app/src/preferences.rs:265
 msgid "• Run in background: listens for the shortcut with no window open."
 msgstr ""
 
-#: app/src/preferences.rs:219
+#: app/src/preferences.rs:266
 msgid "• Network: only to download models from Hugging Face, when you ask."
 msgstr ""
 
-#: app/src/preferences.rs:220
+#: app/src/preferences.rs:267
 msgid "• Status icon: the tray icon showing whether dictation is on."
 msgstr ""
 
-#: app/src/preferences.rs:225
+#: app/src/preferences.rs:272
 msgid "Source code"
 msgstr ""
 
 #. Translators: your names and emails, one per line.
-#: app/src/preferences.rs:227
+#: app/src/preferences.rs:274
 msgid "translator-credits"
 msgstr ""
 
-#: app/src/preferences.rs:248
+#: app/src/preferences.rs:295
 msgid "License: {license}"
 msgstr ""
 
-#: app/src/preferences.rs:277
+#: app/src/preferences.rs:324
 msgid "{size} MB"
 msgstr ""
 
-#: app/src/preferences.rs:309 app/src/preferences.rs:650
+#: app/src/preferences.rs:356 app/src/preferences.rs:697
 msgid "Download"
 msgstr ""
 
-#: app/src/preferences.rs:310
+#: app/src/preferences.rs:357
 msgid "Cancel download"
 msgstr ""
 
-#: app/src/preferences.rs:311
+#: app/src/preferences.rs:358
 msgid "Remove"
 msgstr ""
 
-#: app/src/preferences.rs:335
+#: app/src/preferences.rs:382
 msgid "downloading"
 msgstr ""
 
-#: app/src/preferences.rs:337
+#: app/src/preferences.rs:384
 msgid "installed"
 msgstr ""
 
-#: app/src/preferences.rs:339
+#: app/src/preferences.rs:386
 msgid "not installed"
 msgstr ""
 
-#: app/src/preferences.rs:342
+#: app/src/preferences.rs:389
 msgid "{size} · {state} · license {license}"
 msgstr ""
 
-#: app/src/preferences.rs:409
+#: app/src/preferences.rs:456
 msgid "{done} / {total} MB"
 msgstr ""
 
-#: app/src/preferences.rs:455
+#: app/src/preferences.rs:502
 msgid "Could not remove: {error}"
 msgstr ""
 
-#: app/src/preferences.rs:514 app/src/preferences.rs:519
-#: app/src/preferences.rs:641
+#: app/src/preferences.rs:561 app/src/preferences.rs:566
+#: app/src/preferences.rs:688
 msgid "Add a model"
 msgstr ""
 
-#: app/src/preferences.rs:516
+#: app/src/preferences.rs:563
 msgid "sherpa-onnx streaming transducer, from Hugging Face or a folder"
 msgstr ""
 
-#: app/src/preferences.rs:520 app/src/preferences.rs:648
+#: app/src/preferences.rs:567 app/src/preferences.rs:695
 msgid "Cancel"
 msgstr ""
 
-#: app/src/preferences.rs:544
+#: app/src/preferences.rs:591
 msgid "Preparing…"
 msgstr ""
 
-#: app/src/preferences.rs:560
+#: app/src/preferences.rs:607
 msgid "Downloading… {done} / {total} MB"
 msgstr ""
 
-#: app/src/preferences.rs:569
+#: app/src/preferences.rs:616
 msgid "Checking the model (loading, speed, test sentence)…"
 msgstr ""
 
-#: app/src/preferences.rs:581
+#: app/src/preferences.rs:628
 msgid "{name} added: {summary}"
 msgstr ""
 
-#: app/src/preferences.rs:587
+#: app/src/preferences.rs:634
 msgid ""
 "{name} added, but its tests did not finish: you can still try it, it may "
 "misbehave"
 msgstr ""
 
-#: app/src/preferences.rs:600
+#: app/src/preferences.rs:647
 msgid "Not added: {error}"
 msgstr ""
 
-#: app/src/preferences.rs:601
+#: app/src/preferences.rs:648
 msgid "The model was not added"
 msgstr ""
 
-#: app/src/preferences.rs:623
+#: app/src/preferences.rs:670
 msgid "Hugging Face repository (owner/name)"
 msgstr ""
 
-#: app/src/preferences.rs:643
+#: app/src/preferences.rs:690
 msgid ""
 "Only sherpa-onnx streaming transducers work (encoder, decoder, joiner, "
 "tokens). The model is copied, then tested before use."
 msgstr ""
 
-#: app/src/preferences.rs:649
+#: app/src/preferences.rs:696
 msgid "From a Folder…"
 msgstr ""
 
-#: app/src/preferences.rs:668
+#: app/src/preferences.rs:715
 msgid "Folder containing the model"
 msgstr ""
 
-#: app/src/shortcut.rs:59
+#: app/src/shortcut.rs:71
 msgid "not assigned"
 msgstr ""
 

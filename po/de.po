@@ -4,10 +4,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: diktu\n"
 "Report-Msgid-Bugs-To: me@gwenael-leger.fr\n"
+"POT-Creation-Date: 2026-10-03 21:35+0200\n"
 "PO-Revision-Date: 2026-10-03 22:00+0200\n"
 "Last-Translator: Gwenaël Léger <me@gwenael-leger.fr>\n"
 "Language-Team: none\n"
-"POT-Creation-Date: 2026-10-03 21:15+0200\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -192,11 +192,11 @@ msgid "the speech engine crashed loading this model ({message})"
 msgstr ""
 "die Spracherkennung ist beim Laden dieses Modells abgestürzt ({message})"
 
-#: app/src/main.rs:400
+#: app/src/main.rs:401
 msgid "keyboard access denied: {error}"
 msgstr "Tastaturzugriff verweigert: {error}"
 
-#: app/src/main.rs:414
+#: app/src/main.rs:415
 msgid ""
 "global shortcut unavailable ({error}): bind a GNOME shortcut to “diktu --"
 "toggle”"
@@ -204,27 +204,27 @@ msgstr ""
 "globales Tastenkürzel nicht verfügbar ({error}): legen Sie ein GNOME-"
 "Tastenkürzel für „diktu --toggle“ an"
 
-#: app/src/main.rs:423
+#: app/src/main.rs:424
 msgid "Listen for the dictation shortcut with no window open"
 msgstr "Auf das Diktat-Tastenkürzel achten, ohne dass ein Fenster offen ist"
 
-#: app/src/preferences.rs:43
+#: app/src/preferences.rs:47
 msgid "{app} Preferences"
 msgstr "{app}-Einstellungen"
 
-#: app/src/preferences.rs:60 app/src/preferences.rs:627
+#: app/src/preferences.rs:64 app/src/preferences.rs:674
 msgid "Language"
 msgstr "Sprache"
 
-#: app/src/preferences.rs:68
+#: app/src/preferences.rs:72
 msgid "Dictation"
 msgstr "Diktat"
 
-#: app/src/preferences.rs:74
+#: app/src/preferences.rs:79
 msgid "Models"
 msgstr "Modelle"
 
-#: app/src/preferences.rs:76
+#: app/src/preferences.rs:81
 msgid ""
 "Download a model for the chosen language to start dictating. Models come "
 "from Hugging Face, are verified (SHA-256), then used offline."
@@ -233,11 +233,11 @@ msgstr ""
 "zu beginnen. Modelle stammen von Hugging Face, werden geprüft (SHA-256) und "
 "dann offline verwendet."
 
-#: app/src/preferences.rs:109
+#: app/src/preferences.rs:114
 msgid "Shortcut"
 msgstr "Tastenkürzel"
 
-#: app/src/preferences.rs:111
+#: app/src/preferences.rs:116
 msgid ""
 "GNOME assigns the shortcut. Fallback: a custom GNOME shortcut that runs "
 "“diktu --toggle”."
@@ -245,181 +245,193 @@ msgstr ""
 "GNOME vergibt das Tastenkürzel. Alternative: ein eigenes GNOME-Tastenkürzel, "
 "das „diktu --toggle“ ausführt."
 
-#: app/src/preferences.rs:115 app/src/shortcut.rs:27
+#: app/src/preferences.rs:120 app/src/shortcut.rs:20
 msgid "Start or stop dictation"
 msgstr "Diktat starten oder beenden"
 
-#: app/src/preferences.rs:120
+#: app/src/preferences.rs:125
 msgid "GlobalShortcuts portal unavailable"
 msgstr "GlobalShortcuts-Portal nicht verfügbar"
 
-#: app/src/preferences.rs:124
+#: app/src/preferences.rs:129
 msgid "Change…"
 msgstr "Ändern…"
 
-#: app/src/preferences.rs:133
+#: app/src/preferences.rs:138
 msgid "Change it in Settings → Apps → Diktu"
 msgstr "Ändern Sie es in Einstellungen → Apps → Diktu"
 
-#: app/src/preferences.rs:142
+#: app/src/preferences.rs:147
 msgid "Behavior"
 msgstr "Verhalten"
 
-#: app/src/preferences.rs:145
+#: app/src/preferences.rs:150
 msgid "End-of-speech silence (s)"
 msgstr "Stille am Sprechende (s)"
 
-#: app/src/preferences.rs:146
+#: app/src/preferences.rs:151
 msgid "Silence after speech that stops listening"
 msgstr "Stille nach dem Sprechen, die das Zuhören beendet"
 
-#: app/src/preferences.rs:151
+#: app/src/preferences.rs:156
 msgid "Capitalize and end with a period"
 msgstr "Großschreiben und mit Punkt beenden"
 
-#: app/src/preferences.rs:156
+#: app/src/preferences.rs:161
 msgid "Delay between keys (ms)"
 msgstr "Verzögerung zwischen Tasten (ms)"
 
-#: app/src/preferences.rs:157
+#: app/src/preferences.rs:162
 msgid "Increase it if some apps drop characters"
 msgstr "Erhöhen, wenn manche Apps Zeichen verlieren"
 
-#: app/src/preferences.rs:161
+#: app/src/preferences.rs:166
 msgid "Start and stop sounds"
 msgstr "Start- und Stopptöne"
 
-#: app/src/preferences.rs:171
+#: app/src/preferences.rs:176
 msgid "Volume"
 msgstr "Lautstärke"
 
-#: app/src/preferences.rs:182
+#: app/src/preferences.rs:187
 msgid "About {app}"
 msgstr "Info zu {app}"
 
-#: app/src/preferences.rs:183
+#: app/src/preferences.rs:188
 msgid "Version, permissions, licenses, source code"
 msgstr "Version, Berechtigungen, Lizenzen, Quellcode"
 
+#: app/src/preferences.rs:205
+msgid "Same as the system"
+msgstr "Wie das System"
+
 #: app/src/preferences.rs:213
+msgid "Interface language"
+msgstr "Sprache der Oberfläche"
+
+#: app/src/preferences.rs:239
+msgid "Interface"
+msgstr "Oberfläche"
+
+#: app/src/preferences.rs:260
 msgid "Permissions"
 msgstr "Berechtigungen"
 
-#: app/src/preferences.rs:215
+#: app/src/preferences.rs:262
 msgid ""
 "• Microphone: open only while you dictate; no audio leaves your machine."
 msgstr ""
 "• Mikrofon: nur während des Diktats geöffnet; kein Ton verlässt Ihren "
 "Rechner."
 
-#: app/src/preferences.rs:216
+#: app/src/preferences.rs:263
 msgid "• Remote desktop (keyboard): types the recognized text at the cursor."
 msgstr ""
 "• Fernzugriff (Tastatur): tippt den erkannten Text an der Cursorposition."
 
-#: app/src/preferences.rs:217
+#: app/src/preferences.rs:264
 msgid "• Global shortcut: starts and stops dictation from any app."
 msgstr "• Globales Tastenkürzel: startet und beendet das Diktat aus jeder App."
 
-#: app/src/preferences.rs:218
+#: app/src/preferences.rs:265
 msgid "• Run in background: listens for the shortcut with no window open."
 msgstr ""
 "• Hintergrundbetrieb: wartet ohne offenes Fenster auf das Tastenkürzel."
 
-#: app/src/preferences.rs:219
+#: app/src/preferences.rs:266
 msgid "• Network: only to download models from Hugging Face, when you ask."
 msgstr ""
 "• Netzwerk: nur zum Herunterladen von Modellen von Hugging Face, auf Ihren "
 "Wunsch."
 
-#: app/src/preferences.rs:220
+#: app/src/preferences.rs:267
 msgid "• Status icon: the tray icon showing whether dictation is on."
 msgstr "• Statussymbol: das Symbol im Infobereich zeigt, ob das Diktat läuft."
 
-#: app/src/preferences.rs:225
+#: app/src/preferences.rs:272
 msgid "Source code"
 msgstr "Quellcode"
 
 #. Translators: your names and emails, one per line.
-#: app/src/preferences.rs:227
+#: app/src/preferences.rs:274
 msgid "translator-credits"
 msgstr ""
 
-#: app/src/preferences.rs:248
+#: app/src/preferences.rs:295
 msgid "License: {license}"
 msgstr "Lizenz: {license}"
 
-#: app/src/preferences.rs:277
+#: app/src/preferences.rs:324
 msgid "{size} MB"
 msgstr "{size} MB"
 
-#: app/src/preferences.rs:309 app/src/preferences.rs:650
+#: app/src/preferences.rs:356 app/src/preferences.rs:697
 msgid "Download"
 msgstr "Herunterladen"
 
-#: app/src/preferences.rs:310
+#: app/src/preferences.rs:357
 msgid "Cancel download"
 msgstr "Download abbrechen"
 
-#: app/src/preferences.rs:311
+#: app/src/preferences.rs:358
 msgid "Remove"
 msgstr "Entfernen"
 
-#: app/src/preferences.rs:335
+#: app/src/preferences.rs:382
 msgid "downloading"
 msgstr "wird heruntergeladen"
 
-#: app/src/preferences.rs:337
+#: app/src/preferences.rs:384
 msgid "installed"
 msgstr "installiert"
 
-#: app/src/preferences.rs:339
+#: app/src/preferences.rs:386
 msgid "not installed"
 msgstr "nicht installiert"
 
-#: app/src/preferences.rs:342
+#: app/src/preferences.rs:389
 msgid "{size} · {state} · license {license}"
 msgstr "{size} · {state} · Lizenz {license}"
 
-#: app/src/preferences.rs:409
+#: app/src/preferences.rs:456
 msgid "{done} / {total} MB"
 msgstr "{done} / {total} MB"
 
-#: app/src/preferences.rs:455
+#: app/src/preferences.rs:502
 msgid "Could not remove: {error}"
 msgstr "Entfernen nicht möglich: {error}"
 
-#: app/src/preferences.rs:514 app/src/preferences.rs:519
-#: app/src/preferences.rs:641
+#: app/src/preferences.rs:561 app/src/preferences.rs:566
+#: app/src/preferences.rs:688
 msgid "Add a model"
 msgstr "Modell hinzufügen"
 
-#: app/src/preferences.rs:516
+#: app/src/preferences.rs:563
 msgid "sherpa-onnx streaming transducer, from Hugging Face or a folder"
 msgstr ""
 "sherpa-onnx-Streaming-Transducer, von Hugging Face oder aus einem Ordner"
 
-#: app/src/preferences.rs:520 app/src/preferences.rs:648
+#: app/src/preferences.rs:567 app/src/preferences.rs:695
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: app/src/preferences.rs:544
+#: app/src/preferences.rs:591
 msgid "Preparing…"
 msgstr "Vorbereitung…"
 
-#: app/src/preferences.rs:560
+#: app/src/preferences.rs:607
 msgid "Downloading… {done} / {total} MB"
 msgstr "Herunterladen… {done} / {total} MB"
 
-#: app/src/preferences.rs:569
+#: app/src/preferences.rs:616
 msgid "Checking the model (loading, speed, test sentence)…"
 msgstr "Modell wird geprüft (Laden, Geschwindigkeit, Testsatz)…"
 
-#: app/src/preferences.rs:581
+#: app/src/preferences.rs:628
 msgid "{name} added: {summary}"
 msgstr "{name} hinzugefügt: {summary}"
 
-#: app/src/preferences.rs:587
+#: app/src/preferences.rs:634
 msgid ""
 "{name} added, but its tests did not finish: you can still try it, it may "
 "misbehave"
@@ -427,19 +439,19 @@ msgstr ""
 "{name} hinzugefügt, aber die Tests wurden nicht beendet: Sie können es "
 "ausprobieren, es könnte sich fehlerhaft verhalten"
 
-#: app/src/preferences.rs:600
+#: app/src/preferences.rs:647
 msgid "Not added: {error}"
 msgstr "Nicht hinzugefügt: {error}"
 
-#: app/src/preferences.rs:601
+#: app/src/preferences.rs:648
 msgid "The model was not added"
 msgstr "Das Modell wurde nicht hinzugefügt"
 
-#: app/src/preferences.rs:623
+#: app/src/preferences.rs:670
 msgid "Hugging Face repository (owner/name)"
 msgstr "Hugging-Face-Repository (Besitzer/Name)"
 
-#: app/src/preferences.rs:643
+#: app/src/preferences.rs:690
 msgid ""
 "Only sherpa-onnx streaming transducers work (encoder, decoder, joiner, "
 "tokens). The model is copied, then tested before use."
@@ -447,15 +459,15 @@ msgstr ""
 "Nur sherpa-onnx-Streaming-Transducer funktionieren (encoder, decoder, "
 "joiner, tokens). Das Modell wird kopiert und vor der Verwendung getestet."
 
-#: app/src/preferences.rs:649
+#: app/src/preferences.rs:696
 msgid "From a Folder…"
 msgstr "Aus einem Ordner…"
 
-#: app/src/preferences.rs:668
+#: app/src/preferences.rs:715
 msgid "Folder containing the model"
 msgstr "Ordner mit dem Modell"
 
-#: app/src/shortcut.rs:59
+#: app/src/shortcut.rs:71
 msgid "not assigned"
 msgstr "nicht zugewiesen"
 

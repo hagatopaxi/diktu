@@ -94,6 +94,7 @@ equivalent label.
 - [ ] Add a model in a language without a registered one (e.g. English): the language appears in the Language list.
 - [ ] Remove an imported model: its row disappears; if it was selected, the default model is used again.
 - [ ] Desktop in German, Spanish, Russian or Esperanto (`LANGUAGE=eo diktu`): menus, preferences, toasts, the About dialog and the app grid entry are translated; with no Diktu setting yet, the Language row shows the desktop language, and English when no model exists for it (e.g. Esperanto).
+- [ ] Interface language row: each choice translates the preferences window at once, then the icon menu; "Same as the system" goes back to the desktop language; the choice persists after a restart, and the dictation language does not change.
 - [ ] Switch the Language row to each built-in language, download its model and dictate a sentence: the text is typed correctly.
 - [ ] "About Diktu" (bottom of the preferences): the dialog shows the version, the GitHub links (website, issues, source code), the permissions list under Details, and under Legal the GPL-3.0, sherpa-onnx (Apache-2.0), ONNX Runtime (MIT) and one license section per model.
 

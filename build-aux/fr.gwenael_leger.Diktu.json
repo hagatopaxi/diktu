@@ -5,6 +5,7 @@
   "sdk": "org.gnome.Sdk",
   "sdk-extensions": ["org.freedesktop.Sdk.Extension.rust-stable"],
   "command": "diktu",
+  "separate-locales": false,
   "finish-args": [
     "--socket=wayland",
     "--socket=fallback-x11",
