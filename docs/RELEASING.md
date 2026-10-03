@@ -13,7 +13,7 @@ The script refuses to run outside `main`, with uncommitted changes, or if the ta
 
 1. sets `version` in the workspace `Cargo.toml` and refreshes `Cargo.lock`;
 2. adds a `<release>` entry, dated today, at the top of `<releases>` in the AppStream metainfo
-   (GNOME Software and Flathub show these notes) and validates the file;
+   (software centers show these notes) and validates the file;
 3. runs `cargo fmt --check`, `cargo clippy -D warnings` and `cargo test`;
 4. commits `chore: release X.Y.Z`, creates the annotated tag `vX.Y.Z` and pushes both.
 
