@@ -134,9 +134,29 @@ pub fn all_models() -> Vec<Model> {
     models
 }
 
+/// The dictation language: the setting, else the desktop language when a model exists
+/// for it, else English.
+pub fn language(settings: &gio::Settings) -> String {
+    let set = settings.string("language");
+    if !set.is_empty() {
+        return set.into();
+    }
+    let models = all_models();
+    glib::language_names()
+        .iter()
+        .map(|l| {
+            l.split(['_', '.', '@'])
+                .next()
+                .unwrap_or_default()
+                .to_owned()
+        })
+        .find(|l| models.iter().any(|m| m.langs.contains(l)))
+        .unwrap_or_else(|| "en".into())
+}
+
 /// The model selected for the current language, if any exists.
 pub fn selected_model(settings: &gio::Settings) -> Option<Model> {
-    let (lang, id) = (settings.string("language"), settings.string("model"));
+    let (lang, id) = (language(settings), settings.string("model"));
     let models: Vec<Model> = all_models()
         .into_iter()
         .filter(|m| m.langs.iter().any(|l| l == lang.as_str()))

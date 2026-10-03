@@ -2,9 +2,9 @@
 <schemalist gettext-domain="diktu">
   <schema id="fr.gwenael_leger.Diktu" path="/fr/gwenael_leger/Diktu/">
     <key name="language" type="s">
-      <default>'fr'</default>
+      <default>''</default>
       <summary>Dictation language</summary>
-      <description>ISO 639-1 code of the language to dictate.</description>
+      <description>ISO 639-1 code of the language to dictate; empty means the desktop language when a model exists for it, otherwise English.</description>
     </key>
     <key name="model" type="s">
       <default>''</default>

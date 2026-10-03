@@ -173,3 +173,10 @@ Each entry: context, choice, rejected alternative, reason.
 - **Choice**: a Meson option `profile=development` (Cargo feature `diktu/devel`) builds a separate application: ID `fr.gwenael_leger.Diktu.Devel` (GNOME's `.Devel` convention), name "Diktu dev", binary `diktu-dev`, its own GSettings schema (same keys under the new ID and path, rewritten by `sed` in Meson and by `build.rs`), its own data folder `diktu-dev`, and an orange striped icon. Models are not shared: a development build may import or remove models freely.
 - `build-aux/fr.gwenael_leger.Diktu.Devel.json` is generated from the release manifest, to be rerun after editing it:
   `jq --indent 2 '.id += ".Devel" | .command = "diktu-dev" | (.modules[] | select(.name == "diktu") | ."config-opts") += ["-Dprofile=development"]' build-aux/fr.gwenael_leger.Diktu.json > build-aux/fr.gwenael_leger.Diktu.Devel.json`
+
+## D27 — Built-in languages
+
+- **Context**: Diktu offered French only. The five most spoken languages in Europe are Russian, German, French, English and Italian (native speakers).
+- **Choice**: one small streaming transducer per language, like Kroko FR: Kroko EN, DE, ES (71, 71 and 156 MB, same family and license as Kroko FR) and Vosk small RU (94 MB, Apache-2.0), all from `csukuangfj`'s sherpa-onnx conversions. Italian is replaced by Spanish: the only sherpa-onnx Italian streaming transducers on Hugging Face are re-uploads of Kroko IT by unknown accounts, with no provenance; Banafo publishes Kroko IT only in its own `.data` format. Italian stays available through the import.
+- Each language has a CC0 Common Voice 17 test clip in `data/samples/` (16 kHz mono, re-encoded from the `fixie-ai/common_voice_17_0` test split): `common_voice_en_27340672`, `common_voice_de_38272982`, `common_voice_es_19653917`, `common_voice_ru_32271856`. The registry models score 0–33 % word errors on them, below the 50 % import threshold.
+- The `language` setting defaults to empty: the desktop language when a model exists for it, otherwise English.

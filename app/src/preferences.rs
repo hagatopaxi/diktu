@@ -59,7 +59,7 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
         .title("Language")
         .model(&gtk::StringList::new(&names))
         .build();
-    let current = settings.string("language");
+    let current = crate::language(settings);
     if let Some(i) = languages.iter().position(|l| *l == current.as_str()) {
         language.set_selected(i as u32);
     }
@@ -69,7 +69,10 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
 
     let group = adw::PreferencesGroup::builder()
         .title("Models")
-        .description("Downloaded from Hugging Face, verified (SHA-256), then used offline.")
+        .description(
+            "Download a model for the chosen language to start dictating. \
+             Models come from Hugging Face, are verified (SHA-256), then used offline.",
+        )
         .build();
     let mut first_check: Option<gtk::CheckButton> = None;
     let rows: Vec<(Model, adw::ActionRow)> = models
@@ -592,7 +595,7 @@ fn import_row(ui: &Rc<Ui>, window: &adw::PreferencesWindow) -> adw::ActionRow {
                 .title("Language")
                 .model(&gtk::StringList::new(&names))
                 .build();
-            let current = settings.string("language");
+            let current = crate::language(&settings);
             if let Some(i) = LANGUAGES.iter().position(|(c, _)| *c == current.as_str()) {
                 language.set_selected(i as u32);
             }

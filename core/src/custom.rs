@@ -24,12 +24,24 @@ const MAX_WER: f64 = 0.5;
 /// Fraction of real time the model may spend decoding; above it, dictation lags.
 const MAX_RTF: f64 = 0.8;
 
+macro_rules! sample {
+    ($lang:literal) => {
+        (
+            $lang,
+            include_bytes!(concat!("../../data/samples/", $lang, ".wav")),
+            include_str!(concat!("../../data/samples/", $lang, ".txt")),
+        )
+    };
+}
+
 /// Reference clips (16 kHz mono 16-bit WAV, CC0) with their transcript, per language.
-const SAMPLES: &[(&str, &[u8], &str)] = &[(
-    "fr",
-    include_bytes!("../../data/samples/fr.wav"),
-    include_str!("../../data/samples/fr.txt"),
-)];
+const SAMPLES: &[(&str, &[u8], &str)] = &[
+    sample!("de"),
+    sample!("en"),
+    sample!("es"),
+    sample!("fr"),
+    sample!("ru"),
+];
 
 pub fn is_custom(model: &Model) -> bool {
     model.id.starts_with(PREFIX)

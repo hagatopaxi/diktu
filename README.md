@@ -4,7 +4,8 @@ Diktu is a voice dictation tool for GNOME on Wayland. Press a shortcut, speak, a
 are typed at the cursor of whatever application you are using, as you talk. Speech
 recognition runs entirely on your computer.
 
-Diktu currently understands French only.
+Diktu understands English, French, German, Russian and Spanish out of the box; any other
+language works with an imported sherpa-onnx streaming model.
 
 ## Pronunciation
 
@@ -152,8 +153,11 @@ It builds on:
 - [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) by k2-fsa (Apache-2.0), for speech
   recognition;
 - [ONNX Runtime](https://github.com/microsoft/onnxruntime) by Microsoft (MIT);
-- the [Kroko FR](https://huggingface.co/csukuangfj/sherpa-onnx-streaming-zipformer-fr-kroko-2025-08-06)
-  model by [Banafo](https://huggingface.co/Banafo/Kroko-ASR) (CC-BY-SA), downloaded separately;
+- the Kroko FR, EN, DE and ES models by [Banafo](https://huggingface.co/Banafo/Kroko-ASR)
+  (CC-BY-SA) and the Vosk small RU model by
+  [Alpha Cephei](https://huggingface.co/alphacep/vosk-model-small-streaming-ru) (Apache-2.0),
+  converted by [csukuangfj](https://huggingface.co/csukuangfj), downloaded separately;
+- reference clips from [Common Voice](https://commonvoice.mozilla.org) (CC0) in `data/samples/`;
 - [gtk-rs](https://gtk-rs.org) and libadwaita, [ashpd](https://github.com/bilelmoussaoui/ashpd),
   [ksni](https://github.com/iovxw/ksni), [rodio](https://github.com/RustAudio/rodio) and
   [cpal](https://github.com/RustAudio/cpal).
