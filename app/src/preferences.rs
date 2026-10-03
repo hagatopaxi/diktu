@@ -168,7 +168,69 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
     group.add(&row);
     page.add(&group);
 
+    let group = adw::PreferencesGroup::new();
+    let about = adw::ActionRow::builder()
+        .title(format!("About {}", crate::APP_NAME))
+        .subtitle("Version, permissions, licenses, source code")
+        .activatable(true)
+        .build();
+    about.add_suffix(&gtk::Image::from_icon_name("go-next-symbolic"));
+    about.connect_activated(glib::clone!(
+        #[weak]
+        window,
+        move |_| about_dialog().present(Some(&window))
+    ));
+    group.add(&about);
+    page.add(&group);
+
     window
+}
+
+const REPOSITORY: &str = "https://github.com/hagatopaxi/diktu";
+
+/// Version, project links, permissions, and the licenses of what Diktu ships or downloads.
+fn about_dialog() -> adw::AboutDialog {
+    let dialog = adw::AboutDialog::builder()
+        .application_name(crate::APP_NAME)
+        .application_icon(crate::APP_ID)
+        .version(env!("CARGO_PKG_VERSION"))
+        .developer_name("Gwenaël Léger")
+        .copyright("© Gwenaël Léger")
+        .license_type(gtk::License::Gpl30)
+        .website(REPOSITORY)
+        .issue_url(format!("{REPOSITORY}/issues"))
+        .comments(
+            "Permissions\n\n\
+             • Microphone: open only while you dictate; no audio leaves your machine.\n\
+             • Remote desktop (keyboard): types the recognized text at the cursor.\n\
+             • Global shortcut: starts and stops dictation from any app.\n\
+             • Run in background: listens for the shortcut with no window open.\n\
+             • Network: only to download models from Hugging Face, when you ask.\n\
+             • Status icon: the tray icon showing whether dictation is on.",
+        )
+        .build();
+    dialog.add_link("Source code", REPOSITORY);
+    dialog.add_legal_section(
+        "sherpa-onnx",
+        Some("© k2-fsa"),
+        gtk::License::Apache20,
+        None,
+    );
+    dialog.add_legal_section(
+        "ONNX Runtime",
+        Some("© Microsoft Corporation"),
+        gtk::License::MitX11,
+        None,
+    );
+    for model in all_models() {
+        dialog.add_legal_section(
+            &model.name,
+            None,
+            gtk::License::Custom,
+            Some(&format!("License: {}", model.license)),
+        );
+    }
+    dialog
 }
 
 enum Progress {

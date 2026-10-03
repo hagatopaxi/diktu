@@ -23,7 +23,7 @@ use tokio::sync::mpsc::{UnboundedSender, unbounded_channel};
 /// The development build (feature `devel`) is a separate app that installs and runs
 /// next to the release: its own ID, settings, data folder, name and icon.
 const DEVEL: bool = cfg!(feature = "devel");
-const APP_ID: &str = if DEVEL {
+pub const APP_ID: &str = if DEVEL {
     "fr.gwenael_leger.Diktu.Devel"
 } else {
     "fr.gwenael_leger.Diktu"

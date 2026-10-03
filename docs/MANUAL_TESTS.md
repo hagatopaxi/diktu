@@ -91,6 +91,7 @@ equivalent label.
 - [ ] Add a Whisper repository (e.g. `csukuangfj/sherpa-onnx-whisper-tiny`): refused with an explanation, nothing left in the models folder (no `.staging-*`).
 - [ ] Add a model in a language without a registered one (e.g. English): the language appears in the Language list.
 - [ ] Remove an imported model: its row disappears; if it was selected, the default model is used again.
+- [ ] "About Diktu" (bottom of the preferences): the dialog shows the version, the GitHub links (website, issues, source code), the permissions list under Details, and under Legal the GPL-3.0, sherpa-onnx (Apache-2.0), ONNX Runtime (MIT) and one license section per model.
 
 ## Flatpak
 
