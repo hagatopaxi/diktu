@@ -22,6 +22,9 @@ for new features, the major for breaking changes (for example settings that no l
 
 ## What the CI does with the tag
 
+The workflow runs only for `v*` tags. To check a packaging change without releasing, start it
+by hand: **Actions** → **Flatpak** → **Run workflow** (the release step is skipped).
+
 The `Flatpak` workflow (`.github/workflows/flatpak.yml`):
 
 1. builds `diktu-x86_64.flatpak` and `diktu-aarch64.flatpak` on native runners, from source

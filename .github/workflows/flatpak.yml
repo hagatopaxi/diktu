@@ -1,10 +1,10 @@
 name: Flatpak
 
+# Bundles are built for releases; run it by hand from the Actions tab to check packaging changes.
 on:
   push:
-    branches: [main]
     tags: ["v*"]
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   flatpak:
