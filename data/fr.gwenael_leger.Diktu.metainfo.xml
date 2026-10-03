@@ -51,7 +51,7 @@
   </supports>
   <content_rating type="oars-1.1"/>
   <releases>
-    <release version="0.1.0" date="2026-10-02">
+    <release version="0.1.0" date="2026-10-03">
       <description>
         <p>First release: French streaming dictation, global shortcut, model manager.</p>
       </description>
