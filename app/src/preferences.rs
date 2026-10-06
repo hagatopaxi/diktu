@@ -32,9 +32,6 @@ const LANGUAGES: &[(&str, &str)] = &[
     ("eo", "Esperanto"),
 ];
 
-/// Languages of the catalogs in `po/LINGUAS`, plus English, the messages' own language.
-const INTERFACE_LANGUAGES: &[&str] = &["de", "en", "eo", "es", "fr", "ru"];
-
 pub fn language_name(code: &str) -> &str {
     LANGUAGES
         .iter()
@@ -73,7 +70,6 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
         .build();
     group.add(&language);
     page.add(&group);
-    page.add(&interface_group(settings));
 
     let group = adw::PreferencesGroup::builder()
         .title(tr("Models"))
@@ -198,48 +194,6 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
     page.add(&group);
 
     window
-}
-
-/// The interface language: the desktop's, or one Diktu has a catalog for.
-fn interface_group(settings: &gtk::gio::Settings) -> adw::PreferencesGroup {
-    let mut names = vec![tr("Same as the system")];
-    names.extend(
-        INTERFACE_LANGUAGES
-            .iter()
-            .map(|l| language_name(l).to_owned()),
-    );
-    let names: Vec<&str> = names.iter().map(String::as_str).collect();
-    let row = adw::ComboRow::builder()
-        .title(tr("Interface language"))
-        .model(&gtk::StringList::new(&names))
-        .build();
-    let current = settings.string("interface-language");
-    if let Some(i) = INTERFACE_LANGUAGES
-        .iter()
-        .position(|l| *l == current.as_str())
-    {
-        row.set_selected(i as u32 + 1);
-    }
-    row.connect_selected_notify(glib::clone!(
-        #[strong]
-        settings,
-        move |row| {
-            let code = match row.selected() {
-                0 => "",
-                i => INTERFACE_LANGUAGES[i as usize - 1],
-            };
-            // Rebuilding the window from this handler would destroy the row it runs on.
-            let (settings, code) = (settings.clone(), code.to_owned());
-            glib::idle_add_local_once(move || {
-                let _ = settings.set_string("interface-language", &code);
-            });
-        }
-    ));
-    let group = adw::PreferencesGroup::builder()
-        .title(tr("Interface"))
-        .build();
-    group.add(&row);
-    group
 }
 
 const REPOSITORY: &str = "https://github.com/hagatopaxi/diktu";
@@ -727,22 +681,4 @@ fn import_row(ui: &Rc<Ui>, window: &adw::PreferencesWindow) -> adw::ActionRow {
         }
     ));
     row
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn interface_languages_match_the_catalogs() {
-        let mut catalogs: Vec<&str> = include_str!("../../po/LINGUAS")
-            .split_whitespace()
-            .collect();
-        catalogs.push("en");
-        catalogs.sort();
-        assert_eq!(catalogs, INTERFACE_LANGUAGES);
-        for l in INTERFACE_LANGUAGES {
-            assert_ne!(language_name(l), *l, "{l} has no display name");
-        }
-    }
 }

@@ -43,7 +43,7 @@ equivalent label.
 - [ ] Assistant, permissions: "Allow…" opens the Background dialog, then the RemoteDesktop one only once the first is answered; each row then shows a check mark (or a warning with the reason), and the next step follows.
 - [ ] Assistant, shortcut: "Choose the Shortcut…" opens GNOME's dialog proposing `F12`; once confirmed, the shortcut appears in the row and the last step follows; the last step names it.
 - [ ] Assistant: "Start Using Diktu" closes it; the next launch shows no assistant and no dialog. Closing the assistant before the end shows it again at the next launch.
-- [ ] Assistant in another interface language (`LANGUAGE=fr diktu`, then `eo`, `de`, `es`, `ru`, after resetting `onboarded`): every step (titles, descriptions, buttons, rows, progress bar, final step naming the shortcut) is translated, with no truncated text; the interface language chosen in the preferences afterwards applies at the next assistant launch only.
+- [ ] Assistant in another interface language (`LANGUAGE=fr diktu`, then `eo`, `de`, `es`, `ru`, after resetting `onboarded`): every step (titles, descriptions, buttons, rows, progress bar, final step naming the shortcut) is translated, with no truncated text.
 - [ ] The symbolic icons of the assistant (lock, keyboard, check mark) are sharp (they looked pixelated under the Broadway backend only).
 - [x] Later launches (model installed, consent remembered): `diktu` started from a terminal shows no window and only returns control to the shell on "Quit".
 - [x] A second `diktu` command does not create a second instance; it opens the preferences.
@@ -98,8 +98,7 @@ equivalent label.
 - [ ] Add a Whisper repository (e.g. `csukuangfj/sherpa-onnx-whisper-tiny`): refused with an explanation, nothing left in the models folder (no `.staging-*`).
 - [ ] Add a model in a language without a registered one (e.g. English): the language appears in the Language list.
 - [ ] Remove an imported model: its row disappears; if it was selected, the default model is used again.
-- [ ] Desktop in German, Spanish, Russian or Esperanto (`LANGUAGE=eo diktu`): menus, preferences, toasts, the About dialog and the app grid entry are translated; with no Diktu setting yet, the Language row shows the desktop language, and English when no model exists for it (e.g. Esperanto).
-- [ ] Interface language row: each choice translates the preferences window at once, then the icon menu; "Same as the system" goes back to the desktop language; the choice persists after a restart, and the dictation language does not change.
+- [ ] Desktop in German, Spanish, Russian or Esperanto (`LANGUAGE=eo diktu`, or `LANGUAGE=eo flatpak run fr.gwenael_leger.Diktu`): menus, preferences, toasts, the About dialog and the app grid entry are translated; with no Diktu setting yet, the Language row shows the desktop language, and English when no model exists for it (e.g. Esperanto).
 - [ ] Switch the Language row to each built-in language, download its model and dictate a sentence: the text is typed correctly.
 - [ ] "About Diktu" (bottom of the preferences): the dialog shows the version, the GitHub links (website, issues, source code), the permissions list under Details, and under Legal the GPL-3.0, sherpa-onnx (Apache-2.0), ONNX Runtime (MIT) and one license section per model.
 

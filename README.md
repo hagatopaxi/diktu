@@ -26,8 +26,8 @@ language works with an imported sherpa-onnx streaming model.
 - **Local.** Recognition runs on the CPU with [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx).
   No account, no online service.
 - **Multilingual.** Dictation in English, French, German, Russian and Spanish; the interface
-  is also translated into Esperanto. The dictation language follows your desktop's by
-  default.
+  follows your desktop's language (translated into French, German, Spanish, Russian and
+  Esperanto). The dictation language follows your desktop's by default.
 
 ## Privacy
 

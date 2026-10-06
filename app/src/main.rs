@@ -388,7 +388,6 @@ fn startup(app: &adw::Application) {
     // No window: the application lives in the background until quit.
     std::mem::forget(app.hold());
     let settings = settings();
-    i18n::set_language(&settings.string("interface-language"));
     let (events, mut event_rx) = unbounded_channel::<UiEvent>();
 
     // Portals identify a non-Flatpak app by this registration; it is a no-op in a sandbox.
@@ -506,20 +505,6 @@ fn startup(app: &adw::Application) {
         preferences: RefCell::new(None),
         shortcut_rows: RefCell::default(),
     });
-
-    ui.settings.connect_changed(
-        Some("interface-language"),
-        glib::clone!(
-            #[weak]
-            ui,
-            move |s, _| {
-                i18n::set_language(&s.string("interface-language"));
-                if ui.preferences.borrow().is_some() {
-                    ui.rebuild_preferences();
-                }
-            }
-        ),
-    );
 
     let action = gio::SimpleAction::new("toggle", None);
     let toggle = handles.toggle.clone();
