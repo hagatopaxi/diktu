@@ -531,11 +531,14 @@ fn startup(app: &adw::Application) {
 
     if !onboarded {
         onboarding::show(&ui, consent_tx, bind_tx);
-    } else if selected_model(&ui.settings)
-        .is_none_or(|m| !download::is_installed(&models_root(), &m))
-    {
-        // Nothing to dictate with until a model is downloaded: show where to get one.
-        ui.show_preferences();
+    } else {
+        // No shortcut step to wait for: bind at once.
+        drop(bind_tx);
+        if selected_model(&ui.settings).is_none_or(|m| !download::is_installed(&models_root(), &m))
+        {
+            // Nothing to dictate with until a model is downloaded: show where to get one.
+            ui.show_preferences();
+        }
     }
 
     glib::spawn_future_local(async move {
