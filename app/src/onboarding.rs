@@ -32,7 +32,7 @@ pub fn show(ui: &Rc<Ui>, consent: std::sync::mpsc::Sender<Consent>, bind: onesho
         .build();
     let view = adw::ToolbarView::new();
     view.set_content(Some(&nav));
-    view.add_bottom_bar(&progress);
+    view.add_top_bar(&progress);
     let window = adw::Window::builder()
         .title(APP_NAME)
         .default_width(560)
@@ -222,13 +222,19 @@ fn language_page(
             }
             let cancel = Arc::new(AtomicBool::new(false));
             *current = Some((model.id.clone(), cancel.clone()));
-            start_download(&ui, model, cancel, &progress);
+            start_download(&ui, model, cancel, &progress, &nav);
         }
     ));
     page
 }
 
-fn start_download(ui: &Rc<Ui>, model: Model, cancel: Arc<AtomicBool>, progress: &gtk::ProgressBar) {
+fn start_download(
+    ui: &Rc<Ui>,
+    model: Model,
+    cancel: Arc<AtomicBool>,
+    progress: &gtk::ProgressBar,
+    nav: &adw::NavigationView,
+) {
     progress.set_visible(true);
     progress.set_fraction(0.0);
     progress.set_text(Some(&trf(
@@ -254,6 +260,8 @@ fn start_download(ui: &Rc<Ui>, model: Model, cancel: Arc<AtomicBool>, progress: 
         ui,
         #[weak]
         progress,
+        #[weak]
+        nav,
         async move {
             while let Some(p) = rx.recv().await {
                 match p {
@@ -273,6 +281,21 @@ fn start_download(ui: &Rc<Ui>, model: Model, cancel: Arc<AtomicBool>, progress: 
                         progress
                             .set_text(Some(&trf("{model} is ready", &[("model", &model.name)])));
                         ui.reload_engine();
+                        // The bar stays until the user moves on to another step.
+                        let handler: Rc<RefCell<Option<glib::SignalHandlerId>>> = Rc::default();
+                        let id = nav.connect_visible_page_notify(glib::clone!(
+                            #[weak]
+                            progress,
+                            #[strong]
+                            handler,
+                            move |nav| {
+                                progress.set_visible(false);
+                                if let Some(id) = handler.take() {
+                                    nav.disconnect(id);
+                                }
+                            }
+                        ));
+                        *handler.borrow_mut() = Some(id);
                     }
                     Progress::Done(Err(Error::Cancelled)) => {}
                     Progress::Done(Err(e)) => progress.set_text(Some(&trf(
