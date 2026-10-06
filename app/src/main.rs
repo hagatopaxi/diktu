@@ -363,6 +363,7 @@ impl Ui {
             }
             UiEvent::Notice(Notice::Error(e)) => notify_error(&self.app, &e),
             UiEvent::Trigger(t) => {
+                let t = shortcut::label(&t);
                 // Stored first: a row change may show a page that reads it.
                 *self.trigger.borrow_mut() = Some(t.clone());
                 self.shortcut_rows

@@ -70,3 +70,16 @@ fn describe(shortcuts: &[Shortcut]) -> String {
         .filter(|d| !d.is_empty())
         .unwrap_or_else(|| tr("not assigned"))
 }
+
+/// The portal describes the trigger as a localized phrase around a GTK accelerator
+/// ("Press <Control><Alt>h"): keep only the key label, or the escaped phrase for
+/// the markup labels it ends up in. GTK only: call it on the main thread.
+pub fn label(description: &str) -> String {
+    let accelerator = description
+        .find('<')
+        .map_or(description, |i| &description[i..]);
+    match gtk::accelerator_parse(accelerator) {
+        Some((key, mods)) => gtk::accelerator_get_label(key, mods).to_string(),
+        None => gtk::glib::markup_escape_text(description).to_string(),
+    }
+}
