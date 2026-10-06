@@ -318,6 +318,8 @@ pub struct Ui {
     engines: Sender<Box<dyn SttEngine>>,
     /// Asks the GlobalShortcuts portal to show its configuration dialog.
     configure: UnboundedSender<()>,
+    /// Whether the portal can show its dialog again (version 2 or later).
+    can_configure: Arc<AtomicBool>,
     /// Shortcut as bound by the compositor, once the portal answered.
     trigger: RefCell<Option<String>>,
     preferences: RefCell<Option<adw::PreferencesWindow>>,
@@ -326,6 +328,14 @@ pub struct Ui {
 }
 
 impl Ui {
+    /// Shows the portal's shortcut dialog; `unavailable` runs when the portal cannot
+    /// (version 1, or no portal).
+    fn change_shortcut(&self, unavailable: impl FnOnce()) {
+        if !(self.can_configure.load(Ordering::Relaxed) && self.configure.send(()).is_ok()) {
+            unavailable();
+        }
+    }
+
     fn reload_engine(&self) {
         load_engine(&self.settings, &self.engines, &self.events);
     }
@@ -437,6 +447,8 @@ fn startup(app: &adw::Application) {
         .expect("spawn injection thread");
 
     let (configure, configure_rx) = unbounded_channel();
+    let can_configure = Arc::new(AtomicBool::new(false));
+    let portal_can_configure = can_configure.clone();
     let (toggle, trigger_events) = (handles.toggle.clone(), events.clone());
     // The shortcut dialog waits for the onboarding's shortcut step, or for nothing.
     let (bind_tx, bind_rx) = tokio::sync::oneshot::channel::<()>();
@@ -445,7 +457,8 @@ fn startup(app: &adw::Application) {
         let on_trigger = |t| {
             let _ = trigger_events.send(UiEvent::Trigger(t));
         };
-        if let Err(e) = shortcut::run(toggle, configure_rx, on_trigger).await {
+        if let Err(e) = shortcut::run(toggle, portal_can_configure, configure_rx, on_trigger).await
+        {
             let message = trf(
                 "global shortcut unavailable ({error}): bind a GNOME shortcut to “diktu --toggle”",
                 &[("error", &e)],
@@ -502,6 +515,7 @@ fn startup(app: &adw::Application) {
         events,
         engines: handles.engine.clone(),
         configure,
+        can_configure,
         trigger: RefCell::new(None),
         preferences: RefCell::new(None),
         shortcut_rows: RefCell::default(),

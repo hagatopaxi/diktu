@@ -1,6 +1,8 @@
 //! Global toggle shortcut through the XDG GlobalShortcuts portal.
 
 use diktu_core::i18n::tr;
+use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc::Sender;
 
 use ashpd::desktop::Session;
@@ -28,14 +30,17 @@ async fn bind(
 }
 
 /// Binds the shortcut and forwards each activation to `toggle`. `on_trigger` receives the
-/// binding chosen by the compositor; a message on `configure` opens the system dialog.
+/// binding chosen by the compositor; a message on `configure` opens the system dialog, and
+/// `can_configure` tells whether the portal can do it (version 2 or later).
 pub async fn run(
     toggle: Sender<()>,
+    can_configure: Arc<AtomicBool>,
     mut configure: UnboundedReceiver<()>,
     on_trigger: impl Fn(String),
 ) -> ashpd::Result<()> {
     let proxy = GlobalShortcuts::new().await?;
-    let mut session = bind(&proxy, &on_trigger).await?;
+    let session = bind(&proxy, &on_trigger).await?;
+    can_configure.store(proxy.version() >= 2, Ordering::Relaxed);
 
     let mut activated = proxy.receive_activated().await?;
     let mut changed = proxy.receive_shortcuts_changed().await?;
@@ -48,13 +53,8 @@ pub async fn run(
             }
             Some(c) = changed.next() => on_trigger(describe(c.shortcuts())),
             Some(()) = configure.recv() => {
-                // ConfigureShortcuts appeared in version 2 of the portal; version 1 shows the
-                // same dialog as at startup, through a new binding.
-                if proxy.version() >= 2 {
+                if can_configure.load(Ordering::Relaxed) {
                     proxy.configure_shortcuts(&session, None, Default::default()).await?;
-                } else {
-                    let _ = session.close().await;
-                    session = bind(&proxy, &on_trigger).await?;
                 }
             }
             else => return Ok(()),

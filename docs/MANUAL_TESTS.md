@@ -91,7 +91,7 @@ equivalent label.
 - [x] Cut the network during a download: an error message is shown in the window; starting again resumes.
 - [x] Remove: the model folder disappears, the state goes back to "not installed".
 - [x] The shortcut's "Change…" button opens the GNOME dialog if the GlobalShortcuts portal is version 2 or later, and the new shortcut is then shown in the row.
-- [ ] With version 1 (GNOME 50.1 + xdg-desktop-portal 1.21.1), "Change…" shows the same dialog as at first launch; the chosen shortcut is shown in the row and works, the previous one no longer does.
+- [ ] With version 1 (GNOME 50.1 + xdg-desktop-portal 1.21.1), "Change…" shows the toast "Change it in Settings → Apps → Diktu" (Diktu dev for the development build); the shortcut changed there works, and the row shows it.
 - [x] End silence, capitalization/final period, pause between keys, sounds, volume: each setting applies to the next dictation without a restart, and persists after a restart.
 - [ ] Add a model → Hugging Face `csukuangfj/sherpa-onnx-streaming-zipformer-fr-kroko-2025-08-06`, French: progress "Downloading… x / 71 MB", then "Checking…", then a toast with the check summary; the new model appears, is selected, and dictation works.
 - [ ] Add a model → From a Folder… on a folder holding a streaming transducer (in Flatpak, through the file chooser portal): same result, and a copy is in the models folder.

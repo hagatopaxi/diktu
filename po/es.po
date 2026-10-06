@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: diktu\n"
 "Report-Msgid-Bugs-To: me@gwenael-leger.fr\n"
-"POT-Creation-Date: 2026-10-06 11:00+0200\n"
+"POT-Creation-Date: 2026-10-06 18:19+0200\n"
 "PO-Revision-Date: 2026-10-03 22:00+0200\n"
 "Last-Translator: Gwenaël Léger <me@gwenael-leger.fr>\n"
 "Language-Team: none\n"
@@ -204,11 +204,11 @@ msgstr "Escuchar el atajo de dictado sin ninguna ventana abierta"
 msgid "not allowed"
 msgstr "no permitido"
 
-#: app/src/main.rs:426
+#: app/src/main.rs:437
 msgid "keyboard access denied: {error}"
 msgstr "acceso al teclado denegado: {error}"
 
-#: app/src/main.rs:449
+#: app/src/main.rs:463
 msgid ""
 "global shortcut unavailable ({error}): bind a GNOME shortcut to “diktu --"
 "toggle”"
@@ -217,7 +217,7 @@ msgstr ""
 "toggle»"
 
 #: app/src/onboarding.rs:129 app/src/preferences.rs:61
-#: app/src/preferences.rs:628
+#: app/src/preferences.rs:632
 msgid "Language"
 msgstr "Idioma"
 
@@ -229,7 +229,7 @@ msgstr "Modelo"
 msgid "{size} MB · license {license}"
 msgstr "{size} MB · licencia {license}"
 
-#: app/src/onboarding.rs:184 app/src/onboarding.rs:378
+#: app/src/onboarding.rs:184 app/src/onboarding.rs:401
 msgid "Continue"
 msgstr "Continuar"
 
@@ -245,44 +245,44 @@ msgstr ""
 "Dicte texto en cualquier lugar, reconocido en su ordenador. ¿Qué idioma va a "
 "hablar? Su modelo se descarga mientras configura el resto."
 
-#: app/src/onboarding.rs:235
+#: app/src/onboarding.rs:241
 msgid "Downloading {model}…"
 msgstr "Descargando {model}…"
 
-#: app/src/onboarding.rs:263
+#: app/src/onboarding.rs:271
 msgid "Downloading {model}… {done} / {total} MB"
 msgstr "Descargando {model}… {done} / {total} MB"
 
-#: app/src/onboarding.rs:274
+#: app/src/onboarding.rs:282
 msgid "{model} is ready"
 msgstr "{model} está listo"
 
-#: app/src/onboarding.rs:279
+#: app/src/onboarding.rs:302
 msgid "Download failed: {error}. Retry from the preferences."
 msgstr ""
 "Error de descarga: {error}. Vuelva a intentarlo desde las preferencias."
 
-#: app/src/onboarding.rs:303
+#: app/src/onboarding.rs:326
 msgid "Microphone"
 msgstr "Micrófono"
 
-#: app/src/onboarding.rs:304
+#: app/src/onboarding.rs:327
 msgid "Open only while you dictate. No audio leaves your computer."
 msgstr "Abierto solo mientras dicta. Ningún audio sale de su ordenador."
 
-#: app/src/onboarding.rs:308
+#: app/src/onboarding.rs:331
 msgid "Run in the background"
 msgstr "Ejecutarse en segundo plano"
 
-#: app/src/onboarding.rs:309
+#: app/src/onboarding.rs:332
 msgid "Listen for the shortcut with no window open."
 msgstr "Escuchar el atajo sin ninguna ventana abierta."
 
-#: app/src/onboarding.rs:313
+#: app/src/onboarding.rs:336
 msgid "Type at the cursor"
 msgstr "Escribir en el cursor"
 
-#: app/src/onboarding.rs:315
+#: app/src/onboarding.rs:338
 msgid ""
 "Type the recognized text in the focused app. GNOME shows a remote control "
 "icon while {app} types."
@@ -290,43 +290,43 @@ msgstr ""
 "Escribir el texto reconocido en la aplicación activa. GNOME muestra un icono "
 "de control remoto mientras {app} escribe."
 
-#: app/src/onboarding.rs:319
+#: app/src/onboarding.rs:342
 msgid "Allow…"
 msgstr "Permitir…"
 
-#: app/src/onboarding.rs:320 app/src/onboarding.rs:402
+#: app/src/onboarding.rs:343 app/src/onboarding.rs:425
 msgid "Skip"
 msgstr "Omitir"
 
-#: app/src/onboarding.rs:324 app/src/preferences.rs:214
+#: app/src/onboarding.rs:347 app/src/preferences.rs:218
 msgid "Permissions"
 msgstr "Permisos"
 
-#: app/src/onboarding.rs:325
+#: app/src/onboarding.rs:348
 msgid "GNOME asks you to confirm each one, one dialog after the other."
 msgstr "GNOME le pide confirmar cada uno, un diálogo tras otro."
 
-#: app/src/onboarding.rs:342
+#: app/src/onboarding.rs:365
 msgid "Not granted ({error}). It will be asked again later."
 msgstr "No concedido ({error}). Se volverá a pedir más tarde."
 
-#: app/src/onboarding.rs:397 app/src/preferences.rs:116 app/src/shortcut.rs:20
+#: app/src/onboarding.rs:420 app/src/preferences.rs:116 app/src/shortcut.rs:22
 msgid "Start or stop dictation"
 msgstr "Iniciar o detener el dictado"
 
-#: app/src/onboarding.rs:398
+#: app/src/onboarding.rs:421
 msgid "Not chosen yet"
 msgstr "Aún no elegido"
 
-#: app/src/onboarding.rs:401
+#: app/src/onboarding.rs:424
 msgid "Choose the Shortcut…"
 msgstr "Elegir el atajo…"
 
-#: app/src/onboarding.rs:406
+#: app/src/onboarding.rs:429
 msgid "Keyboard Shortcut"
 msgstr "Atajo de teclado"
 
-#: app/src/onboarding.rs:408
+#: app/src/onboarding.rs:431
 msgid ""
 "Press it anywhere to start dictating, and again to stop. {app} suggests "
 "{key}; GNOME lets you confirm it or pick another one.\n"
@@ -340,31 +340,31 @@ msgstr ""
 "En un portátil, {key} suele controlar el volumen o el brillo: pulse Fn+"
 "{key}, o active el bloqueo Fn (a menudo Fn+Esc)."
 
-#: app/src/onboarding.rs:445
+#: app/src/onboarding.rs:466
 msgid "Start Using {app}"
 msgstr "Empezar a usar {app}"
 
-#: app/src/onboarding.rs:449
+#: app/src/onboarding.rs:470
 msgid "All Set"
 msgstr "Todo listo"
 
-#: app/src/onboarding.rs:459
+#: app/src/onboarding.rs:480
 msgid "Press {key} anywhere"
 msgstr "Pulse {key} en cualquier lugar"
 
-#: app/src/onboarding.rs:461
+#: app/src/onboarding.rs:482
 msgid "Choose “Start dictation” in the {app} menu of the top bar"
 msgstr "Elija «Iniciar dictado» en el menú {app} de la barra superior"
 
-#: app/src/onboarding.rs:470
+#: app/src/onboarding.rs:491
 msgid "Dictation works once the model is downloaded."
 msgstr "El dictado funciona cuando el modelo está descargado."
 
-#: app/src/onboarding.rs:481
+#: app/src/onboarding.rs:502
 msgid "{start}, speak, then pause: the text is typed at the cursor."
 msgstr "{start}, hable y haga una pausa: el texto se escribe en el cursor."
 
-#: app/src/onboarding.rs:485
+#: app/src/onboarding.rs:506
 msgid "The {app} menu in the top bar also opens the preferences."
 msgstr "El menú {app} de la barra superior también abre las preferencias."
 
@@ -409,184 +409,184 @@ msgstr "Portal GlobalShortcuts no disponible"
 msgid "Change…"
 msgstr "Cambiar…"
 
-#: app/src/preferences.rs:134
+#: app/src/preferences.rs:136
 msgid "Change it in Settings → Apps → Diktu"
 msgstr "Cámbielo en Configuración → Aplicaciones → Diktu"
 
-#: app/src/preferences.rs:143
+#: app/src/preferences.rs:147
 msgid "Behavior"
 msgstr "Comportamiento"
 
-#: app/src/preferences.rs:146
+#: app/src/preferences.rs:150
 msgid "End-of-speech silence (s)"
 msgstr "Silencio de fin de voz (s)"
 
-#: app/src/preferences.rs:147
+#: app/src/preferences.rs:151
 msgid "Silence after speech that stops listening"
 msgstr "Silencio tras la voz que detiene la escucha"
 
-#: app/src/preferences.rs:152
+#: app/src/preferences.rs:156
 msgid "Capitalize and end with a period"
 msgstr "Mayúscula inicial y punto final"
 
-#: app/src/preferences.rs:157
+#: app/src/preferences.rs:161
 msgid "Delay between keys (ms)"
 msgstr "Retraso entre teclas (ms)"
 
-#: app/src/preferences.rs:158
+#: app/src/preferences.rs:162
 msgid "Increase it if some apps drop characters"
 msgstr "Auméntelo si algunas aplicaciones pierden caracteres"
 
-#: app/src/preferences.rs:162
+#: app/src/preferences.rs:166
 msgid "Start and stop sounds"
 msgstr "Sonidos de inicio y fin"
 
-#: app/src/preferences.rs:172
+#: app/src/preferences.rs:176
 msgid "Volume"
 msgstr "Volumen"
 
-#: app/src/preferences.rs:183
+#: app/src/preferences.rs:187
 msgid "About {app}"
 msgstr "Acerca de {app}"
 
-#: app/src/preferences.rs:184
+#: app/src/preferences.rs:188
 msgid "Version, permissions, licenses, source code"
 msgstr "Versión, permisos, licencias, código fuente"
 
-#: app/src/preferences.rs:216
+#: app/src/preferences.rs:220
 msgid ""
 "• Microphone: open only while you dictate; no audio leaves your machine."
 msgstr ""
 "• Micrófono: abierto solo mientras dicta; ningún audio sale de su equipo."
 
-#: app/src/preferences.rs:217
+#: app/src/preferences.rs:221
 msgid "• Remote desktop (keyboard): types the recognized text at the cursor."
 msgstr ""
 "• Escritorio remoto (teclado): escribe el texto reconocido en el cursor."
 
-#: app/src/preferences.rs:218
+#: app/src/preferences.rs:222
 msgid "• Global shortcut: starts and stops dictation from any app."
 msgstr ""
 "• Atajo global: inicia y detiene el dictado desde cualquier aplicación."
 
-#: app/src/preferences.rs:219
+#: app/src/preferences.rs:223
 msgid "• Run in background: listens for the shortcut with no window open."
 msgstr ""
 "• Ejecución en segundo plano: espera el atajo sin ninguna ventana abierta."
 
-#: app/src/preferences.rs:220
+#: app/src/preferences.rs:224
 msgid "• Network: only to download models from Hugging Face, when you ask."
 msgstr ""
 "• Red: solo para descargar modelos de Hugging Face, cuando usted lo pide."
 
-#: app/src/preferences.rs:221
+#: app/src/preferences.rs:225
 msgid "• Status icon: the tray icon showing whether dictation is on."
 msgstr ""
 "• Icono de estado: el icono de la bandeja que indica si el dictado está "
 "activo."
 
-#: app/src/preferences.rs:226
+#: app/src/preferences.rs:230
 msgid "Source code"
 msgstr "Código fuente"
 
 #. Translators: your names and emails, one per line.
-#: app/src/preferences.rs:228
+#: app/src/preferences.rs:232
 msgid "translator-credits"
 msgstr ""
 
-#: app/src/preferences.rs:249
+#: app/src/preferences.rs:253
 msgid "License: {license}"
 msgstr "Licencia: {license}"
 
-#: app/src/preferences.rs:278
+#: app/src/preferences.rs:282
 msgid "{size} MB"
 msgstr "{size} MB"
 
-#: app/src/preferences.rs:310 app/src/preferences.rs:651
+#: app/src/preferences.rs:314 app/src/preferences.rs:655
 msgid "Download"
 msgstr "Descargar"
 
-#: app/src/preferences.rs:311
+#: app/src/preferences.rs:315
 msgid "Cancel download"
 msgstr "Cancelar la descarga"
 
-#: app/src/preferences.rs:312
+#: app/src/preferences.rs:316
 msgid "Remove"
 msgstr "Eliminar"
 
-#: app/src/preferences.rs:336
+#: app/src/preferences.rs:340
 msgid "downloading"
 msgstr "descargando"
 
-#: app/src/preferences.rs:338
+#: app/src/preferences.rs:342
 msgid "installed"
 msgstr "instalado"
 
-#: app/src/preferences.rs:340
+#: app/src/preferences.rs:344
 msgid "not installed"
 msgstr "no instalado"
 
-#: app/src/preferences.rs:343
+#: app/src/preferences.rs:347
 msgid "{size} · {state} · license {license}"
 msgstr "{size} · {state} · licencia {license}"
 
-#: app/src/preferences.rs:410
+#: app/src/preferences.rs:414
 msgid "{done} / {total} MB"
 msgstr "{done} / {total} MB"
 
-#: app/src/preferences.rs:456
+#: app/src/preferences.rs:460
 msgid "Could not remove: {error}"
 msgstr "No se pudo eliminar: {error}"
 
-#: app/src/preferences.rs:515 app/src/preferences.rs:520
-#: app/src/preferences.rs:642
+#: app/src/preferences.rs:519 app/src/preferences.rs:524
+#: app/src/preferences.rs:646
 msgid "Add a model"
 msgstr "Añadir un modelo"
 
-#: app/src/preferences.rs:517
+#: app/src/preferences.rs:521
 msgid "sherpa-onnx streaming transducer, from Hugging Face or a folder"
 msgstr "Transductor sherpa-onnx en streaming, desde Hugging Face o una carpeta"
 
-#: app/src/preferences.rs:521 app/src/preferences.rs:649
+#: app/src/preferences.rs:525 app/src/preferences.rs:653
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: app/src/preferences.rs:545
+#: app/src/preferences.rs:549
 msgid "Preparing…"
 msgstr "Preparando…"
 
-#: app/src/preferences.rs:561
+#: app/src/preferences.rs:565
 msgid "Downloading… {done} / {total} MB"
 msgstr "Descargando… {done} / {total} MB"
 
-#: app/src/preferences.rs:570
+#: app/src/preferences.rs:574
 msgid "Checking the model (loading, speed, test sentence)…"
 msgstr "Comprobando el modelo (carga, velocidad, frase de prueba)…"
 
-#: app/src/preferences.rs:582
+#: app/src/preferences.rs:586
 msgid "{name} added: {summary}"
 msgstr "{name} añadido: {summary}"
 
-#: app/src/preferences.rs:588
+#: app/src/preferences.rs:592
 msgid ""
 "{name} added, but its tests did not finish: you can still try it, it may "
 "misbehave"
 msgstr ""
 "{name} añadido, pero sus pruebas no terminaron: puede probarlo, podría fallar"
 
-#: app/src/preferences.rs:601
+#: app/src/preferences.rs:605
 msgid "Not added: {error}"
 msgstr "No añadido: {error}"
 
-#: app/src/preferences.rs:602
+#: app/src/preferences.rs:606
 msgid "The model was not added"
 msgstr "El modelo no se añadió"
 
-#: app/src/preferences.rs:624
+#: app/src/preferences.rs:628
 msgid "Hugging Face repository (owner/name)"
 msgstr "Repositorio de Hugging Face (propietario/nombre)"
 
-#: app/src/preferences.rs:644
+#: app/src/preferences.rs:648
 msgid ""
 "Only sherpa-onnx streaming transducers work (encoder, decoder, joiner, "
 "tokens). The model is copied, then tested before use."
@@ -594,11 +594,11 @@ msgstr ""
 "Solo funcionan los transductores sherpa-onnx en streaming (encoder, decoder, "
 "joiner, tokens). El modelo se copia y se prueba antes de usarlo."
 
-#: app/src/preferences.rs:650
+#: app/src/preferences.rs:654
 msgid "From a Folder…"
 msgstr "Desde una carpeta…"
 
-#: app/src/preferences.rs:669
+#: app/src/preferences.rs:673
 msgid "Folder containing the model"
 msgstr "Carpeta que contiene el modelo"
 
@@ -674,6 +674,9 @@ msgid ""
 msgstr ""
 "Primera versión: dictado en streaming en francés, atajo global, gestor de "
 "modelos."
+
+#~ msgid "• GNOME Settings: opened to change the shortcut."
+#~ msgstr "• Configuración de GNOME: se abre para cambiar el atajo."
 
 #~ msgid "Same as the system"
 #~ msgstr "Igual que el sistema"

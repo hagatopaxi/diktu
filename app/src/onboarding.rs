@@ -439,16 +439,15 @@ fn shortcut_page(
         nav,
         move |_| nav.push_by_tag("finish")
     ));
-    // The first click binds the shortcut; later ones open GNOME's dialog again.
+    // The first click binds the shortcut; later ones open GNOME's dialog again, which
+    // portal v1 cannot do: the button then turns insensitive.
     let bind = RefCell::new(Some(bind));
-    let configure = ui.configure.clone();
-    choose.connect_clicked(move |_| match bind.take() {
+    let ui = ui.clone();
+    choose.connect_clicked(move |b| match bind.take() {
         Some(bind) => {
             let _ = bind.send(());
         }
-        None => {
-            let _ = configure.send(());
-        }
+        None => ui.change_shortcut(|| b.set_sensitive(false)),
     });
     let pushed = Cell::new(false);
     row.connect_subtitle_notify(glib::clone!(

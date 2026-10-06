@@ -125,15 +125,19 @@ pub fn build(ui: &Rc<Ui>) -> adw::PreferencesWindow {
         .label(tr("Change…"))
         .valign(gtk::Align::Center)
         .build();
-    let configure = ui.configure.clone();
     let win = window.downgrade();
-    change.connect_clicked(move |_| {
-        if configure.send(()).is_err()
-            && let Some(window) = win.upgrade()
-        {
-            window.add_toast(adw::Toast::new(&tr("Change it in Settings → Apps → Diktu")));
+    change.connect_clicked(glib::clone!(
+        #[strong]
+        ui,
+        move |_| {
+            let win = win.clone();
+            ui.change_shortcut(move || {
+                if let Some(window) = win.upgrade() {
+                    window.add_toast(adw::Toast::new(&tr("Change it in Settings → Apps → Diktu")));
+                }
+            });
         }
-    });
+    ));
     shortcut.add_suffix(&change);
     group.add(&shortcut);
     ui.shortcut_rows.borrow_mut().push(shortcut.downgrade());

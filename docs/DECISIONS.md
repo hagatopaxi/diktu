@@ -197,3 +197,9 @@ Each entry: context, choice, rejected alternative, reason.
 - **Choice**: an `AdwNavigationView` assistant, shown until it is completed (GSettings `onboarded`): language and model (the download starts and continues during the next steps), permissions (an explanation, then one button that opens the Background dialog, then the RemoteDesktop one once the first is answered), shortcut (GNOME's dialog, opened by a button), then how to dictate. The injection thread waits for a consent request before connecting, and the shortcut task waits for the shortcut step; closing the assistant early releases both, so the dialogs appear later (first dictation, right away for the shortcut). Users who already have a `restore-token` count as onboarded.
 - **Reason**: the system dialogs belong to GNOME and cannot be merged; showing them one at a time, each after its explanation, is what the application controls.
 - The assistant is translated like the rest (D28) in the session language. Its language step picks the dictation language only and does not retranslate the assistant live: its pages hold the consent and shortcut channels, which a rebuild would lose.
+
+## D30 — Changing the shortcut on portal v1 points to GNOME Settings
+
+- **Context**: version 1 of the GlobalShortcuts portal (GNOME 50) has no ConfigureShortcuts, and GNOME remembers the binding, so calling BindShortcuts again shows nothing.
+- **Choice**: "Change…" calls ConfigureShortcuts on portal version 2 or later. On version 1, or without a portal, a toast points to Settings → Apps → Diktu, with no extra sandbox permission. The onboarding's second click does nothing in that case, since its window has no toasts.
+- **Rejected**: opening Settings' panel through D-Bus, because it needs `--talk-name=org.gnome.Settings`; binding again under a new shortcut id, because it leaves stale entries in Settings.

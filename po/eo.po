@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: diktu\n"
 "Report-Msgid-Bugs-To: me@gwenael-leger.fr\n"
-"POT-Creation-Date: 2026-10-06 11:00+0200\n"
+"POT-Creation-Date: 2026-10-06 18:19+0200\n"
 "PO-Revision-Date: 2026-10-03 22:00+0200\n"
 "Last-Translator: Gwenaël Léger <me@gwenael-leger.fr>\n"
 "Language-Team: none\n"
@@ -198,11 +198,11 @@ msgstr "Atendi la diktan klavkombinon sen malfermita fenestro"
 msgid "not allowed"
 msgstr "ne permesite"
 
-#: app/src/main.rs:426
+#: app/src/main.rs:437
 msgid "keyboard access denied: {error}"
 msgstr "aliro al klavaro rifuzita: {error}"
 
-#: app/src/main.rs:449
+#: app/src/main.rs:463
 msgid ""
 "global shortcut unavailable ({error}): bind a GNOME shortcut to “diktu --"
 "toggle”"
@@ -211,7 +211,7 @@ msgstr ""
 "“diktu --toggle”"
 
 #: app/src/onboarding.rs:129 app/src/preferences.rs:61
-#: app/src/preferences.rs:628
+#: app/src/preferences.rs:632
 msgid "Language"
 msgstr "Lingvo"
 
@@ -223,7 +223,7 @@ msgstr "Modelo"
 msgid "{size} MB · license {license}"
 msgstr "{size} MB · permesilo {license}"
 
-#: app/src/onboarding.rs:184 app/src/onboarding.rs:378
+#: app/src/onboarding.rs:184 app/src/onboarding.rs:401
 msgid "Continue"
 msgstr "Daŭrigi"
 
@@ -239,43 +239,43 @@ msgstr ""
 "Diktu tekston ie ajn, rekonitan sur via komputilo. Kiun lingvon vi parolos? "
 "Ĝia modelo elŝutiĝas dum vi agordas la reston."
 
-#: app/src/onboarding.rs:235
+#: app/src/onboarding.rs:241
 msgid "Downloading {model}…"
 msgstr "Elŝutado de {model}…"
 
-#: app/src/onboarding.rs:263
+#: app/src/onboarding.rs:271
 msgid "Downloading {model}… {done} / {total} MB"
 msgstr "Elŝutado de {model}… {done} / {total} MB"
 
-#: app/src/onboarding.rs:274
+#: app/src/onboarding.rs:282
 msgid "{model} is ready"
 msgstr "{model} estas preta"
 
-#: app/src/onboarding.rs:279
+#: app/src/onboarding.rs:302
 msgid "Download failed: {error}. Retry from the preferences."
 msgstr "Elŝuto malsukcesis: {error}. Reprovu el la agordoj."
 
-#: app/src/onboarding.rs:303
+#: app/src/onboarding.rs:326
 msgid "Microphone"
 msgstr "Mikrofono"
 
-#: app/src/onboarding.rs:304
+#: app/src/onboarding.rs:327
 msgid "Open only while you dictate. No audio leaves your computer."
 msgstr "Malfermita nur dum vi diktas. Neniu sono forlasas vian komputilon."
 
-#: app/src/onboarding.rs:308
+#: app/src/onboarding.rs:331
 msgid "Run in the background"
 msgstr "Funkcii en la fono"
 
-#: app/src/onboarding.rs:309
+#: app/src/onboarding.rs:332
 msgid "Listen for the shortcut with no window open."
 msgstr "Aŭskulti la fulmklavon sen malfermita fenestro."
 
-#: app/src/onboarding.rs:313
+#: app/src/onboarding.rs:336
 msgid "Type at the cursor"
 msgstr "Tajpi ĉe la kursoro"
 
-#: app/src/onboarding.rs:315
+#: app/src/onboarding.rs:338
 msgid ""
 "Type the recognized text in the focused app. GNOME shows a remote control "
 "icon while {app} types."
@@ -283,43 +283,43 @@ msgstr ""
 "Tajpi la rekonitan tekston en la aktiva aplikaĵo. GNOME montras piktogramon "
 "de fora regado dum {app} tajpas."
 
-#: app/src/onboarding.rs:319
+#: app/src/onboarding.rs:342
 msgid "Allow…"
 msgstr "Permesi…"
 
-#: app/src/onboarding.rs:320 app/src/onboarding.rs:402
+#: app/src/onboarding.rs:343 app/src/onboarding.rs:425
 msgid "Skip"
 msgstr "Preterpasi"
 
-#: app/src/onboarding.rs:324 app/src/preferences.rs:214
+#: app/src/onboarding.rs:347 app/src/preferences.rs:218
 msgid "Permissions"
 msgstr "Permesoj"
 
-#: app/src/onboarding.rs:325
+#: app/src/onboarding.rs:348
 msgid "GNOME asks you to confirm each one, one dialog after the other."
 msgstr "GNOME petas vin konfirmi ĉiun, unu dialogon post la alia."
 
-#: app/src/onboarding.rs:342
+#: app/src/onboarding.rs:365
 msgid "Not granted ({error}). It will be asked again later."
 msgstr "Ne donita ({error}). Ĝi estos denove petita poste."
 
-#: app/src/onboarding.rs:397 app/src/preferences.rs:116 app/src/shortcut.rs:20
+#: app/src/onboarding.rs:420 app/src/preferences.rs:116 app/src/shortcut.rs:22
 msgid "Start or stop dictation"
 msgstr "Komenci aŭ ĉesigi diktadon"
 
-#: app/src/onboarding.rs:398
+#: app/src/onboarding.rs:421
 msgid "Not chosen yet"
 msgstr "Ankoraŭ ne elektita"
 
-#: app/src/onboarding.rs:401
+#: app/src/onboarding.rs:424
 msgid "Choose the Shortcut…"
 msgstr "Elekti la fulmklavon…"
 
-#: app/src/onboarding.rs:406
+#: app/src/onboarding.rs:429
 msgid "Keyboard Shortcut"
 msgstr "Fulmklavo"
 
-#: app/src/onboarding.rs:408
+#: app/src/onboarding.rs:431
 msgid ""
 "Press it anywhere to start dictating, and again to stop. {app} suggests "
 "{key}; GNOME lets you confirm it or pick another one.\n"
@@ -333,31 +333,31 @@ msgstr ""
 "Sur tekokomputilo, {key} ofte regas la laŭtecon aŭ la helecon: premu Fn+"
 "{key}, aŭ ŝaltu la Fn-baskulon (ofte Fn+Esc)."
 
-#: app/src/onboarding.rs:445
+#: app/src/onboarding.rs:466
 msgid "Start Using {app}"
 msgstr "Komenci uzi {app}"
 
-#: app/src/onboarding.rs:449
+#: app/src/onboarding.rs:470
 msgid "All Set"
 msgstr "Ĉio preta"
 
-#: app/src/onboarding.rs:459
+#: app/src/onboarding.rs:480
 msgid "Press {key} anywhere"
 msgstr "Premu {key} ie ajn"
 
-#: app/src/onboarding.rs:461
+#: app/src/onboarding.rs:482
 msgid "Choose “Start dictation” in the {app} menu of the top bar"
 msgstr "Elektu «Komenci diktadon» en la menuo {app} de la supra breto"
 
-#: app/src/onboarding.rs:470
+#: app/src/onboarding.rs:491
 msgid "Dictation works once the model is downloaded."
 msgstr "Diktado funkcias post kiam la modelo estas elŝutita."
 
-#: app/src/onboarding.rs:481
+#: app/src/onboarding.rs:502
 msgid "{start}, speak, then pause: the text is typed at the cursor."
 msgstr "{start}, parolu, poste paŭzu: la teksto estas tajpita ĉe la kursoro."
 
-#: app/src/onboarding.rs:485
+#: app/src/onboarding.rs:506
 msgid "The {app} menu in the top bar also opens the preferences."
 msgstr "La menuo {app} de la supra breto ankaŭ malfermas la agordojn."
 
@@ -401,164 +401,164 @@ msgstr "Portalo GlobalShortcuts ne disponebla"
 msgid "Change…"
 msgstr "Ŝanĝi…"
 
-#: app/src/preferences.rs:134
+#: app/src/preferences.rs:136
 msgid "Change it in Settings → Apps → Diktu"
 msgstr "Ŝanĝu ĝin en Agordoj → Aplikaĵoj → Diktu"
 
-#: app/src/preferences.rs:143
+#: app/src/preferences.rs:147
 msgid "Behavior"
 msgstr "Konduto"
 
-#: app/src/preferences.rs:146
+#: app/src/preferences.rs:150
 msgid "End-of-speech silence (s)"
 msgstr "Silento post parolado (s)"
 
-#: app/src/preferences.rs:147
+#: app/src/preferences.rs:151
 msgid "Silence after speech that stops listening"
 msgstr "Silento post parolado, kiu ĉesigas la aŭskultadon"
 
-#: app/src/preferences.rs:152
+#: app/src/preferences.rs:156
 msgid "Capitalize and end with a period"
 msgstr "Majuskligi kaj fini per punkto"
 
-#: app/src/preferences.rs:157
+#: app/src/preferences.rs:161
 msgid "Delay between keys (ms)"
 msgstr "Prokrasto inter klavoj (ms)"
 
-#: app/src/preferences.rs:158
+#: app/src/preferences.rs:162
 msgid "Increase it if some apps drop characters"
 msgstr "Pliigu ĝin, se iuj aplikaĵoj perdas signojn"
 
-#: app/src/preferences.rs:162
+#: app/src/preferences.rs:166
 msgid "Start and stop sounds"
 msgstr "Sonoj de komenco kaj fino"
 
-#: app/src/preferences.rs:172
+#: app/src/preferences.rs:176
 msgid "Volume"
 msgstr "Laŭteco"
 
-#: app/src/preferences.rs:183
+#: app/src/preferences.rs:187
 msgid "About {app}"
 msgstr "Pri {app}"
 
-#: app/src/preferences.rs:184
+#: app/src/preferences.rs:188
 msgid "Version, permissions, licenses, source code"
 msgstr "Versio, permesoj, permesiloj, fontkodo"
 
-#: app/src/preferences.rs:216
+#: app/src/preferences.rs:220
 msgid ""
 "• Microphone: open only while you dictate; no audio leaves your machine."
 msgstr ""
 "• Mikrofono: malfermita nur dum vi diktas; neniu sono forlasas vian "
 "komputilon."
 
-#: app/src/preferences.rs:217
+#: app/src/preferences.rs:221
 msgid "• Remote desktop (keyboard): types the recognized text at the cursor."
 msgstr ""
 "• Fora labortablo (klavaro): tajpas la rekonitan tekston ĉe la kursoro."
 
-#: app/src/preferences.rs:218
+#: app/src/preferences.rs:222
 msgid "• Global shortcut: starts and stops dictation from any app."
 msgstr ""
 "• Ĝenerala klavkombino: komencas kaj ĉesigas diktadon el ajna aplikaĵo."
 
-#: app/src/preferences.rs:219
+#: app/src/preferences.rs:223
 msgid "• Run in background: listens for the shortcut with no window open."
 msgstr "• Fona rulado: atendas la klavkombinon sen malfermita fenestro."
 
-#: app/src/preferences.rs:220
+#: app/src/preferences.rs:224
 msgid "• Network: only to download models from Hugging Face, when you ask."
 msgstr "• Reto: nur por elŝuti modelojn de Hugging Face, kiam vi petas."
 
-#: app/src/preferences.rs:221
+#: app/src/preferences.rs:225
 msgid "• Status icon: the tray icon showing whether dictation is on."
 msgstr ""
 "• Statusa piktogramo: la piktogramo en la sistempleto montras, ĉu diktado "
 "funkcias."
 
-#: app/src/preferences.rs:226
+#: app/src/preferences.rs:230
 msgid "Source code"
 msgstr "Fontkodo"
 
 #. Translators: your names and emails, one per line.
-#: app/src/preferences.rs:228
+#: app/src/preferences.rs:232
 msgid "translator-credits"
 msgstr ""
 
-#: app/src/preferences.rs:249
+#: app/src/preferences.rs:253
 msgid "License: {license}"
 msgstr "Permesilo: {license}"
 
-#: app/src/preferences.rs:278
+#: app/src/preferences.rs:282
 msgid "{size} MB"
 msgstr "{size} MB"
 
-#: app/src/preferences.rs:310 app/src/preferences.rs:651
+#: app/src/preferences.rs:314 app/src/preferences.rs:655
 msgid "Download"
 msgstr "Elŝuti"
 
-#: app/src/preferences.rs:311
+#: app/src/preferences.rs:315
 msgid "Cancel download"
 msgstr "Nuligi elŝuton"
 
-#: app/src/preferences.rs:312
+#: app/src/preferences.rs:316
 msgid "Remove"
 msgstr "Forigi"
 
-#: app/src/preferences.rs:336
+#: app/src/preferences.rs:340
 msgid "downloading"
 msgstr "elŝutata"
 
-#: app/src/preferences.rs:338
+#: app/src/preferences.rs:342
 msgid "installed"
 msgstr "instalita"
 
-#: app/src/preferences.rs:340
+#: app/src/preferences.rs:344
 msgid "not installed"
 msgstr "ne instalita"
 
-#: app/src/preferences.rs:343
+#: app/src/preferences.rs:347
 msgid "{size} · {state} · license {license}"
 msgstr "{size} · {state} · permesilo {license}"
 
-#: app/src/preferences.rs:410
+#: app/src/preferences.rs:414
 msgid "{done} / {total} MB"
 msgstr "{done} / {total} MB"
 
-#: app/src/preferences.rs:456
+#: app/src/preferences.rs:460
 msgid "Could not remove: {error}"
 msgstr "Ne eblis forigi: {error}"
 
-#: app/src/preferences.rs:515 app/src/preferences.rs:520
-#: app/src/preferences.rs:642
+#: app/src/preferences.rs:519 app/src/preferences.rs:524
+#: app/src/preferences.rs:646
 msgid "Add a model"
 msgstr "Aldoni modelon"
 
-#: app/src/preferences.rs:517
+#: app/src/preferences.rs:521
 msgid "sherpa-onnx streaming transducer, from Hugging Face or a folder"
 msgstr "Flua transduktilo sherpa-onnx, el Hugging Face aŭ dosierujo"
 
-#: app/src/preferences.rs:521 app/src/preferences.rs:649
+#: app/src/preferences.rs:525 app/src/preferences.rs:653
 msgid "Cancel"
 msgstr "Nuligi"
 
-#: app/src/preferences.rs:545
+#: app/src/preferences.rs:549
 msgid "Preparing…"
 msgstr "Preparado…"
 
-#: app/src/preferences.rs:561
+#: app/src/preferences.rs:565
 msgid "Downloading… {done} / {total} MB"
 msgstr "Elŝutado… {done} / {total} MB"
 
-#: app/src/preferences.rs:570
+#: app/src/preferences.rs:574
 msgid "Checking the model (loading, speed, test sentence)…"
 msgstr "Kontrolado de la modelo (ŝargado, rapido, testfrazo)…"
 
-#: app/src/preferences.rs:582
+#: app/src/preferences.rs:586
 msgid "{name} added: {summary}"
 msgstr "{name} aldonita: {summary}"
 
-#: app/src/preferences.rs:588
+#: app/src/preferences.rs:592
 msgid ""
 "{name} added, but its tests did not finish: you can still try it, it may "
 "misbehave"
@@ -566,19 +566,19 @@ msgstr ""
 "{name} aldonita, sed ĝiaj testoj ne finiĝis: vi povas provi ĝin, ĝi eble "
 "misfunkcios"
 
-#: app/src/preferences.rs:601
+#: app/src/preferences.rs:605
 msgid "Not added: {error}"
 msgstr "Ne aldonita: {error}"
 
-#: app/src/preferences.rs:602
+#: app/src/preferences.rs:606
 msgid "The model was not added"
 msgstr "La modelo ne estis aldonita"
 
-#: app/src/preferences.rs:624
+#: app/src/preferences.rs:628
 msgid "Hugging Face repository (owner/name)"
 msgstr "Deponejo de Hugging Face (posedanto/nomo)"
 
-#: app/src/preferences.rs:644
+#: app/src/preferences.rs:648
 msgid ""
 "Only sherpa-onnx streaming transducers work (encoder, decoder, joiner, "
 "tokens). The model is copied, then tested before use."
@@ -586,11 +586,11 @@ msgstr ""
 "Nur fluaj transduktiloj sherpa-onnx funkcias (encoder, decoder, joiner, "
 "tokens). La modelo estas kopiata, poste testata antaŭ uzo."
 
-#: app/src/preferences.rs:650
+#: app/src/preferences.rs:654
 msgid "From a Folder…"
 msgstr "El dosierujo…"
 
-#: app/src/preferences.rs:669
+#: app/src/preferences.rs:673
 msgid "Folder containing the model"
 msgstr "Dosierujo kun la modelo"
 
@@ -664,6 +664,9 @@ msgid ""
 msgstr ""
 "Unua eldono: flua diktado en la franca, ĝenerala klavkombino, administrilo "
 "de modeloj."
+
+#~ msgid "• GNOME Settings: opened to change the shortcut."
+#~ msgstr "• Agordoj de GNOME: malfermitaj por ŝanĝi la ŝparklavon."
 
 #~ msgid "Same as the system"
 #~ msgstr "Same kiel la sistemo"
