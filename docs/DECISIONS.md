@@ -209,3 +209,9 @@ Each entry: context, choice, rejected alternative, reason.
 - **Context**: GNOME drops keysyms missing from the active keymap, and AZERTY has no key for â, ê, î, ô, û or ä, ë, ï, ö, ü, ÿ: "sûr" came out as "sr".
 - **Choice**: these letters are sent as `dead_circumflex` or `dead_diaeresis` followed by the base letter, as a user types them on French, Belgian and Swiss layouts.
 - **Rejected**: remapping a spare keycode to the missing keysym, because the RemoteDesktop portal gives no access to the keymap.
+
+## D32 — Dependencies are checked with cargo-deny
+
+- **Context**: Diktu downloads models over the network and ships its dependencies in a GPL-3.0-or-later Flatpak: a known vulnerability or an incompatible license in the dependency tree must stop a merge.
+- **Choice**: `cargo deny check` in CI (`deny.toml`) on every push and weekly, since advisories appear without any change here. It fails on a RustSec advisory, a license outside the GPL-compatible list, a wildcard version or a crate from an unknown registry or git repository. Unmaintained crates only count in the workspace's own dependencies. Both crates are `publish = false`, which lets the path dependency between them through.
+- **Rejected**: `cargo audit`, which only covers advisories, not licenses or sources.

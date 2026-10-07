@@ -1,4 +1,5 @@
 [package]
+publish = false
 name = "diktu"
 description = "Local streaming voice dictation for GNOME"
 version.workspace = true

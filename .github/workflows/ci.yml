@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Security advisories are published without any change here.
+  schedule:
+    - cron: "0 6 * * 1"
 
 env:
   CARGO_TERM_COLOR: always
@@ -26,3 +29,9 @@ jobs:
       - run: cargo test --locked
       - name: Schema, .desktop, metainfo
         run: meson setup _build && meson compile -C _build fr.gwenael_leger.Diktu.desktop fr.gwenael_leger.Diktu.metainfo.xml && meson test -C _build --no-rebuild --print-errorlogs
+
+  dependencies:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: EmbarkStudios/cargo-deny-action@v2
