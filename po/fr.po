@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: diktu\n"
 "Report-Msgid-Bugs-To: me@gwenael-leger.fr\n"
-"POT-Creation-Date: 2026-10-07 10:16+0200\n"
+"POT-Creation-Date: 2026-10-07 10:19+0200\n"
 "PO-Revision-Date: 2026-10-03 22:00+0200\n"
 "Last-Translator: Gwenaël Léger <me@gwenael-leger.fr>\n"
 "Language-Team: none\n"
@@ -460,7 +460,10 @@ msgstr "Version, autorisations, licences, code source"
 msgid ""
 "• Microphone: open only while you dictate; audio is transcribed live, in "
 "memory, and never leaves your machine or touches the disk."
-msgstr "• Microphone : ouvert seulement pendant la dictée ; le son est transcrit en direct, en mémoire, et ne quitte jamais votre machine ni n’est écrit sur le disque."
+msgstr ""
+"• Microphone : ouvert seulement pendant la dictée ; le son est transcrit en "
+"direct, en mémoire, et ne quitte jamais votre machine ni n’est écrit sur le "
+"disque."
 
 #: app/src/preferences.rs:221
 msgid "• Remote desktop (keyboard): types the recognized text at the cursor."
@@ -666,6 +669,12 @@ msgstr ""
 
 #: data/fr.gwenael_leger.Diktu.metainfo.xml.in:46
 msgid ""
+"The About window states that audio is transcribed live, in memory, and never "
+"written to disk."
+msgstr "La fenêtre À propos précise que le son est transcrit en direct, en mémoire, et jamais écrit sur le disque."
+
+#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:51
+msgid ""
 "A first-launch assistant guides you step by step: language and model, "
 "permissions, then the shortcut. The interface is translated into French, "
 "German, Spanish, Russian and Esperanto, and English, German, Spanish and "
@@ -676,7 +685,7 @@ msgstr ""
 "allemand, espagnol, russe et espéranto, et des modèles de dictée anglais, "
 "allemands, espagnols et russes sont disponibles."
 
-#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:51
+#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:56
 msgid ""
 "Add your own speech models from Hugging Face or a local folder, in the "
 "language of your choice: Diktu checks that each one works before using it."
@@ -685,7 +694,7 @@ msgstr ""
 "dans la langue de votre choix : Diktu vérifie que chacun fonctionne avant de "
 "l'utiliser."
 
-#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:56
+#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:61
 msgid ""
 "First release: French streaming dictation, global shortcut, model manager."
 msgstr ""

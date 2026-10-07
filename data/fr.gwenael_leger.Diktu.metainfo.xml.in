@@ -41,6 +41,11 @@
   </supports>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="0.3.1" date="2026-10-07">
+      <description>
+        <p>The About window states that audio is transcribed live, in memory, and never written to disk.</p>
+      </description>
+    </release>
     <release version="0.3.0" date="2026-10-07">
       <description>
         <p>A first-launch assistant guides you step by step: language and model, permissions, then the shortcut. The interface is translated into French, German, Spanish, Russian and Esperanto, and English, German, Spanish and Russian speech models are available.</p>
