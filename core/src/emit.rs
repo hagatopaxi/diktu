@@ -107,4 +107,31 @@ mod tests {
         assert_eq!(e.partial(""), None);
         assert_eq!(e.finish("  "), None);
     }
+
+    #[test]
+    fn growing_hypotheses_type_the_sentence_exactly_once() {
+        let sentence = "l’été dernier, il a dit « ça coûte 5 € » puis s’en est allé";
+        let prefixes: Vec<&str> = sentence
+            .char_indices()
+            .map(|(i, _)| &sentence[..i])
+            .collect();
+        for postprocess in [false, true] {
+            let out = run(&mut Emitter::new(postprocess), &prefixes, sentence);
+            let expected = if postprocess {
+                "L’été dernier, il a dit « ça coûte 5 € » puis s’en est allé. "
+            } else {
+                "l’été dernier, il a dit « ça coûte 5 € » puis s’en est allé "
+            };
+            assert_eq!(out, expected);
+        }
+    }
+
+    #[test]
+    fn final_hypothesis_shorter_than_typed_text_types_nothing_more() {
+        let mut e = Emitter::new(false);
+        assert_eq!(e.partial("le chat dort "), Some("le chat dort ".into()));
+        assert_eq!(e.finish("le chat"), None);
+        // The next segment starts from scratch.
+        assert_eq!(e.finish("bonjour"), Some("bonjour ".into()));
+    }
 }

@@ -177,6 +177,58 @@ fn cancel_stops_and_keeps_part() {
 }
 
 #[test]
+fn installed_file_is_kept_and_corrupt_file_is_replaced() {
+    let (url, ranges) = serve(None);
+    let (root, m) = (tmp("existing"), model(sha(&body())));
+    std::fs::create_dir_all(root.join("test/sub")).unwrap();
+    std::fs::write(installed_file(&root), body()).unwrap();
+    download::install(&url, &root, &m, &AtomicBool::new(false), |_, _| {}).unwrap();
+    assert!(
+        ranges.lock().unwrap().is_empty(),
+        "no request for a valid file"
+    );
+
+    std::fs::write(installed_file(&root), b"corrupt").unwrap();
+    download::install(&url, &root, &m, &AtomicBool::new(false), |_, _| {}).unwrap();
+    assert_eq!(ranges.lock().unwrap().len(), 1);
+    assert_eq!(std::fs::read(installed_file(&root)).unwrap(), body());
+}
+
+#[test]
+fn complete_part_is_verified_without_downloading_again() {
+    let (url, ranges) = serve(None);
+    let (root, m) = (tmp("complete"), model(sha(&body())));
+    std::fs::create_dir_all(root.join("test/sub")).unwrap();
+    std::fs::write(root.join("test/sub/model.bin.part"), body()).unwrap();
+    download::install(&url, &root, &m, &AtomicBool::new(false), |_, _| {}).unwrap();
+    assert_eq!(*ranges.lock().unwrap(), [Some(LEN.to_string())]);
+    assert_eq!(std::fs::read(installed_file(&root)).unwrap(), body());
+}
+
+#[test]
+fn oversized_part_is_dropped_then_download_restarts() {
+    let (url, _) = serve(None);
+    let (root, m) = (tmp("oversized"), model(sha(&body())));
+    let part = root.join("test/sub/model.bin.part");
+    std::fs::create_dir_all(part.parent().unwrap()).unwrap();
+    std::fs::write(&part, vec![0; LEN + 10]).unwrap();
+    let err = download::install(&url, &root, &m, &AtomicBool::new(false), |_, _| {});
+    assert!(matches!(err, Err(Error::Http(_))), "{err:?}");
+    assert!(!part.exists());
+    download::install(&url, &root, &m, &AtomicBool::new(false), |_, _| {}).unwrap();
+    assert!(download::is_installed(&root, &m));
+}
+
+#[test]
+fn other_revision_is_not_installed() {
+    let (url, _) = serve(None);
+    let (root, mut m) = (tmp("revision"), model(sha(&body())));
+    download::install(&url, &root, &m, &AtomicBool::new(false), |_, _| {}).unwrap();
+    m.revision = "1".repeat(40);
+    assert!(!download::is_installed(&root, &m));
+}
+
+#[test]
 #[ignore = "downloads the default model (~71 MB) from Hugging Face"]
 fn downloads_default_model_from_hugging_face() {
     let m = registry::default_for("fr").unwrap();

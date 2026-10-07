@@ -1,5 +1,6 @@
 //! Imports the default French model as a custom one, from Hugging Face then from a
 //! folder, and checks that a model with a corrupted vocabulary is refused.
+//! The folder import without a real model runs by default.
 //! Run with `cargo test -p diktu-core --test custom -- --ignored --nocapture`.
 
 use std::fs;
@@ -79,4 +80,56 @@ fn imports_and_checks_real_model() {
     let err = custom::check(&custom::staging_dir(&root, &broken)).unwrap_err();
     println!("broken: {err}");
     custom::discard(&root, &broken);
+}
+
+#[test]
+fn folder_import_is_staged_then_committed() {
+    let root = PathBuf::from(env!("CARGO_TARGET_TMPDIR")).join("custom-import");
+    let _ = fs::remove_dir_all(&root);
+    let src = root.join("src/My Model");
+    fs::create_dir_all(&src).unwrap();
+    for f in [
+        "encoder.onnx",
+        "decoder.onnx",
+        "joiner.onnx",
+        "tokens.txt",
+        "README.md",
+    ] {
+        fs::write(src.join(f), f).unwrap();
+    }
+    let models = root.join("models");
+
+    assert!(custom::stage_folder(&models, &src, "FR").is_err());
+    let model = custom::stage_folder(&models, &src, "fr").unwrap();
+    assert_eq!(model.id, "custom-my-model");
+    assert_eq!(model.files.len(), 4);
+    assert!(
+        model
+            .files
+            .iter()
+            .all(|f| f.size > 0 && f.sha256.len() == 64)
+    );
+    assert!(custom::list(&models).is_empty(), "staged is not installed");
+    assert_eq!(
+        custom::read_manifest(&custom::staging_dir(&models, &model))
+            .unwrap()
+            .revision,
+        model.revision
+    );
+
+    custom::commit(&models, &model).unwrap();
+    assert!(!custom::staging_dir(&models, &model).exists());
+    let listed = custom::list(&models);
+    assert_eq!(listed.len(), 1);
+    assert!(download::is_installed(&models, &listed[0]));
+    assert!(
+        custom::stage_folder(&models, &src, "fr").is_err(),
+        "same name"
+    );
+
+    fs::remove_file(src.join("joiner.onnx")).unwrap();
+    let other = root.join("src/Other");
+    fs::rename(&src, &other).unwrap();
+    assert!(custom::stage_folder(&models, &other, "fr").is_err());
+    assert!(!models.join(".staging-custom-other").exists());
 }

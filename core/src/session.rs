@@ -355,4 +355,34 @@ mod tests {
         );
         assert_eq!(typed, "Mot1 mot2 mot3. ");
     }
+
+    #[test]
+    fn engine_swap_waits_for_idle_and_abort_types_nothing() {
+        let mut d = Dictation::new(Box::new(FakeEngine::default()), 1.2, true);
+        assert!(d.set_engine(Box::new(FakeEngine::default())).is_ok());
+        d.tick(&mut Script(vec![0], 0), &[]);
+        assert_eq!(d.state(), State::Listening);
+        d.tick(&mut Script(vec![], 0), &speech());
+        assert!(d.set_engine(Box::new(FakeEngine::default())).is_err());
+        d.abort();
+        assert_eq!(d.state(), State::Idle);
+        // A new dictation does not resume the aborted one.
+        d.tick(&mut Script(vec![0], 0), &[]);
+        let typed = d.tick(&mut Script(vec![], 0), &[speech(), speech()].concat());
+        assert_eq!(typed.as_deref(), Some("Mot1 "));
+    }
+
+    #[test]
+    fn endless_speech_is_capped() {
+        // New words every chunk, and an end-of-silence setting never reached: only the cap ends it.
+        let mut d = Dictation::new(Box::new(FakeEngine::default()), 1e6, true);
+        d.tick(&mut Script(vec![0], 0), &[]);
+        let chunk = speech();
+        for _ in 1..MAX_DICTATION / CHUNK {
+            d.tick(&mut Script(vec![], 0), &chunk);
+        }
+        assert_eq!(d.state(), State::Listening);
+        d.tick(&mut Script(vec![], 0), &chunk);
+        assert_eq!(d.state(), State::Finalizing);
+    }
 }

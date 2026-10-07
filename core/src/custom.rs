@@ -253,6 +253,7 @@ pub fn parse_repo(input: &str) -> Result<String, String> {
     let s = input
         .trim()
         .trim_start_matches("https://")
+        .trim_start_matches("http://")
         .trim_start_matches("huggingface.co/");
     let parts: Vec<&str> = s.split('/').take(2).collect();
     let ok = |p: &str| {
@@ -607,7 +608,9 @@ mod tests {
             parse_repo(" https://huggingface.co/a-b/c.d/tree/main ").unwrap(),
             "a-b/c.d"
         );
+        assert_eq!(parse_repo("http://huggingface.co/a/b").unwrap(), "a/b");
         assert!(parse_repo("justname").is_err());
+        assert!(parse_repo("a/..").is_err() && parse_repo("a b/c").is_err());
         assert!(parse_repo("../x").is_err());
         assert!(is_lang_code("fr") && !is_lang_code("FR") && !is_lang_code("fr-FR"));
         assert_eq!(slug("Kroko FR_v2 !"), "kroko-fr-v2");
