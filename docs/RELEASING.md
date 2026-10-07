@@ -27,7 +27,7 @@ by hand: **Actions** → **Flatpak** → **Run workflow** (the release step is s
 
 The `Flatpak` workflow (`.github/workflows/flatpak.yml`):
 
-1. builds `diktu-x86_64.flatpak` and `diktu-aarch64.flatpak` on native runners, from source
+1. builds `diktu-X.Y.Z-x86_64.flatpak` and `diktu-X.Y.Z-aarch64.flatpak` on native runners, from source
    (sherpa-onnx included, see [MAINTENANCE.md](MAINTENANCE.md));
 2. writes `SHA256SUMS`;
 3. creates the GitHub release `vX.Y.Z` with these three files and notes generated from the commit
@@ -40,7 +40,7 @@ and `git tag -d vX.Y.Z`) and release again.
 ## Check the release
 
 ```sh
-flatpak install --user ./diktu-x86_64.flatpak
+flatpak install --user ./diktu-X.Y.Z-x86_64.flatpak
 flatpak run fr.gwenael_leger.Diktu
 ```
 

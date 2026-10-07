@@ -25,12 +25,9 @@ X11 is not a target: Diktu may work there through the portals, without any guara
 ## Flatpak bundle from GitHub Releases
 
 Each release on <https://github.com/hagatopaxi/diktu/releases> provides two bundles,
-`diktu-x86_64.flatpak` and `diktu-aarch64.flatpak`, plus a `SHA256SUMS` file. They are built
+`diktu-X.Y.Z-x86_64.flatpak` and `diktu-X.Y.Z-aarch64.flatpak`, plus a `SHA256SUMS` file. They are built
 by GitHub Actions ([`.github/workflows/flatpak.yml`](../.github/workflows/flatpak.yml)) for
 every `v*` tag.
-
-> No release has been published yet (v0.1.0 is planned). Until then, use one of the
-> build-from-source methods below.
 
 Download the bundle for your architecture (`uname -m` prints it) and `SHA256SUMS` into the
 same directory, then check the download:
@@ -44,7 +41,7 @@ do not have it yet, then install the bundle:
 
 ```sh
 flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install --user diktu-x86_64.flatpak
+flatpak install --user diktu-X.Y.Z-x86_64.flatpak
 flatpak run fr.gwenael_leger.Diktu
 ```
 

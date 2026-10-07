@@ -21,11 +21,14 @@ jobs:
       options: --privileged
     steps:
       - uses: actions/checkout@v7
+      # The tag without its "v" (0.3.2), or the branch name when run by hand.
+      - id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
       - uses: flatpak/flatpak-github-actions/flatpak-builder@v6
         with:
           manifest-path: build-aux/fr.gwenael_leger.Diktu.json
-          bundle: diktu-${{ matrix.arch }}.flatpak
-          artifact-name: diktu-${{ matrix.arch }}
+          bundle: diktu-${{ steps.version.outputs.version }}-${{ matrix.arch }}.flatpak
+          artifact-name: diktu-${{ steps.version.outputs.version }}-${{ matrix.arch }}
           arch: ${{ matrix.arch }}
 
   release:

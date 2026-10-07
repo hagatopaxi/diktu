@@ -52,11 +52,11 @@ The easiest way is the Flatpak bundle from
 yet (v0.1.0 is planned); until then, build it from source as described in
 [docs/INSTALL.md](docs/INSTALL.md).
 
-Once a release is out, download `diktu-x86_64.flatpak` (or `diktu-aarch64.flatpak`) and run:
+Once a release is out, download `diktu-X.Y.Z-x86_64.flatpak` (or `diktu-X.Y.Z-aarch64.flatpak`, `X.Y.Z` being the version) and run:
 
 ```sh
 flatpak remote-add --if-not-exists --user flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install --user diktu-x86_64.flatpak
+flatpak install --user diktu-X.Y.Z-x86_64.flatpak
 flatpak run fr.gwenael_leger.Diktu
 ```
 
