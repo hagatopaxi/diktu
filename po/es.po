@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: diktu\n"
 "Report-Msgid-Bugs-To: me@gwenael-leger.fr\n"
-"POT-Creation-Date: 2026-10-07 13:27+0200\n"
+"POT-Creation-Date: 2026-10-07 13:54+0200\n"
 "PO-Revision-Date: 2026-10-03 22:00+0200\n"
 "Last-Translator: Gwenaël Léger <me@gwenael-leger.fr>\n"
 "Language-Team: none\n"
@@ -662,13 +662,21 @@ msgstr ""
 "texto."
 
 #: data/fr.gwenael_leger.Diktu.metainfo.xml.in:46
+msgid "The downloadable bundles carry the version in their file name."
+msgstr "Los paquetes descargables llevan el número de versión en su nombre de archivo."
+
+#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:51
 msgid ""
 "Accented letters, the euro sign and Cyrillic text are typed correctly "
 "whatever the keyboard layout: through a dead key when the layout has no key "
 "for them, or without their accent when it has neither."
-msgstr "Las letras con tilde, el símbolo del euro y el texto cirílico se escriben correctamente sea cual sea la distribución del teclado: con una tecla muerta cuando ninguna tecla los produce, o sin su tilde cuando la distribución no tiene ninguna de las dos."
+msgstr ""
+"Las letras con tilde, el símbolo del euro y el texto cirílico se escriben "
+"correctamente sea cual sea la distribución del teclado: con una tecla muerta "
+"cuando ninguna tecla los produce, o sin su tilde cuando la distribución no "
+"tiene ninguna de las dos."
 
-#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:51
+#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:56
 msgid ""
 "The About window states that audio is transcribed live, in memory, and never "
 "written to disk."
@@ -676,7 +684,7 @@ msgstr ""
 "La ventana Acerca de indica que el audio se transcribe en directo, en "
 "memoria, y nunca se escribe en el disco."
 
-#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:56
+#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:61
 msgid ""
 "A first-launch assistant guides you step by step: language and model, "
 "permissions, then the shortcut. The interface is translated into French, "
@@ -688,7 +696,7 @@ msgstr ""
 "español, ruso y esperanto, y hay modelos de voz en inglés, alemán, español y "
 "ruso."
 
-#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:61
+#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:66
 msgid ""
 "Add your own speech models from Hugging Face or a local folder, in the "
 "language of your choice: Diktu checks that each one works before using it."
@@ -697,7 +705,7 @@ msgstr ""
 "el idioma que prefiera: Diktu comprueba que cada uno funciona antes de "
 "usarlo."
 
-#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:66
+#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:71
 msgid ""
 "First release: French streaming dictation, global shortcut, model manager."
 msgstr ""

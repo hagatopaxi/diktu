@@ -41,6 +41,11 @@
   </supports>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="0.3.3" date="2026-10-07">
+      <description>
+        <p>The downloadable bundles carry the version in their file name.</p>
+      </description>
+    </release>
     <release version="0.3.2" date="2026-10-07">
       <description>
         <p>Accented letters, the euro sign and Cyrillic text are typed correctly whatever the keyboard layout: through a dead key when the layout has no key for them, or without their accent when it has neither.</p>
