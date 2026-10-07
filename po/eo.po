@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: diktu\n"
 "Report-Msgid-Bugs-To: me@gwenael-leger.fr\n"
-"POT-Creation-Date: 2026-10-07 10:19+0200\n"
+"POT-Creation-Date: 2026-10-07 13:27+0200\n"
 "PO-Revision-Date: 2026-10-03 22:00+0200\n"
 "Last-Translator: Gwenaël Léger <me@gwenael-leger.fr>\n"
 "Language-Team: none\n"
@@ -66,63 +66,63 @@ msgstr "modelo nomata “{name}” jam estas importita"
 msgid "copying {name}: {error}"
 msgstr "kopiado de {name}: {error}"
 
-#: core/src/custom.rs:267
+#: core/src/custom.rs:268
 msgid "“{input}” is not a Hugging Face repository (owner/name)"
 msgstr "“{input}” ne estas deponejo de Hugging Face (posedanto/nomo)"
 
-#: core/src/custom.rs:290 core/src/download.rs:33
+#: core/src/custom.rs:291 core/src/download.rs:33
 msgid "network error: {error}"
 msgstr "reta eraro: {error}"
 
-#: core/src/custom.rs:295
+#: core/src/custom.rs:296
 msgid "{repo}: private or gated repository"
 msgstr "{repo}: privata aŭ limigita deponejo"
 
-#: core/src/custom.rs:299
+#: core/src/custom.rs:300
 msgid "{repo}: no such repository"
 msgstr "{repo}: deponejo ne ekzistas"
 
-#: core/src/custom.rs:304
+#: core/src/custom.rs:305
 msgid "{repo}: unexpected answer: {error}"
 msgstr "{repo}: neatendita respondo: {error}"
 
-#: core/src/custom.rs:312
+#: core/src/custom.rs:313
 msgid "{name}: unsafe path"
 msgstr "{name}: nesekura vojo"
 
-#: core/src/custom.rs:330
+#: core/src/custom.rs:331
 msgid "see huggingface.co/{repo}"
 msgstr "vidu huggingface.co/{repo}"
 
-#: core/src/custom.rs:366
+#: core/src/custom.rs:367
 msgid "{file}: changed since import"
 msgstr "{file}: ŝanĝita post la importo"
 
-#: core/src/custom.rs:370
+#: core/src/custom.rs:371
 msgid "{file}: not an ONNX file"
 msgstr "{file}: ne estas ONNX-dosiero"
 
-#: core/src/custom.rs:377
+#: core/src/custom.rs:378
 msgid "missing tokens file"
 msgstr "mankas dosiero tokens"
 
-#: core/src/custom.rs:383
+#: core/src/custom.rs:384
 msgid "{count} tokens"
 msgstr "{count} ĵetonoj"
 
-#: core/src/custom.rs:389
+#: core/src/custom.rs:390
 msgid "transcribes silence as “{text}”: files likely mismatched"
 msgstr "transskribas silenton kiel “{text}”: la dosieroj verŝajne ne kongruas"
 
-#: core/src/custom.rs:405
+#: core/src/custom.rs:406
 msgid "too slow for live dictation (real-time factor {rtf})"
 msgstr "tro malrapida por viva diktado (realtempa faktoro {rtf})"
 
-#: core/src/custom.rs:410
+#: core/src/custom.rs:411
 msgid "real-time factor {rtf}"
 msgstr "realtempa faktoro {rtf}"
 
-#: core/src/custom.rs:419
+#: core/src/custom.rs:420
 msgid ""
 "poor transcription of the {lang} test sentence ({percent} % word errors): "
 "“{text}”. Wrong language or broken model?"
@@ -130,27 +130,27 @@ msgstr ""
 "malbona transskribo de la {lang}-testfrazo ({percent} % vorteraroj): "
 "“{text}”. Malĝusta lingvo aŭ difektita modelo?"
 
-#: core/src/custom.rs:428
+#: core/src/custom.rs:429
 msgid "{percent} % word errors on the {lang} test sentence"
 msgstr "{percent} % vorteraroj ĉe la {lang}-testfrazo"
 
-#: core/src/custom.rs:433
+#: core/src/custom.rs:434
 msgid "accuracy not checked: no {lang} test sentence"
 msgstr "precizeco ne kontrolita: neniu {lang}-testfrazo"
 
-#: core/src/custom.rs:461
+#: core/src/custom.rs:462
 msgid "tokens line {line}: expected “symbol id”"
 msgstr "tokens linio {line}: atendis “simbolo id”"
 
-#: core/src/custom.rs:469
+#: core/src/custom.rs:470
 msgid "tokens: ids must run from 0 without gaps"
 msgstr "tokens: identigiloj devas iri de 0 sen truoj"
 
-#: core/src/custom.rs:479
+#: core/src/custom.rs:480
 msgid "not a WAV file"
 msgstr "ne estas WAV-dosiero"
 
-#: core/src/custom.rs:503
+#: core/src/custom.rs:504
 msgid "WAV must be 16 kHz mono 16-bit PCM"
 msgstr "WAV devas esti 16 kHz unukanala 16-bita PCM"
 
@@ -198,11 +198,11 @@ msgstr "Atendi la diktan klavkombinon sen malfermita fenestro"
 msgid "not allowed"
 msgstr "ne permesite"
 
-#: app/src/main.rs:437
+#: app/src/main.rs:452
 msgid "keyboard access denied: {error}"
 msgstr "aliro al klavaro rifuzita: {error}"
 
-#: app/src/main.rs:463
+#: app/src/main.rs:478
 msgid ""
 "global shortcut unavailable ({error}): bind a GNOME shortcut to “diktu --"
 "toggle”"
@@ -654,11 +654,20 @@ msgstr ""
 
 #: data/fr.gwenael_leger.Diktu.metainfo.xml.in:46
 msgid ""
-"The About window states that audio is transcribed live, in memory, and never "
-"written to disk."
-msgstr "La fenestro Pri klarigas, ke la sono estas transskribata tuj, en la memoro, kaj neniam skribata sur la diskon."
+"Accented letters, the euro sign and Cyrillic text are typed correctly "
+"whatever the keyboard layout: through a dead key when the layout has no key "
+"for them, or without their accent when it has neither."
+msgstr "Supersignitaj literoj, la eŭro-signo kaj cirila teksto estas ĝuste tajpataj kun ajna klavararanĝo: per senpaŝa klavo, kiam neniu klavo produktas ilin, aŭ sen ilia supersigno, kiam la aranĝo havas nek tion nek alian."
 
 #: data/fr.gwenael_leger.Diktu.metainfo.xml.in:51
+msgid ""
+"The About window states that audio is transcribed live, in memory, and never "
+"written to disk."
+msgstr ""
+"La fenestro Pri klarigas, ke la sono estas transskribata tuj, en la memoro, "
+"kaj neniam skribata sur la diskon."
+
+#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:56
 msgid ""
 "A first-launch assistant guides you step by step: language and model, "
 "permissions, then the shortcut. The interface is translated into French, "
@@ -670,7 +679,7 @@ msgstr ""
 "germana, hispana, rusa kaj Esperanto, kaj disponeblas parolmodeloj por la "
 "angla, germana, hispana kaj rusa."
 
-#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:56
+#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:61
 msgid ""
 "Add your own speech models from Hugging Face or a local folder, in the "
 "language of your choice: Diktu checks that each one works before using it."
@@ -678,7 +687,7 @@ msgstr ""
 "Aldonu viajn proprajn parolmodelojn el Hugging Face aŭ loka dosierujo, en la "
 "lingvo de via elekto: Diktu kontrolas, ke ĉiu funkcias antaŭ ol uzi ĝin."
 
-#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:61
+#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:66
 msgid ""
 "First release: French streaming dictation, global shortcut, model manager."
 msgstr ""

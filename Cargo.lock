@@ -588,7 +588,7 @@ dependencies = [
 
 [[package]]
 name = "diktu"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "ashpd",
  "diktu-core",
@@ -603,7 +603,7 @@ dependencies = [
 
 [[package]]
 name = "diktu-core"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "cpal",
  "reqwest",
