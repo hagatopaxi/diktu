@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: diktu\n"
 "Report-Msgid-Bugs-To: me@gwenael-leger.fr\n"
-"POT-Creation-Date: 2026-10-07 10:10+0200\n"
+"POT-Creation-Date: 2026-10-07 10:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -429,7 +429,8 @@ msgstr ""
 
 #: app/src/preferences.rs:220
 msgid ""
-"• Microphone: open only while you dictate; no audio leaves your machine."
+"• Microphone: open only while you dictate; audio is transcribed live, in "
+"memory, and never leaves your machine or touches the disk."
 msgstr ""
 
 #: app/src/preferences.rs:221

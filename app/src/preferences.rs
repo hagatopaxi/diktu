@@ -217,7 +217,7 @@ fn about_dialog() -> adw::AboutDialog {
             [
                 tr("Permissions"),
                 String::new(),
-                tr("• Microphone: open only while you dictate; no audio leaves your machine."),
+                tr("• Microphone: open only while you dictate; audio is transcribed live, in memory, and never leaves your machine or touches the disk."),
                 tr("• Remote desktop (keyboard): types the recognized text at the cursor."),
                 tr("• Global shortcut: starts and stops dictation from any app."),
                 tr("• Run in background: listens for the shortcut with no window open."),

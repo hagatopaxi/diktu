@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: diktu\n"
 "Report-Msgid-Bugs-To: me@gwenael-leger.fr\n"
-"POT-Creation-Date: 2026-10-07 10:10+0200\n"
+"POT-Creation-Date: 2026-10-07 10:16+0200\n"
 "PO-Revision-Date: 2026-10-03 22:00+0200\n"
 "Last-Translator: Gwenaël Léger <me@gwenael-leger.fr>\n"
 "Language-Team: none\n"
@@ -456,9 +456,9 @@ msgstr "Версия, разрешения, лицензии, исходный �
 
 #: app/src/preferences.rs:220
 msgid ""
-"• Microphone: open only while you dictate; no audio leaves your machine."
-msgstr ""
-"• Микрофон: открыт только во время диктовки; звук не покидает ваш компьютер."
+"• Microphone: open only while you dictate; audio is transcribed live, in "
+"memory, and never leaves your machine or touches the disk."
+msgstr "• Микрофон: открыт только во время диктовки; звук распознаётся на лету в памяти и никогда не покидает компьютер и не записывается на диск."
 
 #: app/src/preferences.rs:221
 msgid "• Remote desktop (keyboard): types the recognized text at the cursor."
@@ -664,7 +664,11 @@ msgid ""
 "permissions, then the shortcut. The interface is translated into French, "
 "German, Spanish, Russian and Esperanto, and English, German, Spanish and "
 "Russian speech models are available."
-msgstr "Помощник первого запуска проведёт вас шаг за шагом: язык и модель, разрешения, затем сочетание клавиш. Интерфейс переведён на французский, немецкий, испанский, русский и эсперанто, доступны модели распознавания речи для английского, немецкого, испанского и русского."
+msgstr ""
+"Помощник первого запуска проведёт вас шаг за шагом: язык и модель, "
+"разрешения, затем сочетание клавиш. Интерфейс переведён на французский, "
+"немецкий, испанский, русский и эсперанто, доступны модели распознавания речи "
+"для английского, немецкого, испанского и русского."
 
 #: data/fr.gwenael_leger.Diktu.metainfo.xml.in:51
 msgid ""

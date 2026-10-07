@@ -31,9 +31,9 @@ language works with an imported sherpa-onnx streaming model.
 
 ## Privacy
 
-No audio ever leaves your machine. The microphone is open only while you dictate. The only
-network access is the one-time download of the speech model from Hugging Face, which you start
-yourself from the preferences.
+No audio ever leaves your machine, or is even written to disk: it is transcribed live, in
+memory. The microphone is open only while you dictate. The only network access is the one-time
+download of the speech model from Hugging Face, which you start yourself from the preferences.
 
 ## Requirements
 
