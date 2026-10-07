@@ -203,3 +203,9 @@ Each entry: context, choice, rejected alternative, reason.
 - **Context**: version 1 of the GlobalShortcuts portal (GNOME 50) has no ConfigureShortcuts, and GNOME remembers the binding, so calling BindShortcuts again shows nothing.
 - **Choice**: "Change…" calls ConfigureShortcuts on portal version 2 or later. On version 1, or without a portal, a toast points to Settings → Apps → Diktu, with no extra sandbox permission. The onboarding's second click does nothing in that case, since its window has no toasts.
 - **Rejected**: opening Settings' panel through D-Bus, because it needs `--talk-name=org.gnome.Settings`; binding again under a new shortcut id, because it leaves stale entries in Settings.
+
+## D31 — Circumflex and diaeresis letters are typed with dead keys
+
+- **Context**: GNOME drops keysyms missing from the active keymap, and AZERTY has no key for â, ê, î, ô, û or ä, ë, ï, ö, ü, ÿ: "sûr" came out as "sr".
+- **Choice**: these letters are sent as `dead_circumflex` or `dead_diaeresis` followed by the base letter, as a user types them on French, Belgian and Swiss layouts.
+- **Rejected**: remapping a spare keycode to the missing keysym, because the RemoteDesktop portal gives no access to the keymap.

@@ -8,7 +8,7 @@ use std::time::Duration;
 use ashpd::desktop::PersistMode;
 use ashpd::desktop::Session;
 use ashpd::desktop::remote_desktop::{DeviceType, KeyState, RemoteDesktop, SelectDevicesOptions};
-use diktu_core::inject::{TextSink, keysym};
+use diktu_core::inject::{TextSink, keysyms};
 
 pub struct PortalSink {
     connection: Option<(RemoteDesktop, Session<RemoteDesktop>)>,
@@ -75,7 +75,7 @@ impl PortalSink {
         let (proxy, session) = self.connection.as_ref().expect("connected");
         let delay = Duration::from_millis(self.delay_ms.load(Ordering::Relaxed).into());
         crate::runtime().block_on(async {
-            for k in text.chars().filter_map(keysym) {
+            for k in text.chars().flat_map(keysyms) {
                 for state in [KeyState::Pressed, KeyState::Released] {
                     proxy
                         .notify_keyboard_keysym(session, k as i32, state, Default::default())

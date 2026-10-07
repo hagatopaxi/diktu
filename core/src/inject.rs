@@ -15,6 +15,38 @@ pub fn keysym(c: char) -> Option<u32> {
     }
 }
 
+/// The keysyms typing `c`. Circumflex and diaeresis letters are missing from the AZERTY
+/// keymap, so GNOME would drop them: they are typed as dead key + base letter, like by hand.
+pub fn keysyms(c: char) -> Vec<u32> {
+    const CIRCUMFLEX: u32 = 0xfe52; // dead_circumflex
+    const DIAERESIS: u32 = 0xfe57; // dead_diaeresis
+    let (dead, base) = match c {
+        'â' => (CIRCUMFLEX, 'a'),
+        'ê' => (CIRCUMFLEX, 'e'),
+        'î' => (CIRCUMFLEX, 'i'),
+        'ô' => (CIRCUMFLEX, 'o'),
+        'û' => (CIRCUMFLEX, 'u'),
+        'Â' => (CIRCUMFLEX, 'A'),
+        'Ê' => (CIRCUMFLEX, 'E'),
+        'Î' => (CIRCUMFLEX, 'I'),
+        'Ô' => (CIRCUMFLEX, 'O'),
+        'Û' => (CIRCUMFLEX, 'U'),
+        'ä' => (DIAERESIS, 'a'),
+        'ë' => (DIAERESIS, 'e'),
+        'ï' => (DIAERESIS, 'i'),
+        'ö' => (DIAERESIS, 'o'),
+        'ü' => (DIAERESIS, 'u'),
+        'ÿ' => (DIAERESIS, 'y'),
+        'Ä' => (DIAERESIS, 'A'),
+        'Ë' => (DIAERESIS, 'E'),
+        'Ï' => (DIAERESIS, 'I'),
+        'Ö' => (DIAERESIS, 'O'),
+        'Ü' => (DIAERESIS, 'U'),
+        _ => return keysym(c).into_iter().collect(),
+    };
+    vec![dead, base as u32]
+}
+
 /// Where dictated text goes.
 pub trait TextSink {
     /// Types `text` at the cursor of the focused application.
@@ -29,7 +61,7 @@ pub struct MemorySink {
 
 impl TextSink for MemorySink {
     fn type_text(&mut self, text: &str) -> Result<(), String> {
-        self.keysyms.extend(text.chars().filter_map(keysym));
+        self.keysyms.extend(text.chars().flat_map(keysyms));
         Ok(())
     }
 }
@@ -58,6 +90,10 @@ mod tests {
         }
         assert_eq!(keysym('\u{7}'), None);
         assert_eq!(keysym('\u{85}'), None);
+        assert_eq!(keysyms('û'), [0xfe52, 0x75]);
+        assert_eq!(keysyms('Ë'), [0xfe57, 0x45]);
+        assert_eq!(keysyms('é'), [0xe9]);
+        assert!(keysyms('\u{7}').is_empty());
     }
 
     #[test]
@@ -75,9 +111,12 @@ mod tests {
         let typed: String = sink
             .keysyms
             .iter()
-            .map(|&k| char::from_u32(if k >= 0x0100_0000 { k - 0x0100_0000 } else { k }).unwrap())
+            .map(|&k| match k {
+                0xfe52 => '^',
+                k => char::from_u32(if k >= 0x0100_0000 { k - 0x0100_0000 } else { k }).unwrap(),
+            })
             .collect();
-        assert_eq!(typed, "Ça coûte 5 € 😀 ");
+        assert_eq!(typed, "Ça co^ute 5 € 😀 ");
         assert!(!sink.keysyms.contains(&0xff08), "no BackSpace");
     }
 }
