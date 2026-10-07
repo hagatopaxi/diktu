@@ -64,7 +64,13 @@ equivalent label.
 
 - [x] `F12` starts listening: short rising sound, GNOME microphone indicator visible.
 - [x] Text is typed at the cursor as you speak, word by word (never a half word), without erasing.
-- [x] Accents (é, è, à, ç, ù, œ) and the typographic apostrophe (’) are typed correctly, including with a non-French keyboard layout (e.g. US).
+- [x] Accents (é, è, à, ç, ù) and the typographic apostrophe (’) are typed correctly.
+- [ ] French layout: "sûr", "être", "Noël", "Été", "5 €" are typed whole; "Ça", "cœur" come out as "Ca", "coeur".
+- [ ] French and French (alt.) input sources, dictating in each: "être" is typed whole in both.
+- [ ] Spanish model and layout: "está", "niño", "pingüino" are typed whole; German model and layout: "Größe", "Café".
+- [ ] Russian model with the Russian input source active: "ещё", "привет" are typed whole; with a French layout only, nothing Cyrillic is typed and `G_MESSAGES_DEBUG=diktu` logs the dropped letters.
+- [ ] Adding or switching an input source while Diktu runs: the next dictation follows the new layout.
+- [ ] US layout: "café" comes out as "cafe".
 - [x] After ~1.2 s of silence, listening stops by itself: the rest of the text is typed, followed by a period and a space; falling sound; GNOME microphone indicator off.
 - [x] A second press of the shortcut while listening stops it immediately and types the rest.
 - [x] Nothing said for 6 s: listening stops without typing anything.

@@ -37,11 +37,16 @@ permission to control the keyboard is checked.
 
 ## Apostrophes or special characters are missing
 
-Diktu sends each character as a key symbol. GNOME drops symbols that are not on the active
-keyboard layout, so characters such as emoji or rare symbols may be missing from the typed
-text. The typographic apostrophe (’) produced by the model is typed as a plain ASCII
-apostrophe (') so that it works on every layout. Accented letters are typed correctly,
-including with a non-French layout such as US.
+Diktu types each character with the keys of your keyboard layout: directly when a key
+produces it (with Shift or AltGr if needed), otherwise with a dead key (^ then e for ê). When
+the layout has neither, the letter is typed without its accent (C for Ç, oe for œ), and
+characters such as emoji are missing. The typographic apostrophe (’) produced by the model is
+typed as a plain apostrophe (').
+
+For a language written in another alphabet, such as Russian, add its keyboard layout in
+Settings → Keyboard → Input Sources and switch to it before dictating: Cyrillic letters cannot
+be typed with a Latin layout. Layouts with dead keys, such as US International, keep the
+accents of other languages.
 
 ## Words are wrong or invented
 

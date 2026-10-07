@@ -1,18 +1,51 @@
 //! Types text through the XDG RemoteDesktop portal (`NotifyKeyboardKeysym`).
 
-use std::sync::Arc;
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::mpsc::{Receiver, RecvTimeoutError};
+use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use ashpd::desktop::PersistMode;
 use ashpd::desktop::Session;
 use ashpd::desktop::remote_desktop::{DeviceType, KeyState, RemoteDesktop, SelectDevicesOptions};
-use diktu_core::inject::{TextSink, keysyms};
+use diktu_core::inject::{Keymap, TextSink, keysyms};
+use gtk::gdk;
+use gtk::glib::translate::IntoGlib;
+use gtk::prelude::*;
+
+/// The keyboard layouts of the session, read on the GTK thread.
+pub fn keymap() -> Keymap {
+    let mut keymap = Keymap {
+        keysym: |c| gdk::unicode_to_keyval(c as u32),
+        ..Keymap::default()
+    };
+    let Some(display) = gdk::Display::default() else {
+        return keymap;
+    };
+    // evdev keycodes, offset by 8 as in xkb.
+    for keycode in 8..256 {
+        for (key, keyval) in display.map_keycode(keycode).unwrap_or_default() {
+            // GNOME types levels 1 to 3 only: none, Shift, AltGr.
+            if key.level() > 2 {
+                continue;
+            }
+            let group = key.group() as usize;
+            if keymap.layouts.len() <= group {
+                keymap.layouts.resize_with(group + 1, Default::default);
+            }
+            keymap.layouts[group].insert(keyval.into_glib());
+        }
+    }
+    if let Some(keyboard) = display.default_seat().and_then(|s| s.keyboard()) {
+        keymap.active = keyboard.property::<i32>("active-layout-index").max(0) as usize;
+    }
+    keymap
+}
 
 pub struct PortalSink {
     connection: Option<(RemoteDesktop, Session<RemoteDesktop>)>,
     restore_token: Option<String>,
+    keymap: Arc<Mutex<Keymap>>,
     /// Pause between two key events, in milliseconds.
     delay_ms: Arc<AtomicU32>,
     on_token: Box<dyn Fn(String)>,
@@ -22,12 +55,14 @@ impl PortalSink {
     /// `on_token` receives each new restore token, so that consent survives restarts.
     pub fn new(
         restore_token: Option<String>,
+        keymap: Arc<Mutex<Keymap>>,
         delay_ms: Arc<AtomicU32>,
         on_token: impl Fn(String) + 'static,
     ) -> Self {
         Self {
             connection: None,
             restore_token,
+            keymap,
             delay_ms,
             on_token: Box::new(on_token),
         }
@@ -74,8 +109,20 @@ impl PortalSink {
     fn send(&self, text: &str) -> Result<(), ashpd::Error> {
         let (proxy, session) = self.connection.as_ref().expect("connected");
         let delay = Duration::from_millis(self.delay_ms.load(Ordering::Relaxed).into());
+        let keys: Vec<u32> = {
+            let keymap = self.keymap.lock().unwrap();
+            text.chars()
+                .flat_map(|c| {
+                    let keys = keysyms(c, &keymap);
+                    if keys.is_empty() {
+                        gtk::glib::g_debug!("diktu", "no keyboard layout types {c:?}");
+                    }
+                    keys
+                })
+                .collect()
+        };
         crate::runtime().block_on(async {
-            for k in text.chars().flat_map(keysyms) {
+            for k in keys {
                 for state in [KeyState::Pressed, KeyState::Released] {
                     proxy
                         .notify_keyboard_keysym(session, k as i32, state, Default::default())

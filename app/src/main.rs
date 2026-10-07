@@ -10,7 +10,7 @@ use std::path::PathBuf;
 use std::rc::Rc;
 use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
 use std::sync::mpsc::{Sender, sync_channel};
-use std::sync::{Arc, OnceLock};
+use std::sync::{Arc, Mutex, OnceLock};
 
 use adw::prelude::*;
 use diktu_core::i18n::{self, tr, trf};
@@ -417,13 +417,28 @@ fn startup(app: &adw::Application) {
     let (consent_tx, consent_rx) = std::sync::mpsc::channel::<Consent>();
     let delay = Arc::new(AtomicU32::new(settings.uint("key-delay")));
     let token = Some(settings.string("restore-token").to_string()).filter(|t| !t.is_empty());
+    let keymap = Arc::new(Mutex::new(inject::keymap()));
+    if let Some(keyboard) = gtk::gdk::Display::default()
+        .and_then(|d| d.default_seat())
+        .and_then(|s| s.keyboard())
+    {
+        // Input sources added, removed or switched.
+        let keymap = keymap.clone();
+        let refresh = move |_: &gtk::gdk::Device| *keymap.lock().unwrap() = inject::keymap();
+        keyboard.connect_changed(refresh.clone());
+        keyboard.connect_notify_local(Some("layout-names"), {
+            let refresh = refresh.clone();
+            move |d, _| refresh(d)
+        });
+        keyboard.connect_notify_local(Some("active-layout-index"), move |d, _| refresh(d));
+    }
     let (sink_delay, sink_events) = (delay.clone(), events.clone());
     std::thread::Builder::new()
         .name("injection".into())
         .spawn(move || {
             let _tokio = runtime().enter();
             let tokens = sink_events.clone();
-            let mut sink = inject::PortalSink::new(token, sink_delay, move |t| {
+            let mut sink = inject::PortalSink::new(token, keymap, sink_delay, move |t| {
                 let _ = tokens.send(UiEvent::RestoreToken(t));
             });
             let error = |e: String| {

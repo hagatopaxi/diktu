@@ -18,6 +18,7 @@ reqwest = { version = "0.13.5", features = ["blocking"] }
 cpal = "0.17.3"
 rubato = "5.0.1"
 ringbuf = "0.5.2"
+unicode-normalization = "0.1.25"
 
 [features]
 # Links the shared libsherpa-onnx-c-api found in SHERPA_ONNX_LIB_DIR (Flatpak build from

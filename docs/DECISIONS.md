@@ -204,11 +204,11 @@ Each entry: context, choice, rejected alternative, reason.
 - **Choice**: "Change…" calls ConfigureShortcuts on portal version 2 or later. On version 1, or without a portal, a toast points to Settings → Apps → Diktu, with no extra sandbox permission. The onboarding's second click does nothing in that case, since its window has no toasts.
 - **Rejected**: opening Settings' panel through D-Bus, because it needs `--talk-name=org.gnome.Settings`; binding again under a new shortcut id, because it leaves stale entries in Settings.
 
-## D31 — Circumflex and diaeresis letters are typed with dead keys
+## D31 — Each character is typed in a way the keyboard layout can
 
-- **Context**: GNOME drops keysyms missing from the active keymap, and AZERTY has no key for â, ê, î, ô, û or ä, ë, ï, ö, ü, ÿ: "sûr" came out as "sr".
-- **Choice**: these letters are sent as `dead_circumflex` or `dead_diaeresis` followed by the base letter, as a user types them on French, Belgian and Swiss layouts.
-- **Rejected**: remapping a spare keycode to the missing keysym, because the RemoteDesktop portal gives no access to the keymap.
+- **Context**: mutter types a keysym only if a key of the active layout produces it at level 1 to 3 (none, Shift, AltGr), compares keysyms exactly, and silently drops any other. "sûr" came out as "sr" on AZERTY, É and Ç were lost, á é í ó ú on a Spanish layout, € everywhere, and all of Russian, because layouts name Cyrillic and € by their legacy keysyms (`Cyrillic_a`, `EuroSign`), not by `0x1000000 + code point`.
+- **Choice**: the keysyms of every layout of the session are read through GDK (`map_keycode`, which works without a window) and refreshed when the input sources change. Each character is typed as itself (GDK's legacy keysym), as its dead-key sequence (`dead_circumflex`, `e`), or, as a last resort, without its accent (C for Ç, oe for œ): the first that the active layout types wins, exact spellings first, then the one that the most layouts type, since GDK only learns the active layout when Diktu has the focus. A character no layout types is dropped and logged.
+- **Rejected**: a fixed dead-key table, because the right spelling depends on the layout (ä is a key in German and a dead key in Spanish); reading the input sources from GSettings, because the sandbox would need dconf access; remapping a spare keycode, because the RemoteDesktop portal gives no access to the keymap.
 
 ## D32 — Dependencies are checked with cargo-deny
 
