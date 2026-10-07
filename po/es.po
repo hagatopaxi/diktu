@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: diktu\n"
 "Report-Msgid-Bugs-To: me@gwenael-leger.fr\n"
-"POT-Creation-Date: 2026-10-06 18:19+0200\n"
+"POT-Creation-Date: 2026-10-07 10:10+0200\n"
 "PO-Revision-Date: 2026-10-03 22:00+0200\n"
 "Last-Translator: Gwenaël Léger <me@gwenael-leger.fr>\n"
 "Language-Team: none\n"
@@ -340,31 +340,31 @@ msgstr ""
 "En un portátil, {key} suele controlar el volumen o el brillo: pulse Fn+"
 "{key}, o active el bloqueo Fn (a menudo Fn+Esc)."
 
-#: app/src/onboarding.rs:466
+#: app/src/onboarding.rs:467
 msgid "Start Using {app}"
 msgstr "Empezar a usar {app}"
 
-#: app/src/onboarding.rs:470
+#: app/src/onboarding.rs:471
 msgid "All Set"
 msgstr "Todo listo"
 
-#: app/src/onboarding.rs:480
+#: app/src/onboarding.rs:481
 msgid "Press {key} anywhere"
 msgstr "Pulse {key} en cualquier lugar"
 
-#: app/src/onboarding.rs:482
+#: app/src/onboarding.rs:483
 msgid "Choose “Start dictation” in the {app} menu of the top bar"
 msgstr "Elija «Iniciar dictado» en el menú {app} de la barra superior"
 
-#: app/src/onboarding.rs:491
+#: app/src/onboarding.rs:492
 msgid "Dictation works once the model is downloaded."
 msgstr "El dictado funciona cuando el modelo está descargado."
 
-#: app/src/onboarding.rs:502
+#: app/src/onboarding.rs:503
 msgid "{start}, speak, then pause: the text is typed at the cursor."
 msgstr "{start}, hable y haga una pausa: el texto se escribe en el cursor."
 
-#: app/src/onboarding.rs:506
+#: app/src/onboarding.rs:507
 msgid "The {app} menu in the top bar also opens the preferences."
 msgstr "El menú {app} de la barra superior también abre las preferencias."
 
@@ -661,6 +661,14 @@ msgstr ""
 
 #: data/fr.gwenael_leger.Diktu.metainfo.xml.in:46
 msgid ""
+"A first-launch assistant guides you step by step: language and model, "
+"permissions, then the shortcut. The interface is translated into French, "
+"German, Spanish, Russian and Esperanto, and English, German, Spanish and "
+"Russian speech models are available."
+msgstr "Un asistente de primer inicio te guía paso a paso: idioma y modelo, permisos y, por último, el atajo. La interfaz está traducida al francés, alemán, español, ruso y esperanto, y hay modelos de voz en inglés, alemán, español y ruso."
+
+#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:51
+msgid ""
 "Add your own speech models from Hugging Face or a local folder, in the "
 "language of your choice: Diktu checks that each one works before using it."
 msgstr ""
@@ -668,7 +676,7 @@ msgstr ""
 "el idioma que prefiera: Diktu comprueba que cada uno funciona antes de "
 "usarlo."
 
-#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:51
+#: data/fr.gwenael_leger.Diktu.metainfo.xml.in:56
 msgid ""
 "First release: French streaming dictation, global shortcut, model manager."
 msgstr ""
